@@ -3,7 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
-    // Polyfills for client-side
+    // Polyfills and fallbacks
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
@@ -13,7 +13,15 @@ const nextConfig: NextConfig = {
       'pino-pretty': false,
     };
 
-    // Ignore pino and thread-stream on client side (not needed in browser)
+    // Ignore optional dependencies (both client and server)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      // Solana dependencies (not needed for Ethereum-only app)
+      '@solana/kit': false,
+      '@solana-program/system': false,
+    };
+
+    // Additional client-side ignores
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
