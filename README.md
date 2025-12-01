@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NILAV UI - Nillion Verifier Node Manager
 
-## Getting Started
+Web app that helps users for set up and manage nilAV nodes
 
-First, run the development server:
+## 🚀 Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎨 Components
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All components in `components/ui/`:
 
-## Learn More
+| Component       | Usage                                             |
+| --------------- | ------------------------------------------------- |
+| Button          | `<Button variant="outline">Click</Button>`        |
+| Card            | `<Card>Content</Card>`                            |
+| Input           | `<Input required validateEmail />`                |
+| Label           | `<Label htmlFor="id">Label</Label>`               |
+| Select          | `<Select options={[...]} />`                      |
+| Modal           | `<Modal isOpen={open} onClose={...}>`             |
+| Spinner         | `<Spinner size="large" />`                        |
+| ErrorMessage    | `<ErrorMessage message="..." onRetry={...} />`    |
+| Badge           | `<Badge variant="success">Active</Badge>`         |
+| LoadingSkeleton | `<LoadingSkeleton width="300px" height="20px" />` |
 
-To learn more about Next.js, take a look at the following resources:
+**Toasts:** `toast.success('Message')` (uses [sonner](https://sonner.emilkowal.ski/))
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Component Showcase:** Visit `/components-test`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Styling
 
-## Deploy on Vercel
+**All styles go in `app/globals.css`**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+✅ DO:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Use Nillion CSS variables (`var(--nillion-primary)`)
+- Use `.nillion-*` classes from brand kit
+- Create reusable components
+
+❌ DON'T:
+
+- Use Tailwind, styled-jsx, or CSS-in-JS
+- Add light mode styles (dark only)
+
+## 📝 Adding Components
+
+1. Create `components/ui/MyComponent.tsx`
+2. Add styles to `app/globals.css`
+3. Export in `components/ui/index.ts`
+4. Test in `/components-test`
+
+Example:
+
+```typescript
+// components/ui/MyComponent.tsx
+export function MyComponent({ ...props }) {
+  return <div className="my-component">Content</div>;
+}
+```
+
+```css
+/* app/globals.css */
+.my-component {
+  /* styles */
+}
+```
+
+## 🔧 Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Global CSS + Nillion Brand Kit
+- Sonner (toasts)

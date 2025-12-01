@@ -1,0 +1,502 @@
+/**
+ * Nillion Brand Kit
+ * Version: 1.0.1
+ * Drop-in CSS that automatically styles all HTML elements
+ */
+
+/* Font Definition */
+@font-face {
+  font-family: "TWKEverett";
+  src: url("./TWKEverett-Medium-web.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Variables - Dark Mode Only */
+:root {
+  /* Primary Colors */
+  --nillion-primary: #8a89ff;
+  --nillion-primary-hover: #a5a4ff;
+  --nillion-primary-active: #6f6eff;
+  --nillion-primary-light: #9f9eeb;
+  --nillion-primary-lighter: #b5b4f5;
+  --nillion-primary-lightest: #cccbff;
+
+  /* Greys */
+  --nillion-grey-light: #2a2a2a;
+  --nillion-grey: #3a3a3a;
+  --nillion-grey-dark: #646464;
+
+  /* Base colors */
+  --nillion-bg: #12125a;
+  --nillion-bg-secondary: #1a1a6e;
+  --nillion-text: #ffffff;
+  --nillion-text-secondary: #b0b0b0;
+  --nillion-border: #4746a7;
+
+  /* Typography */
+  --nillion-font-heading: "TWKEverett", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --nillion-font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+
+  /* Shadows */
+  --nillion-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --nillion-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --nillion-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5),
+    0 2px 4px -1px rgba(0, 0, 0, 0.4);
+}
+
+/* Base body styles */
+body {
+  font-family: var(--nillion-font-body);
+  background-color: var(--nillion-bg);
+  color: var(--nillion-text);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Auto-style all headings with TWKEverett */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--nillion-font-heading);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--nillion-text);
+}
+
+h1 {
+  font-size: 3rem;
+  letter-spacing: -0.025em;
+}
+h2 {
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+}
+h3 {
+  font-size: 1.875rem;
+  letter-spacing: -0.015em;
+}
+h4 {
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1.125rem;
+}
+
+/* Auto-style all buttons */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--nillion-font-heading);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background-color: var(--nillion-primary);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: var(--nillion-shadow);
+  vertical-align: middle;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--nillion-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--nillion-shadow-md);
+}
+
+button:active:not(:disabled) {
+  background-color: var(--nillion-primary-active);
+  transform: translateY(0);
+  box-shadow: var(--nillion-shadow-sm);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Secondary button style - add type="button" */
+button[type="button"] {
+  background-color: #A0A0BF;
+  color: white;
+  border: 1px solid #A0A0BF;
+}
+
+button[type="button"]:hover:not(:disabled) {
+  background-color: #F2F2FF;
+  color: #000000;
+  border-color: #F2F2FF;
+}
+
+button[type="button"]:active:not(:disabled) {
+  background-color: #E0E0F0;
+  color: #000000;
+  border-color: #E0E0F0;
+}
+
+/* Auto-style links */
+a {
+  color: var(--nillion-primary);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+a:hover {
+  color: var(--nillion-primary-hover);
+  text-decoration: underline;
+}
+
+/* Prevent underline on links inside buttons */
+button a {
+  text-decoration: none;
+}
+
+button a:hover {
+  text-decoration: none;
+}
+
+/* Auto-style labels */
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--nillion-text);
+  font-size: 0.875rem;
+}
+
+/* Auto-style form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+textarea,
+select {
+  font-family: var(--nillion-font-body);
+  font-size: 1rem;
+  padding: 0.625rem 0.875rem;
+  background-color: var(--nillion-bg);
+  color: var(--nillion-text);
+  border: 2px solid var(--nillion-border);
+  border-radius: 0.375rem;
+  transition: all 200ms ease;
+  width: 100%;
+  max-width: 100%;
+  margin: 0.5rem 0 1rem 0;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--nillion-primary);
+  background-color: var(--nillion-bg-secondary);
+  box-shadow: 0 0 0 3px rgba(138, 137, 255, 0.2);
+}
+
+/* Disabled input styling */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--nillion-grey-light);
+  border-color: var(--nillion-grey);
+  color: var(--nillion-text-secondary);
+}
+
+/* Input validation error state */
+input.input-error,
+textarea.input-error,
+select.input-error {
+  border-color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+input.input-error:focus,
+textarea.input-error:focus,
+select.input-error:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+}
+
+/* Input error message */
+.input-error-message {
+  display: block;
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 0.375rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--nillion-text-secondary);
+  opacity: 0.7;
+}
+
+/* Select styling */
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23b0b0b0' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+}
+
+/* Checkboxes and Radio buttons */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0 0.5rem 0 0;
+  cursor: pointer;
+  accent-color: var(--nillion-primary);
+  vertical-align: middle;
+  position: relative;
+  top: -0.05em;
+}
+
+/* Custom checkbox/radio container */
+label input[type="checkbox"],
+label input[type="radio"] {
+  margin-top: 0.125rem;
+  margin-bottom: 0.125rem;
+}
+
+/* Inline label styling for checkboxes and radios */
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Fallback for browsers without :has() support */
+@supports not selector(:has(*)) {
+  label {
+    display: flex;
+    align-items: center;
+  }
+
+  label input[type="checkbox"] + *,
+  label input[type="radio"] + * {
+    margin-left: 0;
+  }
+}
+
+/* File input */
+input[type="file"] {
+  padding: 0.375rem 0;
+  border: none;
+  background: none;
+  margin: 0.5rem 0 1rem 0;
+  width: 100%;
+}
+
+/* Range input */
+input[type="range"] {
+  padding: 0;
+  margin: 0.5rem 0 1rem 0;
+  background: transparent;
+  border: none;
+  width: 100%;
+}
+
+/* Optional Nillion Classes */
+
+/* Typography classes */
+.nillion-font-heading {
+  font-family: var(--nillion-font-heading) !important;
+}
+
+.nillion-font-body {
+  font-family: var(--nillion-font-body) !important;
+}
+
+/* Color classes */
+.nillion-primary {
+  color: var(--nillion-primary) !important;
+}
+
+.nillion-bg-primary {
+  background-color: var(--nillion-primary) !important;
+  color: white !important;
+}
+
+.nillion-secondary {
+  color: var(--nillion-text-secondary) !important;
+}
+
+.nillion-bg-secondary {
+  background-color: var(--nillion-bg-secondary) !important;
+}
+
+/* Button variants */
+.nillion-button-primary {
+  background-color: var(--nillion-primary) !important;
+  color: white !important;
+}
+
+.nillion-button-secondary {
+  background-color: var(--nillion-grey-light) !important;
+  color: var(--nillion-text) !important;
+}
+
+.nillion-button-outline {
+  background-color: transparent !important;
+  color: var(--nillion-primary) !important;
+  border: 2px solid var(--nillion-primary) !important;
+}
+
+.nillion-button-outline:hover:not(:disabled) {
+  background-color: var(--nillion-primary) !important;
+  color: white !important;
+}
+
+.nillion-button-ghost {
+  background-color: transparent !important;
+  color: var(--nillion-primary) !important;
+  box-shadow: none !important;
+}
+
+.nillion-button-ghost:hover:not(:disabled) {
+  background-color: rgba(138, 137, 255, 0.2) !important;
+}
+
+/* Size modifiers */
+.nillion-small {
+  font-size: 0.875rem !important;
+  padding: 0.375rem 0.75rem !important;
+}
+
+.nillion-large {
+  font-size: 1.125rem !important;
+  padding: 0.75rem 1.5rem !important;
+}
+
+/* Card class */
+.nillion-card {
+  background-color: var(--nillion-bg-secondary);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: var(--nillion-shadow);
+  border: 1px solid var(--nillion-border);
+}
+
+/* Badge class */
+.nillion-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--nillion-primary);
+  color: white;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Button with icon styles */
+button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* Add gap to buttons for consistent spacing */
+button {
+  gap: 0.25rem;
+}
+
+/* For buttons containing links with icons */
+button a {
+  gap: 0.25rem;
+}
+
+/* Icon-only button */
+button.icon-only {
+  padding: 0.5rem;
+}
+
+button.icon-only svg {
+  margin: 0;
+}
+
+/* Utility classes */
+.nillion-rounded {
+  border-radius: 0.375rem !important;
+}
+
+.nillion-rounded-full {
+  border-radius: 9999px !important;
+}
+
+.nillion-shadow {
+  box-shadow: var(--nillion-shadow) !important;
+}
+
+.nillion-shadow-md {
+  box-shadow: var(--nillion-shadow-md) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.25rem;
+  }
+  h2 {
+    font-size: 1.875rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.25rem;
+  }
+
+  button {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+}

@@ -1,66 +1,48 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { Button } from '@/components/ui';
 
 export default function Home() {
+  const router = useRouter();
+  const { isConnected } = useAppKitAccount();
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="landing-page">
+      <div className="hero-section">
+        <div className="hero-content">
+          <div className="badge">
+            <span>Nillion verifier node</span>
+          </div>
+
+          <h1 className="hero-title">Manage your verifier node</h1>
+
+          <p className="hero-subtitle">
+            Set up your nilAV node, contribute to the Blind Computer, and start
+            earning rewards in minutes
           </p>
+
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            {isConnected && (
+              <Button
+                variant="outline"
+                size="medium"
+                onClick={() => router.push('/nodes')}
+              >
+                My Nodes
+              </Button>
+            )}
+            <Button
+              variant="primary"
+              size="medium"
+              onClick={() => router.push('/setup')}
+            >
+              Set up nilAV
+            </Button>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,114 @@
+{
+  "0x41d72c2C95c6F8C28C792d511c15E31c7241a826": [
+    {
+      "id": "node-001",
+      "publicKey": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "platform": "linux",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "active",
+      "registeredAt": 1732896000000,
+      "lastSeen": 1733097600000,
+      "metadata": {
+        "version": "1.0.0",
+        "location": "US-East",
+        "ipAddress": "192.168.1.100"
+      }
+    },
+    {
+      "id": "node-002",
+      "publicKey": "0x9876543210fedcba0987654321fedcba0987654321fedcba0987654321fedcba",
+      "platform": "mac",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "active",
+      "registeredAt": 1732982400000,
+      "lastSeen": 1733097600000,
+      "metadata": {
+        "version": "1.0.0",
+        "location": "EU-West",
+        "ipAddress": "192.168.1.101"
+      }
+    },
+    {
+      "id": "node-003",
+      "publicKey": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "platform": "windows",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "inactive",
+      "registeredAt": 1732723200000,
+      "lastSeen": 1732982400000,
+      "metadata": {
+        "version": "1.0.0",
+        "location": "Asia-Pacific",
+        "ipAddress": "192.168.1.102"
+      }
+    },
+    {
+      "id": "node-004",
+      "publicKey": "0x4567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef123",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "active",
+      "registeredAt": 1733068800000,
+      "lastSeen": 1733097600000,
+      "metadata": {
+        "version": "1.0.1",
+        "location": "US-West",
+        "ipAddress": "192.168.1.103"
+      }
+    },
+    {
+      "id": "node-005",
+      "publicKey": "0xfedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+      "platform": "linux",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "error",
+      "registeredAt": 1732636800000,
+      "lastSeen": 1732809600000,
+      "metadata": {
+        "version": "0.9.8",
+        "location": "EU-North",
+        "ipAddress": "192.168.1.104"
+      }
+    },
+    {
+      "id": "node-006",
+      "publicKey": "0x2468ace02468ace02468ace02468ace02468ace02468ace02468ace02468ace0",
+      "platform": "mac",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "active",
+      "registeredAt": 1733001600000,
+      "lastSeen": 1733097600000,
+      "metadata": {
+        "version": "1.0.0",
+        "location": "US-Central",
+        "ipAddress": "192.168.1.105"
+      }
+    },
+    {
+      "id": "node-007",
+      "publicKey": "0x13579bdf13579bdf13579bdf13579bdf13579bdf13579bdf13579bdf13579bdf",
+      "platform": "linux",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "active",
+      "registeredAt": 1732809600000,
+      "lastSeen": 1733097600000,
+      "metadata": {
+        "version": "1.0.0",
+        "location": "Asia-East",
+        "ipAddress": "192.168.1.106"
+      }
+    },
+    {
+      "id": "node-008",
+      "publicKey": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "walletAddress": "0x41d72c2C95c6F8C28C792d511c15E31c7241a826",
+      "status": "inactive",
+      "registeredAt": 1732550400000,
+      "lastSeen": 1732723200000,
+      "metadata": {
+        "version": "0.9.5",
+        "location": "South America",
+        "ipAddress": "192.168.1.107"
+      }
+    }
+  ]
+}
