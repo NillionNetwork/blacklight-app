@@ -20,6 +20,7 @@
     "@safe-global/safe-apps-sdk": "^9.1.0",
     "@tanstack/react-query": "^5.90.11",
     "@walletconnect/core": "^2.23.0",
+    "@walletconnect/ethereum-provider": "^2.21.10",
     "@walletconnect/utils": "^2.23.0",
     "axios": "^1.13.2",
     "next": "^15.5.6",
