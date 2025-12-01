@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import path from "path";
+import webpack from "webpack";
 
 const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
@@ -13,13 +14,16 @@ const nextConfig: NextConfig = {
       'pino-pretty': false,
     };
 
-    // Ignore optional dependencies (both client and server)
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      // Solana dependencies (not needed for Ethereum-only app)
-      '@solana/kit': false,
-      '@solana-program/system': false,
-    };
+    // Use IgnorePlugin to completely skip these modules during bundling
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /@solana\/kit/,
+      }),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /@solana-program\/system/,
+      })
+    );
 
     // Additional client-side ignores
     if (!isServer) {

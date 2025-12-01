@@ -36,6 +36,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "null-loader": "^4.0.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "webpack": "^5.103.0"
+  },
+  "optionalDependencies": {
+    "@solana/kit": "^3.0.3",
+    "@solana/web3.js": "^1.98.4"
   }
 }
