@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppKitAccount } from '@reown/appkit/react';
-import { AppKitAccountButton } from '@reown/appkit/react';
-import { ConnectWallet } from '@/components/auth';
+import { ConnectWallet, AccountButton } from '@/components/auth';
 
 export function Navbar() {
   const { isConnected } = useAppKitAccount();
@@ -59,7 +58,7 @@ export function Navbar() {
 
         <div className="navbar-wallet">
           {isConnected ? (
-            <AppKitAccountButton />
+            <AccountButton size="small" variant="outline" />
           ) : (
             <ConnectWallet size="small" />
           )}

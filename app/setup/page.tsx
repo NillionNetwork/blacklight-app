@@ -6,7 +6,7 @@ import { useSwitchChain } from 'wagmi';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { ConnectWallet } from '@/components/auth';
 import { Card, Badge, Button } from '@/components/ui';
-import { baseSepolia } from '@/config';
+import { nilavTestnet } from '@/config';
 import { useNodes } from '@/lib/hooks';
 import { toast } from 'sonner';
 
@@ -32,7 +32,7 @@ export default function SetupPage() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  const isCorrectNetwork = chainId === baseSepolia.id || chainId === 8453;
+  const isCorrectNetwork = chainId === nilavTestnet.id;
 
   // Platform-specific configuration
   const platformConfig = {
@@ -123,8 +123,7 @@ export default function SetupPage() {
 
             <div className="setup-wrong-network-box">
               <p className="setup-wrong-network-text">
-                This app only supports <strong>Base Sepolia</strong> (testnet)
-                and <strong>Base</strong> (mainnet).
+                This app only supports <strong>Nilav Testnet</strong>.
               </p>
               <p className="setup-wrong-network-current">
                 Current network: {caipNetwork?.name || 'Unknown'}
@@ -134,9 +133,9 @@ export default function SetupPage() {
             <Button
               variant="primary"
               size="large"
-              onClick={() => switchChain({ chainId: baseSepolia.id })}
+              onClick={() => switchChain({ chainId: nilavTestnet.id })}
             >
-              Switch to Base Sepolia
+              Switch to Nilav Testnet
             </Button>
           </div>
         </Card>

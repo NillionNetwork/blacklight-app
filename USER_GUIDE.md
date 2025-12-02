@@ -215,6 +215,6 @@ For technical issues, smart contract questions, or general support, please reach
 ## Technical Requirements
 
 - **Wallet:** MetaMask, Rainbow, Coinbase Wallet, or any WalletConnect-compatible wallet
-- **Network:** Base (mainnet) or Base Sepolia (testnet)
+- **Network:** Nilav Testnet
 - **Tokens:** NIL tokens for staking (minimum 1,000 NIL)
 - **Node Requirements:** Computer to run the verifier node binary (Mac, Linux, or Windows)

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useAppKitAccount } from '@reown/appkit/react';
 import {
   Button,
   Card,
@@ -14,11 +15,16 @@ import {
   Badge,
   LoadingSkeleton,
 } from '@/components/ui';
+import { TokenBalance } from '@/components/wallet';
 
 export default function ComponentsTest() {
+  const { address, isConnected } = useAppKitAccount();
   const [modalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [selectValue, setSelectValue] = useState('option1');
+
+  // Demo address for testing when not connected
+  const demoAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb' as `0x${string}`;
 
   return (
     <div className="components-test-page">
@@ -152,6 +158,122 @@ export default function ComponentsTest() {
           <Badge variant="warning">Pending</Badge>
           <Badge variant="error">Failed</Badge>
           <Badge variant="info">Info</Badge>
+        </div>
+      </Card>
+
+      {/* Token Balance */}
+      <Card style={{ marginBottom: '2rem' }}>
+        <h2>Token Balance</h2>
+        <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.875rem' }}>
+          {isConnected ? `Showing balance for: ${address}` : `Showing balance for demo address`}
+        </p>
+
+        {/* ETH Balances */}
+        <h3 style={{ marginTop: '1.5rem', marginBottom: '1rem', fontSize: '1rem', fontWeight: 600 }}>
+          ETH (Native Token)
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Badge Variant (with label)</p>
+            <TokenBalance
+              address={(address || demoAddress) as `0x${string}`}
+              variant="badge"
+              showLabel={true}
+              tokenType="ETH"
+            />
+          </div>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Inline Variant</p>
+            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '0.5rem' }}>
+              <p>
+                You have{' '}
+                <TokenBalance
+                  address={(address || demoAddress) as `0x${string}`}
+                  variant="inline"
+                  showLabel={true}
+                  tokenType="ETH"
+                />{' '}
+                available for gas fees.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* TEST Token Balances */}
+        <h3 style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1rem', fontWeight: 600 }}>
+          TEST Token (ERC-20)
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Badge Variant (with label)</p>
+            <TokenBalance
+              address={(address || demoAddress) as `0x${string}`}
+              variant="badge"
+              showLabel={true}
+              tokenType="TEST"
+            />
+          </div>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Badge Variant (without label)</p>
+            <TokenBalance
+              address={(address || demoAddress) as `0x${string}`}
+              variant="badge"
+              showLabel={false}
+              tokenType="TEST"
+            />
+          </div>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Inline Variant</p>
+            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '0.5rem' }}>
+              <p>
+                Your current{' '}
+                <TokenBalance
+                  address={(address || demoAddress) as `0x${string}`}
+                  variant="inline"
+                  showLabel={true}
+                  tokenType="TEST"
+                />{' '}
+                will be staked to your node.
+              </p>
+            </div>
+          </div>
+          <div>
+            <p style={{ marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>Compact Variant (Table)</p>
+            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '0.5rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <th style={{ textAlign: 'left', padding: '0.5rem', fontSize: '0.875rem' }}>Token</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem', fontSize: '0.875rem' }}>Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '0.5rem', fontSize: '0.875rem' }}>ETH</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>
+                      <TokenBalance
+                        address={(address || demoAddress) as `0x${string}`}
+                        variant="compact"
+                        showLabel={false}
+                        tokenType="ETH"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '0.5rem', fontSize: '0.875rem' }}>TEST</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>
+                      <TokenBalance
+                        address={(address || demoAddress) as `0x${string}`}
+                        variant="compact"
+                        showLabel={false}
+                        tokenType="TEST"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </Card>
 

@@ -4,39 +4,54 @@ import { ReactNode } from 'react';
 import { createAppKit } from '@reown/appkit/react';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReownAuthentication } from '@reown/appkit-siwx';
 import { wagmiAdapter, projectId, networks } from '@/config';
 
 // Create React Query client
 const queryClient = new QueryClient();
 
-// Create AppKit with SIWX (ReownAuthentication)
+// Suppress UniversalProvider errors for custom networks (cosmetic only)
+const originalConsoleError = console.error;
+console.error = (...args: any[]) => {
+  const errorString = args.join(' ');
+  if (
+    errorString.includes('getUniversalProvider') ||
+    errorString.includes('Cannot create provider')
+  ) {
+    return; // Suppress known AppKit custom network errors
+  }
+  originalConsoleError.apply(console, args);
+};
+
+// Simple AppKit setup for custom network with injected wallets only
 createAppKit({
   adapters: [wagmiAdapter],
   projectId: projectId as string,
-  networks: networks as [(typeof networks)[0], ...typeof networks],
-  siwx: new ReownAuthentication({
-    required: true, // Force signature on wallet connect
-  }),
-  defaultNetwork: networks[0], // Base Sepolia as default
+  networks: networks as any, // Type assertion needed for custom networks
+  defaultNetwork: networks[0],
   metadata: {
     name: 'NILAV',
     description: 'Nillion Verifier Node Manager',
-    url:
-      typeof window !== 'undefined'
-        ? window.location.origin
-        : 'https://nilav.nillion.com',
+    url: typeof window !== 'undefined' ? window.location.origin : 'https://nilav.nillion.com',
     icons: ['https://nillion.com/favicon.ico'],
   },
   features: {
-    analytics: false, // Disable analytics for privacy
-    allWallets: true, // Show all wallet options
-    swaps: false, // Disable swaps feature
-    onramp: false, // Disable onramp feature
+    analytics: false,
+    swaps: false,
+    onramp: false,
+    email: false,
+    socials: [],
   },
-  allowUnsupportedChain: false, // Force users to be on supported chains
+  allowUnsupportedChain: true,
   themeMode: 'dark',
+  enableWalletConnect: false, // Disabled for custom network
+  enableInjected: true, // MetaMask, Brave, etc.
+  enableCoinbase: false,
 });
+
+// Restore console.error after init
+setTimeout(() => {
+  console.error = originalConsoleError;
+}, 3000);
 
 interface ProvidersProps {
   children: ReactNode;

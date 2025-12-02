@@ -22,6 +22,9 @@ const nextConfig: NextConfig = {
       }),
       new webpack.IgnorePlugin({
         resourceRegExp: /@solana-program\/system/,
+      }),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /@react-native-async-storage\/async-storage/,
       })
     );
 

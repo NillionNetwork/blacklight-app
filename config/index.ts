@@ -1,64 +1,61 @@
 // Application Configuration
 // This file contains all network, platform, and contract configuration
 
-import { defineChain } from 'viem'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { cookieStorage, createStorage } from '@wagmi/core'
+import { defineChain } from 'viem';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import { cookieStorage, createStorage } from '@wagmi/core';
 
 // ==============================================
 // AUTHENTICATION & NETWORK SETUP
 // ==============================================
 
 // Reown/WalletConnect Project ID
-export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
+export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 if (!projectId) {
-  throw new Error('NEXT_PUBLIC_PROJECT_ID is not defined in environment variables')
+  throw new Error(
+    'NEXT_PUBLIC_PROJECT_ID is not defined in environment variables'
+  );
 }
 
-// Define Base Sepolia (testnet)
-export const baseSepolia = defineChain({
-  id: 84532,
-  name: 'Base Sepolia',
+// Define Nilav (testnet)
+export const nilavTestnet = defineChain({
+  id: 78651,
+  name: 'Nilav Testnet',
   nativeCurrency: {
     name: 'Ethereum',
     symbol: 'ETH',
     decimals: 18,
   },
   rpcUrls: {
-    default: { http: ['https://sepolia.base.org'] },
+    default: {
+      http: ['https://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+      webSocket: ['wss://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+    },
+    public: {
+      http: ['https://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+      webSocket: ['wss://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+    },
   },
   blockExplorers: {
     default: {
-      name: 'BaseScan',
-      url: 'https://sepolia.basescan.org',
+      name: 'Nilav Explorer',
+      url: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
+      apiUrl: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz/api',
     },
+  },
+  contracts: {
+    // Add multicall3 if available on the network
+    // multicall3: {
+    //   address: '0x...',
+    //   blockCreated: 0,
+    // },
   },
   testnet: true,
-})
-
-// Define Base (mainnet)
-export const base = defineChain({
-  id: 8453,
-  name: 'Base',
-  nativeCurrency: {
-    name: 'Ethereum',
-    symbol: 'ETH',
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: { http: ['https://mainnet.base.org'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'BaseScan',
-      url: 'https://basescan.org',
-    },
-  },
-})
+});
 
 // Network array for AppKit
-export const networks = [baseSepolia, base]
+export const networks = [nilavTestnet];
 
 // Wagmi Adapter configuration
 export const wagmiAdapter = new WagmiAdapter({
@@ -68,32 +65,21 @@ export const wagmiAdapter = new WagmiAdapter({
   ssr: true,
   projectId,
   networks,
-})
+});
 
 // Export wagmi config for use in providers
-export const wagmiConfig = wagmiAdapter.wagmiConfig
+export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // ==============================================
 // LEGACY NETWORK CONFIG (for reference/utilities)
 // ==============================================
 
 export const networkInfo = {
-  baseTestnet: {
-    id: 84532,
-    name: 'Base Sepolia',
-    rpcUrl: 'https://sepolia.base.org',
-    blockExplorer: 'https://sepolia.basescan.org',
-    nativeCurrency: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-  },
-  baseMainnet: {
-    id: 8453,
-    name: 'Base',
-    rpcUrl: 'https://mainnet.base.org',
-    blockExplorer: 'https://basescan.org',
+  nilavTestnet: {
+    id: 78651,
+    name: 'Nilav Testnet',
+    rpcUrl: 'https://rpc-nilav-shzvox09l5.t.conduit.xyz',
+    blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     nativeCurrency: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -126,29 +112,21 @@ export const platforms = {
   },
 } as const;
 
-// Contract addresses - PLACEHOLDERS - will be updated by smart contract dev
+// Contract addresses
 export const contracts = {
-  baseTestnet: {
-    verifierRegistry: '0x0000000000000000000000000000000000000000', // TODO: Update when contract deployed
-  },
-  baseMainnet: {
-    verifierRegistry: '0x0000000000000000000000000000000000000000', // TODO: Update when contract deployed
+  nilavTestnet: {
+    testToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
+    stakingOperators: '0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46',
   },
 } as const;
 
 // Default network - use testnet for development
-export const defaultNetwork =
-  process.env.NODE_ENV === 'production'
-    ? base
-    : baseSepolia;
+export const defaultNetwork = nilavTestnet;
 
-// Get contract address for current network
-export const getContractAddress = (networkId: number): string => {
-  if (networkId === baseSepolia.id) {
-    return contracts.baseTestnet.verifierRegistry;
-  }
-  if (networkId === base.id) {
-    return contracts.baseMainnet.verifierRegistry;
+// Get contract addresses for current network
+export const getContractAddresses = (networkId: number) => {
+  if (networkId === nilavTestnet.id) {
+    return contracts.nilavTestnet;
   }
   throw new Error(`Unsupported network: ${networkId}`);
 };
