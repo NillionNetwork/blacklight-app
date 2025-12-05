@@ -26,11 +26,11 @@ export function Navbar() {
           </Link>
         </div>
 
-        {isConnected && (
-          <div
-            className="navbar-links"
-            style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}
-          >
+        <div
+          className="navbar-links"
+          style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}
+        >
+          {isConnected && (
             <Link
               href="/nodes"
               style={{
@@ -42,19 +42,19 @@ export function Navbar() {
             >
               My Nodes
             </Link>
-            <Link
-              href="/setup"
-              style={{
-                color:
-                  pathname === '/setup' ? 'var(--nillion-primary)' : 'inherit',
-                textDecoration: 'none',
-                fontWeight: 500,
-              }}
-            >
-              Set up Node
-            </Link>
-          </div>
-        )}
+          )}
+          <Link
+            href="/setup"
+            style={{
+              color:
+                pathname === '/setup' ? 'var(--nillion-primary)' : 'inherit',
+              textDecoration: 'none',
+              fontWeight: 500,
+            }}
+          >
+            Set up Node
+          </Link>
+        </div>
 
         <div className="navbar-wallet">
           {isConnected ? (

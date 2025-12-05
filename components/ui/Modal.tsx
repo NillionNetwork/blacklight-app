@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from './Button';
 
 export interface ModalProps {
@@ -19,6 +20,7 @@ export interface ModalProps {
  * - ESC key to close
  * - Optional title with close button
  * - Uses .glass-dark and .nillion-card styling
+ * - Renders using portal to document.body for proper z-index layering
  */
 export function Modal({
   isOpen,
@@ -27,6 +29,14 @@ export function Modal({
   title,
   showCloseButton = true,
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure component is mounted before creating portal
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   // Close modal on ESC key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -47,9 +57,9 @@ export function Modal({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  const modalContent = (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content glass-dark" onClick={(e) => e.stopPropagation()}>
         {title && (
@@ -71,4 +81,7 @@ export function Modal({
       </div>
     </div>
   );
+
+  // Render modal using portal to document.body
+  return createPortal(modalContent, document.body);
 }

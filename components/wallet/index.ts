@@ -1,1 +1,0 @@
-export { TokenBalance } from './TokenBalance';

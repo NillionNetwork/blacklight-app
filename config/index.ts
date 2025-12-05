@@ -92,31 +92,40 @@ export const platforms = {
   mac: {
     name: 'Mac',
     displayName: 'macOS',
-    binaryName: 'nil-av-node-mac',
-    downloadUrl: 'https://releases.nillion.com/nil-av-node-mac', // TODO: Update with actual URL
-    command: './nil-av-node-mac generate-keys',
+    dockerInstallCommand: 'brew install --cask docker',
+    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
+    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    nodeStartCommand: './nilav_node',
   },
   linux: {
     name: 'Linux',
     displayName: 'Linux',
-    binaryName: 'nil-av-node-linux',
-    downloadUrl: 'https://releases.nillion.com/nil-av-node-linux', // TODO: Update with actual URL
-    command: './nil-av-node-linux generate-keys',
+    dockerInstallCommand: 'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
+    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    nodeStartCommand: './nilav_node',
   },
   windows: {
     name: 'Windows',
     displayName: 'Windows',
-    binaryName: 'nil-av-node-windows.exe',
-    downloadUrl: 'https://releases.nillion.com/nil-av-node-windows.exe', // TODO: Update with actual URL
-    command: '.\\nil-av-node-windows.exe generate-keys',
+    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
+    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    nodeStartCommand: './nilav_node',
   },
 } as const;
 
 // Contract addresses
 export const contracts = {
   nilavTestnet: {
-    testToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
+    nilToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
+    nilTokenSymbol: 'NIL',
     stakingOperators: '0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46',
+    blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
+    // StakingOperators contract deployment block
+    // This allows event queries to start from deployment instead of querying all history
+    stakingOperatorsDeploymentBlock: 700000,
   },
 } as const;
 
