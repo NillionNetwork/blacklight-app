@@ -1,12 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAppKitAccount } from '@reown/appkit/react';
 import { Button } from '@/components/ui';
 
 export default function Home() {
   const router = useRouter();
-  const { isConnected } = useAppKitAccount();
 
   return (
     <div className="landing-page">
@@ -24,15 +22,13 @@ export default function Home() {
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            {isConnected && (
-              <Button
-                variant="outline"
-                size="medium"
-                onClick={() => router.push('/nodes')}
-              >
-                My Nodes
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              size="medium"
+              onClick={() => router.push('/nodes')}
+            >
+              Node Dashboard
+            </Button>
             <Button
               variant="primary"
               size="medium"

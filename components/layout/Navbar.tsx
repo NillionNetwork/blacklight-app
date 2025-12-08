@@ -40,7 +40,7 @@ export function Navbar() {
                 fontWeight: 500,
               }}
             >
-              My Nodes
+              Dashboard
             </Link>
           )}
           <Link

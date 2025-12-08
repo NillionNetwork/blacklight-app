@@ -5,10 +5,11 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { formatUnits } from 'viem';
 import { useUserStakedOperators } from '@/lib/hooks';
 import { Spinner } from '@/components/ui';
+import { ConnectWallet } from '@/components/auth';
 import { contracts } from '@/config';
 
 export default function NodesPage() {
-  const { address } = useAppKitAccount();
+  const { address, isConnected } = useAppKitAccount();
   const {
     operators,
     isLoading: loading,
@@ -26,6 +27,39 @@ export default function NodesPage() {
         return Number(b.stake - a.stake);
       })
     : [];
+
+  // Show connect wallet if not connected
+  if (!isConnected) {
+    return (
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 'calc(100vh - 5rem)',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}
+      >
+        <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+          Node Dashboard
+        </h1>
+        <p
+          style={{
+            color: 'rgba(255, 255, 255, 0.7)',
+            marginBottom: '1rem',
+            textAlign: 'center',
+          }}
+        >
+          Connect your wallet to view your staked verifier nodes
+        </p>
+        <ConnectWallet />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -94,9 +128,10 @@ export default function NodesPage() {
       style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem' }}
     >
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ marginBottom: '0.5rem' }}>My Nodes</h1>
+        <h1 style={{ marginBottom: '0.5rem' }}>Node Dashboard</h1>
         <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
-          {sortedOperators.length} {sortedOperators.length === 1 ? 'node' : 'nodes'}
+          {sortedOperators.length}{' '}
+          {sortedOperators.length === 1 ? 'node' : 'nodes'}
         </p>
       </div>
 
@@ -137,7 +172,13 @@ export default function NodesPage() {
               }}
             >
               {/* Operator Address - Top */}
-              <div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              <div
+                style={{
+                  marginBottom: '1.5rem',
+                  paddingBottom: '1.5rem',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                }}
+              >
                 <div
                   style={{
                     fontSize: '0.7rem',
@@ -192,7 +233,10 @@ export default function NodesPage() {
                       lineHeight: 1,
                     }}
                   >
-                    {formatUnits(op.stake, 18)} <span style={{ fontSize: '1rem', opacity: 0.8 }}>{tokenSymbol}</span>
+                    {formatUnits(op.stake, 18)}{' '}
+                    <span style={{ fontSize: '1rem', opacity: 0.8 }}>
+                      {tokenSymbol}
+                    </span>
                   </div>
                   <div
                     style={{
@@ -208,7 +252,9 @@ export default function NodesPage() {
                         ? 'rgba(74, 222, 128, 0.1)'
                         : 'rgba(156, 163, 175, 0.1)',
                       border: `1px solid ${
-                        op.isActive ? 'rgba(74, 222, 128, 0.3)' : 'rgba(156, 163, 175, 0.3)'
+                        op.isActive
+                          ? 'rgba(74, 222, 128, 0.3)'
+                          : 'rgba(156, 163, 175, 0.3)'
                       }`,
                       color: op.isActive ? '#4ade80' : '#9ca3af',
                     }}
@@ -219,7 +265,9 @@ export default function NodesPage() {
                         height: '6px',
                         borderRadius: '50%',
                         background: op.isActive ? '#4ade80' : '#9ca3af',
-                        boxShadow: op.isActive ? '0 0 6px rgba(74, 222, 128, 0.5)' : 'none',
+                        boxShadow: op.isActive
+                          ? '0 0 6px rgba(74, 222, 128, 0.5)'
+                          : 'none',
                       }}
                     />
                     {op.isActive ? 'ACTIVE' : 'INACTIVE'}

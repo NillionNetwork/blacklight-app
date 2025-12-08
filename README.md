@@ -70,9 +70,51 @@ export function MyComponent({ ...props }) {
 }
 ```
 
+## 🔐 Authentication Pattern
+
+Pages handle their own authentication using **authenticated views**, not route groups:
+
+```typescript
+'use client';
+
+import { useAppKitAccount } from '@reown/appkit/react';
+import { ConnectWallet } from '@/components/auth';
+
+export default function NodesPage() {
+  const { address, isConnected } = useAppKitAccount();
+
+  // Show connect wallet view if not connected
+  if (!isConnected) {
+    return (
+      <div>
+        <h1>Node Dashboard</h1>
+        <p>Connect your wallet to view your staked verifier nodes</p>
+        <ConnectWallet />
+      </div>
+    );
+  }
+
+  // Show authenticated content
+  return <div>Your nodes for {address}</div>;
+}
+```
+
+**Pattern:**
+- Check `isConnected` at the top of your page component
+- Return early with `<ConnectWallet />` component if not connected
+- User stays at the URL (no redirects)
+- Can show partial content to non-authenticated users
+
+**Why authenticated views over route groups?**
+- Simpler - no `(authenticated)` folder structure needed
+- More flexible - each page controls its own auth requirements
+- Better UX - users see what's at the URL before connecting wallet
+
 ## 🔧 Tech Stack
 
-- Next.js 14 (App Router)
+- Next.js 15 (App Router)
 - TypeScript
 - Global CSS + Nillion Brand Kit
 - Sonner (toasts)
+- Reown AppKit (wallet connection)
+- wagmi + viem (Web3 integration)
