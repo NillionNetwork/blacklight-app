@@ -5,7 +5,7 @@ import { LayoutWrapper } from '@/components/layout';
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NILAV - Nillion Verifier Node Manager",
+  title: "nilAV Dashboard",
   description: "Set up and manage your Nillion verifier nodes",
 };
 
