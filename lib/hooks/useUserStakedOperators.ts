@@ -14,7 +14,7 @@ interface StakedOperator {
    */
   stake: bigint;
   /**
-   * The operator's metadata URI (public key or JSON metadata)
+   * The operator's metadata URI (nodeAddress or JSON metadata)
    */
   metadataURI?: string;
   /**
@@ -91,9 +91,13 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
         const currentBlock = await publicClient.getBlockNumber();
         let fromBlock: bigint;
 
-        if (contracts.nilavTestnet.stakingOperatorsDeploymentBlock !== undefined) {
+        if (
+          contracts.nilavTestnet.stakingOperatorsDeploymentBlock !== undefined
+        ) {
           // Use deployment block if configured
-          fromBlock = BigInt(contracts.nilavTestnet.stakingOperatorsDeploymentBlock);
+          fromBlock = BigInt(
+            contracts.nilavTestnet.stakingOperatorsDeploymentBlock
+          );
           console.log(`Using deployment block: ${fromBlock}`);
         } else {
           // Fallback: query last 100k blocks to avoid timeout
@@ -102,7 +106,7 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
           console.log(`Using recent blocks (last 100k): from ${fromBlock}`);
           console.warn(
             'stakingOperatorsDeploymentBlock not configured. Querying only recent blocks. ' +
-            'Stakes older than ~100k blocks may not be found.'
+              'Stakes older than ~100k blocks may not be found.'
           );
         }
 
@@ -181,12 +185,17 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
         console.error('Error fetching staked operators:', err);
 
         // Provide user-friendly error messages
-        if (errorMessage.includes('timeout') || errorMessage.includes('timed out')) {
+        if (
+          errorMessage.includes('timeout') ||
+          errorMessage.includes('timed out')
+        ) {
           setError(
             'Request timed out. This can happen when querying events. Please refresh the page to try again.'
           );
         } else if (errorMessage.includes('rate limit')) {
-          setError('Rate limit exceeded. Please wait a moment and refresh the page.');
+          setError(
+            'Rate limit exceeded. Please wait a moment and refresh the page.'
+          );
         } else {
           setError(errorMessage);
         }

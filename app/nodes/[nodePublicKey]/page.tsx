@@ -11,7 +11,11 @@ import {
   useIsJailed,
 } from '@/lib/hooks';
 import { Card, Spinner, Button } from '@/components/ui';
-import { StakingForm, UnstakingForm, UnbondingForm } from '@/components/staking';
+import {
+  StakingForm,
+  UnstakingForm,
+  UnbondingForm,
+} from '@/components/staking';
 import { FundNodeForm } from '@/components/transfer';
 import { contracts, nilavTestnet } from '@/config';
 import { toast } from 'sonner';
@@ -20,17 +24,22 @@ export default function NodeDetailPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nodePublicKey = params.nodePublicKey as `0x${string}`;
+  const nodeAddress = params.nodePublicKey as `0x${string}`;
   const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
 
-  const [activeTab, setActiveTab] = useState<'stake' | 'unstake' | 'withdraw' | 'fund'>(
-    'stake'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'stake' | 'unstake' | 'withdraw' | 'fund'
+  >('stake');
 
   // Initialize tab from URL
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'stake' || tabParam === 'unstake' || tabParam === 'withdraw' || tabParam === 'fund') {
+    if (
+      tabParam === 'stake' ||
+      tabParam === 'unstake' ||
+      tabParam === 'withdraw' ||
+      tabParam === 'fund'
+    ) {
       setActiveTab(tabParam);
     }
   }, [searchParams]);
@@ -38,21 +47,21 @@ export default function NodeDetailPage() {
   // Update URL when tab changes
   const handleTabChange = (tab: 'stake' | 'unstake' | 'withdraw' | 'fund') => {
     setActiveTab(tab);
-    router.push(`/nodes/${nodePublicKey}?tab=${tab}`, { scroll: false });
+    router.push(`/nodes/${nodeAddress}?tab=${tab}`, { scroll: false });
   };
 
   // Fetch node data from blockchain
-  const { stake, isLoading: isLoadingStake } = useStakeOf(nodePublicKey);
+  const { stake, isLoading: isLoadingStake } = useStakeOf(nodeAddress);
   const { operatorInfo, isLoading: isLoadingInfo } =
-    useOperatorInfo(nodePublicKey);
+    useOperatorInfo(nodeAddress);
   const { isActive, isLoading: isLoadingActive } =
-    useIsActiveOperator(nodePublicKey);
-  const { isJailed, isLoading: isLoadingJailed } = useIsJailed(nodePublicKey);
+    useIsActiveOperator(nodeAddress);
+  const { isJailed, isLoading: isLoadingJailed } = useIsJailed(nodeAddress);
 
   // Fetch node ETH balance
   const { data: nodeBalanceData, isLoading: isLoadingNodeBalance } = useBalance(
     {
-      address: nodePublicKey,
+      address: nodeAddress,
       chainId: nilavTestnet.id,
     }
   );
@@ -64,7 +73,8 @@ export default function NodeDetailPage() {
     isLoadingJailed ||
     isLoadingNodeBalance;
 
-  if (isLoading) {
+  // Show loading while fetching or if nodeAddress is invalid
+  if (isLoading || !nodeAddress) {
     return (
       <div className="node-detail-loading">
         <Spinner size="large" />
@@ -87,12 +97,14 @@ export default function NodeDetailPage() {
             <div className="node-overview-stat-label">Operator Address</div>
             <div className="node-overview-address-container">
               <div className="node-overview-address-text">
-                {nodePublicKey.slice(0, 10)}...{nodePublicKey.slice(-8)}
+                {nodeAddress?.slice(0, 10)}...{nodeAddress?.slice(-8)}
               </div>
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(nodePublicKey);
-                  toast.success('Address copied to clipboard');
+                  if (nodeAddress) {
+                    navigator.clipboard.writeText(nodeAddress);
+                    toast.success('Address copied to clipboard');
+                  }
                 }}
                 className="node-overview-copy-btn"
                 title="Copy address"
@@ -117,8 +129,16 @@ export default function NodeDetailPage() {
           {/* Status */}
           <div className="node-overview-stat">
             <div className="node-overview-stat-label">Status</div>
-            <div className={`node-status-indicator ${isActive ? 'active' : 'inactive'}`}>
-              <div className={`node-status-dot ${isActive ? 'active' : 'inactive'}`} />
+            <div
+              className={`node-status-indicator ${
+                isActive ? 'active' : 'inactive'
+              }`}
+            >
+              <div
+                className={`node-status-dot ${
+                  isActive ? 'active' : 'inactive'
+                }`}
+              />
               <span>{isActive ? 'ACTIVE' : 'INACTIVE'}</span>
             </div>
             {isJailed && (
@@ -197,7 +217,7 @@ export default function NodeDetailPage() {
         <div className="node-staking-content">
           {activeTab === 'stake' && (
             <StakingForm
-              nodePublicKey={nodePublicKey}
+              nodeAddress={nodeAddress}
               onSuccess={() => {
                 toast.success('Stake successful!');
               }}
@@ -209,7 +229,7 @@ export default function NodeDetailPage() {
 
           {activeTab === 'unstake' && (
             <UnstakingForm
-              operatorAddress={nodePublicKey}
+              operatorAddress={nodeAddress}
               onUnstakeSuccess={() => {
                 toast.success('Unstake request successful!');
               }}
@@ -221,7 +241,7 @@ export default function NodeDetailPage() {
 
           {activeTab === 'withdraw' && (
             <UnbondingForm
-              operatorAddress={nodePublicKey}
+              operatorAddress={nodeAddress}
               onWithdrawSuccess={() => {
                 toast.success('Withdrawal successful!');
               }}
@@ -233,7 +253,7 @@ export default function NodeDetailPage() {
 
           {activeTab === 'fund' && (
             <FundNodeForm
-              nodePublicKey={nodePublicKey}
+              nodeAddress={nodeAddress}
               onSuccess={() => {
                 toast.success('Funding successful!');
               }}

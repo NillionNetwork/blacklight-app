@@ -16,9 +16,9 @@ import { toast } from 'sonner';
 
 interface FundNodeFormProps {
   /**
-   * Optional pre-filled node public key. If not provided, shows an input field.
+   * Optional pre-filled node address. If not provided, shows an input field.
    */
-  nodePublicKey?: string;
+  nodeAddress?: string;
   /**
    * Optional callback when funding is successful
    */
@@ -38,11 +38,14 @@ interface FundNodeFormProps {
   /**
    * Optional callback when balance data changes (for parent to know about node balance)
    */
-  onBalanceDataChange?: (data: { nodeBalance: number; nodeAddress: string }) => void;
+  onBalanceDataChange?: (data: {
+    nodeBalance: number;
+    nodeAddress: string;
+  }) => void;
 }
 
 export function FundNodeForm({
-  nodePublicKey,
+  nodeAddress: nodeAddressProp,
   onSuccess,
   onError,
   minAmount = 0.001,
@@ -69,7 +72,7 @@ export function FundNodeForm({
     chainId: nilavTestnet.id,
   });
 
-  const [nodeAddress, setNodeAddress] = useState(nodePublicKey || '');
+  const [nodeAddress, setNodeAddress] = useState(nodeAddressProp || '');
 
   // Fetch ETH balance for node address (only when valid address is entered)
   const isValidNodeAddress =
@@ -82,7 +85,9 @@ export function FundNodeForm({
   );
 
   // Notify parent about balance data changes
-  const nodeBalance = nodeBalanceData ? parseFloat(formatEther(nodeBalanceData.value)) : 0;
+  const nodeBalance = nodeBalanceData
+    ? parseFloat(formatEther(nodeBalanceData.value))
+    : 0;
   useEffect(() => {
     onBalanceDataChange?.({ nodeBalance, nodeAddress });
   }, [nodeBalance, nodeAddress, onBalanceDataChange]);
@@ -195,7 +200,7 @@ export function FundNodeForm({
 
       const errorMessage = err?.message || 'Failed to fund node';
       // Keep transaction hash if we have it
-      setTxStatus(prev => ({ ...prev, step: 'error' }));
+      setTxStatus((prev) => ({ ...prev, step: 'error' }));
       setError(errorMessage);
       toast.error(errorMessage);
       onError?.(err);
@@ -316,12 +321,16 @@ export function FundNodeForm({
               </svg>
             </button>
           </div>
-          <div style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.25rem' }}>
+          <div
+            style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.25rem' }}
+          >
             Balance:{' '}
             {isLoadingBalance ? (
               <span>Loading...</span>
             ) : balanceData ? (
-              <span style={{ color: 'var(--nillion-primary)', fontWeight: 600 }}>
+              <span
+                style={{ color: 'var(--nillion-primary)', fontWeight: 600 }}
+              >
                 {Number(formatEther(balanceData.value)).toFixed(4)} ETH
               </span>
             ) : (
@@ -331,22 +340,30 @@ export function FundNodeForm({
         </div>
         <div className="staking-info-card">
           <div className="staking-info-label">Node Balance</div>
-          <div className="staking-info-content" style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--nillion-primary)' }}>
-            {isLoadingNodeBalance ? (
-              'Loading...'
-            ) : nodeBalanceData ? (
-              `${Number(formatEther(nodeBalanceData.value)).toFixed(4)} ETH`
-            ) : (
-              '0.0000 ETH'
-            )}
+          <div
+            className="staking-info-content"
+            style={{
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              color: 'var(--nillion-primary)',
+            }}
+          >
+            {isLoadingNodeBalance
+              ? 'Loading...'
+              : nodeBalanceData
+              ? `${Number(formatEther(nodeBalanceData.value)).toFixed(4)} ETH`
+              : '0.0000 ETH'}
           </div>
         </div>
       </div>
 
       {/* Main Funding Form */}
       <div className="staking-form-container">
-        {nodePublicKey ? (
-          <div className="staking-address-box" style={{ marginBottom: '1.5rem' }}>
+        {nodeAddress ? (
+          <div
+            className="staking-address-box"
+            style={{ marginBottom: '1.5rem' }}
+          >
             <code className="staking-address-code">{nodeAddress}</code>
             <button
               onClick={() => {
@@ -385,9 +402,7 @@ export function FundNodeForm({
         {/* Fund Amount */}
         <label htmlFor="fund-amount" className="setup-label staking-label">
           Amount to Send
-          <span className="staking-label-hint">
-            (min {minAmount} ETH)
-          </span>
+          <span className="staking-label-hint">(min {minAmount} ETH)</span>
         </label>
         <input
           id="fund-amount"
@@ -434,8 +449,8 @@ export function FundNodeForm({
             <div className="fund-node-warning-content">
               <div className="fund-node-warning-title">Not Enough ETH</div>
               <div className="fund-node-warning-text">
-                You need at least {smallestPresetAmount} ETH (plus gas) to fund a
-                node. Your current balance is{' '}
+                You need at least {smallestPresetAmount} ETH (plus gas) to fund
+                a node. Your current balance is{' '}
                 {balanceData
                   ? Number(formatEther(balanceData.value)).toFixed(4)
                   : '0'}{' '}
@@ -457,7 +472,11 @@ export function FundNodeForm({
             isConfirming
           }
           onClick={handleFund}
-          style={{ width: '100%', marginTop: '1.5rem', marginBottom: txStatus ? '1.5rem' : '0' }}
+          style={{
+            width: '100%',
+            marginTop: '1.5rem',
+            marginBottom: txStatus ? '1.5rem' : '0',
+          }}
         >
           {isPending
             ? 'Waiting for Wallet...'

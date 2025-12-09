@@ -1,4 +1,9 @@
-import { useWriteContract, useReadContract, useWaitForTransactionReceipt, useConfig } from 'wagmi';
+import {
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useConfig,
+} from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 import { useQueryClient } from '@tanstack/react-query';
 import { parseUnits, BaseError, ContractFunctionRevertedError } from 'viem';
@@ -8,24 +13,28 @@ import { stakingOperatorsABI } from '@/lib/abis/StakingOperators';
 // Helper to parse contract errors into user-friendly messages
 function parseContractError(error: any): string {
   if (error instanceof BaseError) {
-    const revertError = error.walk(err => err instanceof ContractFunctionRevertedError);
+    const revertError = error.walk(
+      (err) => err instanceof ContractFunctionRevertedError
+    );
     if (revertError instanceof ContractFunctionRevertedError) {
       const errorName = revertError.data?.errorName ?? '';
 
       // Map contract errors to user-friendly messages
       const errorMessages: Record<string, string> = {
-        'NoStake': 'You must stake tokens before registering as an operator. Please complete Step 5 first.',
-        'ZeroAmount': 'Stake amount must be greater than zero.',
-        'ZeroAddress': 'Invalid operator address.',
-        'NotActive': 'This operator is not active.',
-        'OperatorJailed': 'This operator has been jailed and cannot accept stakes.',
-        'DifferentStaker': 'This operator already has a different staker.',
-        'InsufficientStake': 'Insufficient stake amount.',
-        'PendingUnbonding': 'There is a pending unbonding request.',
-        'NotStaker': 'You are not the staker for this operator.',
-        'NotReady': 'Unstake period has not elapsed yet.',
-        'NoUnbonding': 'No unbonding request found.',
-        'UnbondingExists': 'An unbonding request already exists.',
+        NoStake:
+          'You must stake tokens before registering as an operator. Please complete Step 5 first.',
+        ZeroAmount: 'Stake amount must be greater than zero.',
+        ZeroAddress: 'Invalid operator address.',
+        NotActive: 'This operator is not active.',
+        OperatorJailed:
+          'This operator has been jailed and cannot accept stakes.',
+        DifferentStaker: 'This operator already has a different staker.',
+        InsufficientStake: 'Insufficient stake amount.',
+        PendingUnbonding: 'There is a pending unbonding request.',
+        NotStaker: 'You are not the staker for this operator.',
+        NotReady: 'Unstake period has not elapsed yet.',
+        NoUnbonding: 'No unbonding request found.',
+        UnbondingExists: 'An unbonding request already exists.',
       };
 
       if (errorName && errorMessages[errorName]) {
@@ -80,7 +89,7 @@ export function useStakingOperators() {
 
   /**
    * Register the connected wallet as an operator
-   * @param metadataURI - URI pointing to operator metadata (can be public key or JSON metadata)
+   * @param metadataURI - URI pointing to operator metadata (can be nodeAddress or JSON metadata)
    */
   const registerOperator = async (metadataURI: string) => {
     try {
@@ -130,12 +139,18 @@ export function useStakingOperators() {
           address: contracts.nilavTestnet.nilToken as `0x${string}`,
           abi: erc20ABI,
           functionName: 'approve',
-          args: [contracts.nilavTestnet.stakingOperators as `0x${string}`, amountInWei],
+          args: [
+            contracts.nilavTestnet.stakingOperators as `0x${string}`,
+            amountInWei,
+          ],
           chainId: nilavTestnet.id,
         });
 
         console.log('✓ Approval transaction submitted:', approveHash);
-        console.log('  Explorer:', `${contracts.nilavTestnet.blockExplorer}/tx/${approveHash}`);
+        console.log(
+          '  Explorer:',
+          `${contracts.nilavTestnet.blockExplorer}/tx/${approveHash}`
+        );
         console.log('  Waiting for confirmation...');
         onProgress?.('confirming_approve', { approveHash });
 
@@ -149,7 +164,10 @@ export function useStakingOperators() {
           throw new Error('Approval transaction was reverted on-chain');
         }
 
-        console.log('✓ Approval confirmed in block:', approveReceipt.blockNumber);
+        console.log(
+          '✓ Approval confirmed in block:',
+          approveReceipt.blockNumber
+        );
       } catch (error) {
         console.error('Approval transaction failed:', error);
         const message = parseContractError(error);
@@ -171,7 +189,10 @@ export function useStakingOperators() {
         });
 
         console.log('✓ Stake transaction submitted:', stakeHash);
-        console.log('  Explorer:', `${contracts.nilavTestnet.blockExplorer}/tx/${stakeHash}`);
+        console.log(
+          '  Explorer:',
+          `${contracts.nilavTestnet.blockExplorer}/tx/${stakeHash}`
+        );
         console.log('  Waiting for confirmation...');
         onProgress?.('confirming_stake', { approveHash, stakeHash });
 
@@ -234,7 +255,10 @@ export function useStakingOperators() {
       });
 
       console.log('✓ Unstake request submitted:', hash);
-      console.log('  Explorer:', `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`);
+      console.log(
+        '  Explorer:',
+        `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`
+      );
       console.log('  Waiting for confirmation...');
       onProgress?.('confirming', { requestHash: hash });
 
@@ -307,7 +331,10 @@ export function useStakingOperators() {
       });
 
       console.log('✓ Withdraw transaction submitted:', hash);
-      console.log('  Explorer:', `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`);
+      console.log(
+        '  Explorer:',
+        `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`
+      );
       console.log('  Waiting for confirmation...');
       onProgress?.('confirming', { withdrawHash: hash });
 
@@ -358,7 +385,9 @@ export function useOperatorInfo(operatorAddress?: `0x${string}`) {
   });
 
   return {
-    operatorInfo: operatorInfo as { active: boolean; metadataURI: string } | undefined,
+    operatorInfo: operatorInfo as
+      | { active: boolean; metadataURI: string }
+      | undefined,
     isLoading,
   };
 }

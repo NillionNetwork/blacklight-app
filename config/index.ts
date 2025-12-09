@@ -129,6 +129,12 @@ export const contracts = {
   },
 } as const;
 
+// Help and documentation links
+export const helpLinks = {
+  nilavHelp: 'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
+  discord: 'https://discord.gg/nillion',
+} as const;
+
 // Default network - use testnet for development
 export const defaultNetwork = nilavTestnet;
 

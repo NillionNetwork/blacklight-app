@@ -34,7 +34,7 @@ export default function Home() {
               size="medium"
               onClick={() => router.push('/setup')}
             >
-              Set up nilAV
+              Set up Node
             </Button>
           </div>
         </div>

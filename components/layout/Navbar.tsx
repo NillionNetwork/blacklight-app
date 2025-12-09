@@ -34,8 +34,7 @@ export function Navbar() {
             <Link
               href="/nodes"
               style={{
-                color:
-                  pathname === '/nodes' ? 'var(--nillion-primary)' : 'inherit',
+                color: 'inherit',
                 textDecoration: 'none',
                 fontWeight: 500,
               }}
@@ -46,8 +45,7 @@ export function Navbar() {
           <Link
             href="/setup"
             style={{
-              color:
-                pathname === '/setup' ? 'var(--nillion-primary)' : 'inherit',
+              color: 'inherit',
               textDecoration: 'none',
               fontWeight: 500,
             }}

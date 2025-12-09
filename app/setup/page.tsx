@@ -11,15 +11,67 @@ import { platforms } from '@/config';
 
 type Platform = 'linux' | 'mac' | 'windows' | null;
 
+// Step configuration - add/remove/reorder steps here
+const SETUP_STEPS = [
+  {
+    id: 'select-platform',
+    title: ['Select', 'Platform'],
+    description:
+      'Choose your operating system for platform-specific setup instructions',
+  },
+  {
+    id: 'install-docker',
+    title: ['Install', 'Docker'],
+    description: 'Docker is required to run the Nillion verifier node',
+  },
+  {
+    id: 'setup-run-node',
+    title: ['Setup & Run', 'Node'],
+    description:
+      "Pull the Docker image, run it to generate your node wallet, and enter the node's wallet address",
+  },
+  {
+    id: 'stake-to-node',
+    title: ['Stake to', 'your node'],
+    description:
+      'Stake TEST tokens to your node so it can be assigned verification work',
+  },
+  {
+    id: 'fund-node',
+    title: ['Fund Node', 'with ETH'],
+    description: 'Fund your node with ETH for gas transactions',
+  },
+  {
+    id: 'start-node',
+    title: ['Start', 'Node'],
+    description: 'Run the node binary to register and start your verifier node',
+  },
+] as const;
+
+const TOTAL_STEPS = SETUP_STEPS.length;
+
+// Step IDs for easy reference
+const STEPS = {
+  SELECT_PLATFORM: 1,
+  INSTALL_DOCKER: 2,
+  SETUP_RUN_NODE: 3,
+  STAKE_TO_NODE: 4,
+  FUND_NODE: 5,
+  START_NODE: 6,
+} as const;
+
 export default function SetupPage() {
   const router = useRouter();
   const { isConnected } = useAppKitAccount();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<number>(STEPS.SELECT_PLATFORM);
   const [platform, setPlatform] = useState<Platform>(null);
   const [publicKey, setPublicKey] = useState('');
   const [hasExistingStake, setHasExistingStake] = useState(false);
   const [hasExistingBalance, setHasExistingBalance] = useState(false);
+
+  // Get current step configuration
+  const currentStepConfig = SETUP_STEPS[currentStep - 1];
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -30,13 +82,11 @@ export default function SetupPage() {
     operatorAddress: string,
     amount: string
   ) => {
-    // Move to step 6 (fund node)
-    setCurrentStep(6);
+    setCurrentStep(STEPS.FUND_NODE);
   };
 
   const handleFundingSuccess = async (nodeAddress: string, amount: string) => {
-    // Move to step 7 (start node)
-    setCurrentStep(7);
+    setCurrentStep(STEPS.START_NODE);
   };
 
   // Show multi-step setup with prototype design
@@ -44,7 +94,7 @@ export default function SetupPage() {
     <div className="setup-page">
       <div
         className={`setup-page-gradient ${
-          currentStep <= 3
+          currentStep <= STEPS.SETUP_RUN_NODE
             ? 'setup-page-gradient-top-right'
             : 'setup-page-gradient-bottom-left'
         }`}
@@ -56,89 +106,35 @@ export default function SetupPage() {
             {/* Left: Bold title section */}
             <div className="setup-left">
               <h1 className="setup-heading">
-                {currentStep === 1 && (
-                  <>
-                    Select
-                    <br />
-                    Platform
-                  </>
-                )}
-                {currentStep === 2 && (
-                  <>
-                    Install
-                    <br />
-                    Docker
-                  </>
-                )}
-                {currentStep === 3 && (
-                  <>
-                    Setup &amp; Run
-                    <br />
-                    Node
-                  </>
-                )}
-                {currentStep === 4 && (
-                  <>
-                    Log Node's
-                    <br />
-                    Public Key
-                  </>
-                )}
-                {currentStep === 5 && (
-                  <>
-                    Stake to
-                    <br />
-                    your node
-                  </>
-                )}
-                {currentStep === 6 && (
-                  <>
-                    Fund Node
-                    <br />
-                    with ETH
-                  </>
-                )}
-                {currentStep === 7 && (
-                  <>
-                    Start
-                    <br />
-                    Node
-                  </>
-                )}
+                {currentStepConfig.title[0]}
+                <br />
+                {currentStepConfig.title[1]}
               </h1>
               <p className="setup-description">
-                {currentStep === 1 &&
-                  'Choose your operating system for platform-specific setup instructions'}
-                {currentStep === 2 &&
-                  'Docker is required to run the Nillion verifier node'}
-                {currentStep === 3 &&
-                  'Pull the Docker image and run it to generate your node wallet'}
-                {currentStep === 4 &&
-                  'Enter the public key generated by your node'}
-                {currentStep === 5 &&
-                  'Stake TEST tokens to your node so it can be assigned verification work'}
-                {currentStep === 6 &&
-                  'Fund your node with ETH for gas transactions'}
-                {currentStep === 7 &&
-                  'Run the node binary to register and start your verifier node'}
+                {currentStepConfig.description}
               </p>
             </div>
 
             {/* Right: Floating glass card with form */}
             <div className="setup-right">
               {/* Step 1: Select Platform */}
-              {currentStep === 1 && (
+              {currentStep === STEPS.SELECT_PLATFORM && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 1 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
                   <label className="setup-label">Select Platform</label>
                   <div className="setup-platform-grid">
-                    {(Object.keys(platforms) as Array<keyof typeof platforms>).map((key) => (
+                    {(
+                      Object.keys(platforms) as Array<keyof typeof platforms>
+                    ).map((key) => (
                       <button
                         key={key}
-                        onClick={() => setPlatform(key)}
+                        onClick={() => {
+                          setPlatform(key);
+                          setCurrentStep(STEPS.INSTALL_DOCKER);
+                        }}
                         className={`setup-platform-button ${
                           platform === key ? 'selected' : ''
                         }`}
@@ -147,25 +143,15 @@ export default function SetupPage() {
                       </button>
                     ))}
                   </div>
-
-                  <Button
-                    variant="outline"
-                    size="large"
-                    onClick={() => setCurrentStep(2)}
-                    disabled={!platform}
-                    className="setup-button-full"
-                  >
-                    Continue
-                  </Button>
                 </div>
               )}
 
               {/* Step 2: Install Docker */}
-              {currentStep === 2 && platform && (
+              {currentStep === STEPS.INSTALL_DOCKER && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 2 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
                   <label className="setup-label">Install Docker</label>
 
@@ -222,7 +208,9 @@ export default function SetupPage() {
                         </div>
                         <button
                           onClick={() =>
-                            handleCopy(platforms[platform].dockerInstallCommand!)
+                            handleCopy(
+                              platforms[platform].dockerInstallCommand!
+                            )
                           }
                           style={{
                             background: 'rgba(255, 255, 255, 0.1)',
@@ -239,7 +227,10 @@ export default function SetupPage() {
                         </button>
                       </div>
                       {platform === 'mac' && (
-                        <p className="setup-note" style={{ marginTop: '0.5rem' }}>
+                        <p
+                          className="setup-note"
+                          style={{ marginTop: '0.5rem' }}
+                        >
                           Alternatively, you can{' '}
                           <a
                             href={platforms[platform].dockerInstallUrl}
@@ -256,18 +247,22 @@ export default function SetupPage() {
                   )}
 
                   <p className="setup-note">
-                    <strong>Note:</strong> Docker is required to run the Nillion verifier node.
-                    After installation, you may need to restart your terminal.
+                    <strong>Note:</strong> Docker is required to run the Nillion
+                    verifier node. After installation, you may need to restart
+                    your terminal.
                   </p>
 
                   <div className="setup-button-group">
-                    <Button variant="ghost" onClick={() => setCurrentStep(1)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentStep(STEPS.SELECT_PLATFORM)}
+                    >
                       Back
                     </Button>
                     <Button
                       variant="outline"
                       size="large"
-                      onClick={() => setCurrentStep(3)}
+                      onClick={() => setCurrentStep(STEPS.SETUP_RUN_NODE)}
                       className="setup-button-compact"
                     >
                       I've Installed Docker
@@ -276,12 +271,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 3: Pull & Run Docker Image */}
-              {currentStep === 3 && platform && (
+              {/* Step 3: Pull & Run Docker Image + Enter nodeAddress */}
+              {currentStep === STEPS.SETUP_RUN_NODE && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 3 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
                   <label className="setup-label">Pull Docker Image</label>
                   <div
@@ -309,7 +304,9 @@ export default function SetupPage() {
                       {platforms[platform].dockerPullCommand}
                     </div>
                     <button
-                      onClick={() => handleCopy(platforms[platform].dockerPullCommand)}
+                      onClick={() =>
+                        handleCopy(platforms[platform].dockerPullCommand)
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: 'none',
@@ -351,7 +348,9 @@ export default function SetupPage() {
                       {platforms[platform].dockerRunCommand}
                     </div>
                     <button
-                      onClick={() => handleCopy(platforms[platform].dockerRunCommand)}
+                      onClick={() =>
+                        handleCopy(platforms[platform].dockerRunCommand)
+                      }
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: 'none',
@@ -367,35 +366,14 @@ export default function SetupPage() {
                     </button>
                   </div>
 
-                  <p className="setup-note">
-                    <strong>Note:</strong> On first run, the node will generate a new wallet and save it to <code>./nilav_node/nilav_node.env</code>.
-                    Your wallet address will be displayed - you'll need this for the next step.
+                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
+                    <strong>Note:</strong> On first run, the node will generate
+                    a new wallet and save it to{' '}
+                    <code>./nilav_node/nilav_node.env</code>. Your wallet
+                    address will be displayed - copy it for the next field.
                   </p>
 
-                  <div className="setup-button-group">
-                    <Button variant="ghost" onClick={() => setCurrentStep(2)}>
-                      Back
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="large"
-                      onClick={() => setCurrentStep(4)}
-                      className="setup-button-compact"
-                    >
-                      I've Run It
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4: Enter Public Key */}
-              {currentStep === 4 && (
-                <div>
-                  <div className="setup-step-indicator">
-                    <div className="setup-step-line" />
-                    STEP 4 OF 7
-                  </div>
-                  <label className="setup-label">Enter Node's Public Key</label>
+                  <label className="setup-label">Enter Node Address</label>
                   <input
                     type="text"
                     value={publicKey}
@@ -405,20 +383,23 @@ export default function SetupPage() {
                   />
 
                   <p className="setup-note">
-                    <strong>Note:</strong> This is the public key (address) that
-                    your node generated. You'll stake to this address in the
-                    next step.
+                    <strong>Note:</strong> This corresponds to the wallet that
+                    your node generated. You'll stake to this node address in
+                    the next step.
                   </p>
 
                   <div className="setup-button-group">
-                    <Button variant="ghost" onClick={() => setCurrentStep(3)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentStep(STEPS.INSTALL_DOCKER)}
+                    >
                       Back
                     </Button>
                     <Button
                       variant="primary"
                       size="large"
                       disabled={!publicKey || publicKey.length < 12}
-                      onClick={() => setCurrentStep(5)}
+                      onClick={() => setCurrentStep(STEPS.STAKE_TO_NODE)}
                       className="setup-button-compact"
                     >
                       Continue
@@ -427,16 +408,16 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 5: Stake to Node */}
-              {currentStep === 5 && (
+              {/* Step 4: Stake to Node */}
+              {currentStep === STEPS.STAKE_TO_NODE && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 5 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
 
                   <StakingForm
-                    nodePublicKey={publicKey}
+                    nodeAddress={publicKey}
                     onSuccess={handleStakingSuccess}
                     onError={(error) => {
                       console.error('Staking failed:', error);
@@ -450,14 +431,17 @@ export default function SetupPage() {
                     className="setup-button-group"
                     style={{ marginTop: '1.5rem' }}
                   >
-                    <Button variant="ghost" onClick={() => setCurrentStep(4)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentStep(STEPS.SETUP_RUN_NODE)}
+                    >
                       Back
                     </Button>
                     {isConnected && hasExistingStake && (
                       <Button
                         variant="outline"
                         size="large"
-                        onClick={() => setCurrentStep(6)}
+                        onClick={() => setCurrentStep(STEPS.FUND_NODE)}
                         className="setup-button-compact"
                       >
                         Continue
@@ -467,16 +451,16 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 6: Fund Node with ETH */}
-              {currentStep === 6 && (
+              {/* Step 5: Fund Node with ETH */}
+              {currentStep === STEPS.FUND_NODE && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 6 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
 
                   <FundNodeForm
-                    nodePublicKey={publicKey}
+                    nodeAddress={publicKey}
                     onSuccess={handleFundingSuccess}
                     onError={(error) => {
                       console.error('Funding failed:', error);
@@ -490,14 +474,17 @@ export default function SetupPage() {
                     className="setup-button-group"
                     style={{ marginTop: '1.5rem' }}
                   >
-                    <Button variant="ghost" onClick={() => setCurrentStep(5)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentStep(STEPS.STAKE_TO_NODE)}
+                    >
                       Back
                     </Button>
                     {isConnected && hasExistingBalance && (
                       <Button
                         variant="outline"
                         size="large"
-                        onClick={() => setCurrentStep(7)}
+                        onClick={() => setCurrentStep(STEPS.START_NODE)}
                         className="setup-button-compact"
                       >
                         Continue
@@ -507,12 +494,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 7: Start Node */}
-              {currentStep === 7 && platform && (
+              {/* Step 6: Start Node */}
+              {currentStep === STEPS.START_NODE && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP 7 OF 7
+                    STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
                   <label className="setup-label">Run this command</label>
                   <div
@@ -565,7 +552,10 @@ export default function SetupPage() {
                   </p>
 
                   <div className="setup-button-group">
-                    <Button variant="ghost" onClick={() => setCurrentStep(6)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setCurrentStep(STEPS.FUND_NODE)}
+                    >
                       Back
                     </Button>
                     <Button
