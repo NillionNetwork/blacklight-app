@@ -36,7 +36,7 @@ export function UnstakingForm({
   const { switchChain } = useSwitchChain();
   const { requestUnstake } = useStakingOperators();
   const { stake, isLoading: isLoadingStake } = useStakeOf(operatorAddress);
-  const { delay: unstakeDelay } = useUnstakeDelay();
+  const { delay: unstakeDelay, isLoading: isLoadingDelay } = useUnstakeDelay();
 
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +51,28 @@ export function UnstakingForm({
 
   const stakedAmount = stake ? formatUnits(stake, 18) : '0';
   const hasStake = stake && stake > 0n;
+
+  // Format unstake delay for display
+  const formatUnstakeDelay = (): string => {
+    if (isLoadingDelay) return 'Loading...';
+    if (!unstakeDelay) return 'an';
+
+    const days = Number(unstakeDelay) / 86400;
+
+    // Handle whole days
+    if (days === Math.floor(days)) {
+      return `${days} day${days !== 1 ? 's' : ''}`;
+    }
+
+    // Handle fractional days (show in hours if less than 1 day)
+    if (days < 1) {
+      const hours = Number(unstakeDelay) / 3600;
+      return `${Math.floor(hours)} hour${hours !== 1 ? 's' : ''}`;
+    }
+
+    // Round to 1 decimal for partial days
+    return `${days.toFixed(1)} days`;
+  };
 
   const handleMaxClick = () => {
     setAmount(stakedAmount);
@@ -198,8 +220,7 @@ export function UnstakingForm({
 
             <div className="unstaking-info-box">
               <div className="unstaking-info-line">
-                ℹ️ Unstaking initiates a {unstakeDelay ? `${Number(unstakeDelay) / 86400} day` : ''} unbonding
-                period.
+                ℹ️ Unstaking initiates a {formatUnstakeDelay()} unbonding period.
               </div>
               <div className="unstaking-info-line">
                 You can withdraw tokens after the period ends.

@@ -63,7 +63,7 @@ export function UnbondingForm({
     };
 
     updateTimeRemaining();
-    const interval = setInterval(updateTimeRemaining, 1000);
+    const interval = setInterval(updateTimeRemaining, 60000); // Update every minute
 
     return () => clearInterval(interval);
   }, [unbonding]);
@@ -77,16 +77,13 @@ export function UnbondingForm({
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
 
     if (days > 0) {
-      return `${days}d ${hours}h ${minutes}m ${secs}s`;
+      return `${days}d ${hours}h ${minutes}m`;
     } else if (hours > 0) {
-      return `${hours}h ${minutes}m ${secs}s`;
-    } else if (minutes > 0) {
-      return `${minutes}m ${secs}s`;
+      return `${hours}h ${minutes}m`;
     } else {
-      return `${secs}s`;
+      return `${minutes}m`;
     }
   };
 
@@ -272,9 +269,11 @@ export function UnbondingForm({
       <Modal
         isOpen={showTxModal}
         onClose={() => {
-          if (txStatus?.step === 'complete' || error) {
-            setShowTxModal(false);
-            setTxStatus(null);
+          // Prevent closing during active transaction (requesting/confirming)
+          // Only allow closing when complete or error state
+          if (txStatus?.step === 'complete' || txStatus?.step === 'error' || error) {
+            // Don't auto-close - user must click button
+            return;
           }
         }}
         title={

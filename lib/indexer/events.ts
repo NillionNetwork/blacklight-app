@@ -22,6 +22,7 @@ export const NILAV_ROUTER_EVENTS = {
 export const STAKING_EVENTS = {
   OperatorRegistered: 'OperatorRegistered(address indexed operator, string metadataURI)',
   OperatorDeactivated: 'OperatorDeactivated(address indexed operator)',
+  StakedTo: 'StakedTo(address indexed staker, address indexed operator, uint256 amount)',
   Staked: 'Staked(address indexed operator, address indexed staker, uint256 amount)',
   UnstakeRequested: 'UnstakeRequested(address indexed operator, address indexed staker, uint256 amount, uint256 releaseTime)',
   Unstaked: 'Unstaked(address indexed operator, address indexed staker, uint256 amount)',

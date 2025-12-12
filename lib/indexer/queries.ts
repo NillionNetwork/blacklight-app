@@ -134,6 +134,65 @@ function buildRouterEventQuery(
   `;
 }
 
+/**
+ * Helper for building staking event queries filtered by staker address
+ * StakedTo events have staker address in topics[2] (operator is in topics[3])
+ *
+ * @param eventName - Name of the event from STAKING_EVENTS
+ * @param stakerAddress - Staker address to filter by
+ * @param options - Optional query customization
+ * @param options.selectFields - Columns to select
+ * @param options.limit - Maximum number of results (default: 100)
+ * @param options.orderBy - ORDER BY clause (default: 'block_num DESC')
+ * @param options.fromBlock - Only include events from this block onwards
+ * @returns SQL query string
+ *
+ * @example
+ * // Get last 100 StakedTo events for a user
+ * buildStakerEventQuery('StakedTo', '0x...', { limit: 100 })
+ */
+function buildStakerEventQuery(
+  eventName: keyof typeof STAKING_EVENTS,
+  stakerAddress: string,
+  options: {
+    selectFields?: string[];
+    limit?: number;
+    orderBy?: string;
+    fromBlock?: number;
+  } = {}
+): string {
+  const {
+    selectFields = ['topics[2] as staker', 'topics[3] as operator', 'block_num', 'block_timestamp', 'tx_hash'],
+    limit = 100,
+    orderBy = 'block_num DESC',
+    fromBlock,
+  } = options;
+
+  const eventSignature = getEventSignatureHash(STAKING_EVENTS[eventName]);
+  const paddedStaker = padAddressTo32Bytes(stakerAddress);
+
+  // Build WHERE clause - NOTE: staker address is in topics[2] for StakedTo events!
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${contracts.nilavTestnet.stakingOperators.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[2] = '${paddedStaker}'`;
+
+  // Add fromBlock filter if provided (improves performance)
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  return `
+    SELECT
+      ${selectFields.join(',\n      ')}
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY ${orderBy}
+    LIMIT ${limit}
+  `;
+}
+
 // =============================================================================
 // ⚠️ SECURITY REMINDER
 // =============================================================================
@@ -176,6 +235,17 @@ export interface OperatorRegisteredEvent extends BlockchainEvent {
  */
 export interface OperatorDeactivatedEvent extends BlockchainEvent {
   operator: string;
+}
+
+/**
+ * StakedTo event data
+ * Emitted when a user stakes tokens to an operator
+ * Event signature: StakedTo(address indexed staker, address indexed operator, uint256 amount)
+ */
+export interface StakedEvent extends BlockchainEvent {
+  staker: string; // address - the user staking tokens (topics[2])
+  operator: string; // address - the operator being staked to (topics[3])
+  amount?: string; // uint256 - amount staked (needs decoding from data field)
 }
 
 /**
@@ -357,6 +427,48 @@ export async function getHTXResponses(
         tx_hash: event.tx_hash,
       };
     });
+  }
+
+  return result;
+}
+
+/**
+ * Get StakedTo events for a specific staker (user wallet)
+ * Used to discover which operators a user has staked to
+ *
+ * @param stakerAddress - The staker/user address to query
+ * @param fromBlock - Optional: Only look for events from this block onwards (performance optimization)
+ * @param limit - Maximum number of results (default: 10)
+ * @returns Promise with StakedTo event data
+ */
+export async function getStakedEvents(
+  stakerAddress: string,
+  fromBlock?: number,
+  limit: number = 10
+): Promise<IndexerResponse<StakedEvent>> {
+  const query = buildStakerEventQuery('StakedTo', stakerAddress, {
+    fromBlock,
+    limit,
+  });
+
+  const result = await queryIndexer<StakedEvent>(query, []);
+
+  // Strip padding from staker and operator addresses
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => ({
+      ...event,
+      staker:
+        event.staker && typeof event.staker === 'string'
+          ? '0x' + event.staker.replace('0x', '').slice(-40)
+          : stakerAddress.toLowerCase(),
+      operator:
+        event.operator && typeof event.operator === 'string'
+          ? '0x' + event.operator.replace('0x', '').slice(-40)
+          : '',
+      block_num: event.block_num,
+      block_timestamp: event.block_timestamp,
+      tx_hash: event.tx_hash,
+    }));
   }
 
   return result;

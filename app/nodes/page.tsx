@@ -10,6 +10,7 @@ import { contracts } from '@/config';
 
 export default function NodesPage() {
   const { address, isConnected } = useAppKitAccount();
+
   const {
     operators,
     isLoading: loading,
