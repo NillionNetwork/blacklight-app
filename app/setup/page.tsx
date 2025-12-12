@@ -524,11 +524,11 @@ export default function SetupPage() {
                         minWidth: 0,
                       }}
                     >
-                      {platforms[platform].nodeStartCommand}
+                      {platforms[platform].dockerRunCommand}
                     </div>
                     <button
                       onClick={() => {
-                        handleCopy(platforms[platform].nodeStartCommand);
+                        handleCopy(platforms[platform].dockerRunCommand);
                       }}
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',

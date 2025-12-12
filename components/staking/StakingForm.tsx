@@ -182,6 +182,15 @@ export function StakingForm({
       setError(null); // Clear any previous errors
       setShowTxModal(true); // Open the modal when staking starts
 
+      // Switch to correct chain if needed
+      if (chainId !== nilavTestnet.id) {
+        try {
+          await switchChain({ chainId: nilavTestnet.id });
+        } catch (switchError: any) {
+          throw new Error('Please switch to Nilav Testnet to continue');
+        }
+      }
+
       // Execute approve + stake transactions with progress tracking
       const result = await stakeTo(
         operatorAddress as `0x${string}`,

@@ -165,6 +165,15 @@ export function FundNodeForm({
       setError(null);
       setShowTxModal(true);
 
+      // Switch to correct chain if needed
+      if (chainId !== nilavTestnet.id) {
+        try {
+          await switchChain({ chainId: nilavTestnet.id });
+        } catch (switchError: any) {
+          throw new Error('Please switch to Nilav Testnet to continue');
+        }
+      }
+
       // Send ETH transaction
       sendTransaction(
         {

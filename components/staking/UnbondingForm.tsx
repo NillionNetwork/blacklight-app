@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { useSwitchChain } from 'wagmi';
 import { formatUnits } from 'viem';
 import { Button, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useUnbondingInfo } from '@/lib/hooks/useStakingOperators';
-import { contracts } from '@/config';
+import { contracts, nilavTestnet } from '@/config';
 import { toast } from 'sonner';
 
 interface UnbondingFormProps {
@@ -31,6 +32,8 @@ export function UnbondingForm({
   onError,
 }: UnbondingFormProps) {
   const { address, isConnected } = useAppKitAccount();
+  const { chainId } = useAppKitNetwork();
+  const { switchChain } = useSwitchChain();
   const { withdrawUnstaked } = useStakingOperators();
   const { unbonding, isLoading: isLoadingUnbonding } = useUnbondingInfo(operatorAddress);
 
@@ -106,6 +109,15 @@ export function UnbondingForm({
     setTxStatus({ step: 'requesting' });
 
     try {
+      // Switch to correct chain if needed
+      if (chainId !== nilavTestnet.id) {
+        try {
+          await switchChain({ chainId: nilavTestnet.id });
+        } catch (switchError: any) {
+          throw new Error('Please switch to Nilav Testnet to continue');
+        }
+      }
+
       await withdrawUnstaked(operatorAddress, (step, data) => {
         if (step === 'withdrawing') {
           setTxStatus({ step: 'requesting' });

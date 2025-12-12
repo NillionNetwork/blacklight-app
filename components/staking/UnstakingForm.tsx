@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { useSwitchChain } from 'wagmi';
 import { formatUnits } from 'viem';
 import { Button, Input, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useStakeOf, useUnstakeDelay } from '@/lib/hooks/useStakingOperators';
-import { contracts } from '@/config';
+import { contracts, nilavTestnet } from '@/config';
 import { toast } from 'sonner';
 
 interface UnstakingFormProps {
@@ -31,6 +32,8 @@ export function UnstakingForm({
   onError,
 }: UnstakingFormProps) {
   const { address, isConnected } = useAppKitAccount();
+  const { chainId } = useAppKitNetwork();
+  const { switchChain } = useSwitchChain();
   const { requestUnstake } = useStakingOperators();
   const { stake, isLoading: isLoadingStake } = useStakeOf(operatorAddress);
   const { delay: unstakeDelay } = useUnstakeDelay();
@@ -79,6 +82,15 @@ export function UnstakingForm({
     setTxStatus({ step: 'requesting' });
 
     try {
+      // Switch to correct chain if needed
+      if (chainId !== nilavTestnet.id) {
+        try {
+          await switchChain({ chainId: nilavTestnet.id });
+        } catch (switchError: any) {
+          throw new Error('Please switch to Nilav Testnet to continue');
+        }
+      }
+
       await requestUnstake(operatorAddress, amount, (step, data) => {
         if (step === 'requesting') {
           setTxStatus({ step: 'requesting' });

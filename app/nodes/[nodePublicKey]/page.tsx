@@ -4,12 +4,18 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { formatUnits, formatEther } from 'viem';
 import { useBalance } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 import {
   useStakeOf,
   useOperatorInfo,
   useIsActiveOperator,
   useIsJailed,
 } from '@/lib/hooks';
+import {
+  getOperatorRegistration,
+  getOperatorDeactivation,
+  formatTimeAgo,
+} from '@/lib/indexer';
 import { Card, Spinner, Button } from '@/components/ui';
 import {
   StakingForm,
@@ -17,6 +23,7 @@ import {
   UnbondingForm,
 } from '@/components/staking';
 import { FundNodeForm } from '@/components/transfer';
+import { ActivityFeed } from '@/components/activity';
 import { contracts, nilavTestnet } from '@/config';
 import { toast } from 'sonner';
 
@@ -28,13 +35,14 @@ export default function NodeDetailPage() {
   const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
 
   const [activeTab, setActiveTab] = useState<
-    'stake' | 'unstake' | 'withdraw' | 'fund'
-  >('stake');
+    'activity' | 'stake' | 'unstake' | 'withdraw' | 'fund'
+  >('activity');
 
   // Initialize tab from URL
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (
+      tabParam === 'activity' ||
       tabParam === 'stake' ||
       tabParam === 'unstake' ||
       tabParam === 'withdraw' ||
@@ -45,7 +53,9 @@ export default function NodeDetailPage() {
   }, [searchParams]);
 
   // Update URL when tab changes
-  const handleTabChange = (tab: 'stake' | 'unstake' | 'withdraw' | 'fund') => {
+  const handleTabChange = (
+    tab: 'activity' | 'stake' | 'unstake' | 'withdraw' | 'fund'
+  ) => {
     setActiveTab(tab);
     router.push(`/nodes/${nodeAddress}?tab=${tab}`, { scroll: false });
   };
@@ -66,12 +76,28 @@ export default function NodeDetailPage() {
     }
   );
 
+  // Fetch registration and deactivation events
+  const { data: registrationData, isLoading: isLoadingRegistration } = useQuery({
+    queryKey: ['operator-registration', nodeAddress],
+    queryFn: () => getOperatorRegistration(nodeAddress),
+  });
+
+  const registrationBlockNum = registrationData?.data?.[0]?.block_num;
+
+  const { data: deactivationData, isLoading: isLoadingDeactivation } = useQuery({
+    queryKey: ['operator-deactivation', nodeAddress, registrationBlockNum],
+    queryFn: () => getOperatorDeactivation(nodeAddress, registrationBlockNum),
+    enabled: registrationBlockNum !== undefined,
+  });
+
   const isLoading =
     isLoadingStake ||
     isLoadingInfo ||
     isLoadingActive ||
     isLoadingJailed ||
-    isLoadingNodeBalance;
+    isLoadingNodeBalance ||
+    isLoadingRegistration ||
+    isLoadingDeactivation;
 
   // Show loading while fetching or if nodeAddress is invalid
   if (isLoading || !nodeAddress) {
@@ -153,6 +179,64 @@ export default function NodeDetailPage() {
                 ⚠️ Jailed
               </div>
             )}
+
+            {/* Registration/Deactivation Events - Compact */}
+            {deactivationData?.data?.[0] && (
+              <div
+                style={{
+                  marginTop: '0.5rem',
+                  fontSize: '0.75rem',
+                  opacity: 0.8,
+                }}
+              >
+                Deactivated {formatTimeAgo(deactivationData.data[0].block_timestamp)}{' '}
+                <a
+                  href={`${contracts.nilavTestnet.blockExplorer}/tx/${deactivationData.data[0].tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: 'var(--nillion-primary)',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.textDecoration = 'none';
+                  }}
+                >
+                  (tx ↗)
+                </a>
+              </div>
+            )}
+            {registrationData?.data?.[0] && (
+              <div
+                style={{
+                  marginTop: deactivationData?.data?.[0] ? '0.25rem' : '0.5rem',
+                  fontSize: '0.75rem',
+                  opacity: 0.8,
+                }}
+              >
+                Registered {formatTimeAgo(registrationData.data[0].block_timestamp)}{' '}
+                <a
+                  href={`${contracts.nilavTestnet.blockExplorer}/tx/${registrationData.data[0].tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: 'var(--nillion-primary)',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.textDecoration = 'none';
+                  }}
+                >
+                  (tx ↗)
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Total Staked */}
@@ -179,6 +263,14 @@ export default function NodeDetailPage() {
       {/* Actions Section with Tabs */}
       <div className="node-actions-full-width">
         <div className="node-staking-tabs">
+          <button
+            className={`node-staking-tab ${
+              activeTab === 'activity' ? 'active' : ''
+            }`}
+            onClick={() => handleTabChange('activity')}
+          >
+            HTX Activity
+          </button>
           <button
             className={`node-staking-tab ${
               activeTab === 'stake' ? 'active' : ''
@@ -215,6 +307,8 @@ export default function NodeDetailPage() {
 
         {/* Tab Content */}
         <div className="node-staking-content">
+          {activeTab === 'activity' && <ActivityFeed nodeAddress={nodeAddress} />}
+
           {activeTab === 'stake' && (
             <StakingForm
               nodeAddress={nodeAddress}

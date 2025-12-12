@@ -122,6 +122,7 @@ export const contracts = {
     nilToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
     nilTokenSymbol: 'NIL',
     stakingOperators: '0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46',
+    nilavRouter: '0x34ED5BCD598619f7Aad6e3d9264C38CEb4Cd1edF',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
@@ -145,6 +146,19 @@ export const getContractAddresses = (networkId: number) => {
   }
   throw new Error(`Unsupported network: ${networkId}`);
 };
+
+// Indexer configuration
+export const indexer = {
+  apiUrl: 'https://indexing.conduit.xyz/v2/query',
+  apiKey: process.env.NEXT_PUBLIC_INDEXER_API_KEY || '',
+  chainId: nilavTestnet.id,
+} as const;
+
+if (!indexer.apiKey) {
+  console.warn(
+    'NEXT_PUBLIC_INDEXER_API_KEY is not defined - indexer queries will fail'
+  );
+}
 
 // Type exports
 export type Platform = keyof typeof platforms;
