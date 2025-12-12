@@ -1,6 +1,12 @@
 import { indexer } from '@/config';
 
 /**
+ * Base URL for indexer API routes
+ * All queries go through our server-side proxy to keep API key secure
+ */
+const INDEXER_API_BASE = '/api/indexer';
+
+/**
  * Response structure from Conduit Indexer
  */
 export interface IndexerResponse<T = any> {
@@ -12,7 +18,8 @@ export interface IndexerResponse<T = any> {
 }
 
 /**
- * Query the Conduit Indexer API
+ * Query the Conduit Indexer API via our server-side proxy
+ * This keeps the API key secure on the server
  *
  * @param query - SQL query string
  * @param signatures - Array of event signatures to query
@@ -30,15 +37,8 @@ export async function queryIndexer<T = any>(
   query: string,
   signatures: string[]
 ): Promise<IndexerResponse<T>> {
-  if (!indexer.apiKey) {
-    throw new Error(
-      'Indexer API key not configured. Please set NEXT_PUBLIC_INDEXER_API_KEY in your .env.local file.'
-    );
-  }
-
-  // Build URL with query parameters
+  // Build URL with query parameters - call our API route instead of Conduit directly
   const params = new URLSearchParams({
-    'api-key': indexer.apiKey,
     query,
   });
 
@@ -47,7 +47,7 @@ export async function queryIndexer<T = any>(
     params.append('signatures', sig);
   });
 
-  const url = `${indexer.apiUrl}?${params.toString()}`;
+  const url = `${INDEXER_API_BASE}?${params.toString()}`;
 
   try {
     const response = await fetch(url, {

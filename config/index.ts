@@ -148,17 +148,11 @@ export const getContractAddresses = (networkId: number) => {
 };
 
 // Indexer configuration
+// Note: API key is now stored server-side only (not exposed to clients)
+// Queries are proxied through /api/indexer route
 export const indexer = {
-  apiUrl: 'https://indexing.conduit.xyz/v2/query',
-  apiKey: process.env.NEXT_PUBLIC_INDEXER_API_KEY || '',
   chainId: nilavTestnet.id,
 } as const;
-
-if (!indexer.apiKey) {
-  console.warn(
-    'NEXT_PUBLIC_INDEXER_API_KEY is not defined - indexer queries will fail'
-  );
-}
 
 // Type exports
 export type Platform = keyof typeof platforms;
