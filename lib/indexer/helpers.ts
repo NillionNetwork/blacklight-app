@@ -280,7 +280,7 @@ export type ContractEventConfig = {
  * const query = buildContractEventQuery(
  *   {
  *     chainId: indexer.chainId,
- *     contractAddress: contracts.nilavTestnet.stakingOperators,
+ *     contractAddress: activeContracts.stakingOperators,
  *     contractName: 'StakingOperators'
  *   },
  *   'OperatorRegistered(address,string)',

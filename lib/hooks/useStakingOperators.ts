@@ -7,7 +7,7 @@ import {
 import { waitForTransactionReceipt } from 'wagmi/actions';
 import { useQueryClient } from '@tanstack/react-query';
 import { parseUnits, BaseError, ContractFunctionRevertedError } from 'viem';
-import { contracts, nilavTestnet } from '@/config';
+import { activeContracts, activeNetwork } from '@/config';
 import { stakingOperatorsABI } from '@/lib/abis/StakingOperators';
 
 // Helper to parse contract errors into user-friendly messages
@@ -94,11 +94,11 @@ export function useStakingOperators() {
   const registerOperator = async (metadataURI: string) => {
     try {
       const hash = await writeContractAsync({
-        address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+        address: activeContracts.stakingOperators as `0x${string}`,
         abi: stakingOperatorsABI,
         functionName: 'registerOperator',
         args: [metadataURI],
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       return { hash, success: true, error: null };
@@ -136,20 +136,20 @@ export function useStakingOperators() {
       // First, approve the StakingOperators contract to spend NIL tokens
       try {
         approveHash = await writeContractAsync({
-          address: contracts.nilavTestnet.nilToken as `0x${string}`,
+          address: activeContracts.nilToken as `0x${string}`,
           abi: erc20ABI,
           functionName: 'approve',
           args: [
-            contracts.nilavTestnet.stakingOperators as `0x${string}`,
+            activeContracts.stakingOperators as `0x${string}`,
             amountInWei,
           ],
-          chainId: nilavTestnet.id,
+          chainId: activeNetwork.id,
         });
 
         console.log('✓ Approval transaction submitted:', approveHash);
         console.log(
           '  Explorer:',
-          `${contracts.nilavTestnet.blockExplorer}/tx/${approveHash}`
+          `${activeContracts.blockExplorer}/tx/${approveHash}`
         );
         console.log('  Waiting for confirmation...');
         onProgress?.('confirming_approve', { approveHash });
@@ -157,7 +157,7 @@ export function useStakingOperators() {
         // Wait for approval to be confirmed on-chain
         const approveReceipt = await waitForTransactionReceipt(config, {
           hash: approveHash,
-          chainId: nilavTestnet.id,
+          chainId: activeNetwork.id,
         });
 
         if (approveReceipt.status === 'reverted') {
@@ -181,17 +181,17 @@ export function useStakingOperators() {
       let stakeHash: `0x${string}`;
       try {
         stakeHash = await writeContractAsync({
-          address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+          address: activeContracts.stakingOperators as `0x${string}`,
           abi: stakingOperatorsABI,
           functionName: 'stakeTo',
           args: [operatorAddress, amountInWei],
-          chainId: nilavTestnet.id,
+          chainId: activeNetwork.id,
         });
 
         console.log('✓ Stake transaction submitted:', stakeHash);
         console.log(
           '  Explorer:',
-          `${contracts.nilavTestnet.blockExplorer}/tx/${stakeHash}`
+          `${activeContracts.blockExplorer}/tx/${stakeHash}`
         );
         console.log('  Waiting for confirmation...');
         onProgress?.('confirming_stake', { approveHash, stakeHash });
@@ -199,7 +199,7 @@ export function useStakingOperators() {
         // Wait for stake to be confirmed on-chain
         const stakeReceipt = await waitForTransactionReceipt(config, {
           hash: stakeHash,
-          chainId: nilavTestnet.id,
+          chainId: activeNetwork.id,
         });
 
         if (stakeReceipt.status === 'reverted') {
@@ -247,17 +247,17 @@ export function useStakingOperators() {
       onProgress?.('requesting');
 
       const hash = await writeContractAsync({
-        address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+        address: activeContracts.stakingOperators as `0x${string}`,
         abi: stakingOperatorsABI,
         functionName: 'requestUnstake',
         args: [operatorAddress, amountInWei],
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       console.log('✓ Unstake request submitted:', hash);
       console.log(
         '  Explorer:',
-        `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`
+        `${activeContracts.blockExplorer}/tx/${hash}`
       );
       console.log('  Waiting for confirmation...');
       onProgress?.('confirming', { requestHash: hash });
@@ -265,7 +265,7 @@ export function useStakingOperators() {
       // Wait for transaction confirmation
       const receipt = await waitForTransactionReceipt(config, {
         hash,
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       if (receipt.status === 'reverted') {
@@ -292,10 +292,10 @@ export function useStakingOperators() {
   const deactivateOperator = async () => {
     try {
       const hash = await writeContractAsync({
-        address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+        address: activeContracts.stakingOperators as `0x${string}`,
         abi: stakingOperatorsABI,
         functionName: 'deactivateOperator',
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       return { hash, success: true };
@@ -323,17 +323,17 @@ export function useStakingOperators() {
       onProgress?.('withdrawing');
 
       const hash = await writeContractAsync({
-        address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+        address: activeContracts.stakingOperators as `0x${string}`,
         abi: stakingOperatorsABI,
         functionName: 'withdrawUnstaked',
         args: [operatorAddress],
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       console.log('✓ Withdraw transaction submitted:', hash);
       console.log(
         '  Explorer:',
-        `${contracts.nilavTestnet.blockExplorer}/tx/${hash}`
+        `${activeContracts.blockExplorer}/tx/${hash}`
       );
       console.log('  Waiting for confirmation...');
       onProgress?.('confirming', { withdrawHash: hash });
@@ -341,7 +341,7 @@ export function useStakingOperators() {
       // Wait for transaction confirmation
       const receipt = await waitForTransactionReceipt(config, {
         hash,
-        chainId: nilavTestnet.id,
+        chainId: activeNetwork.id,
       });
 
       if (receipt.status === 'reverted') {
@@ -377,11 +377,11 @@ export function useStakingOperators() {
  */
 export function useOperatorInfo(operatorAddress?: `0x${string}`) {
   const { data: operatorInfo, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'getOperatorInfo',
     args: operatorAddress ? [operatorAddress] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {
@@ -398,11 +398,11 @@ export function useOperatorInfo(operatorAddress?: `0x${string}`) {
  */
 export function useIsActiveOperator(operatorAddress?: `0x${string}`) {
   const { data: isActive, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'isActiveOperator',
     args: operatorAddress ? [operatorAddress] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {
@@ -417,11 +417,11 @@ export function useIsActiveOperator(operatorAddress?: `0x${string}`) {
  */
 export function useStakeOf(operatorAddress?: `0x${string}`) {
   const { data: stake, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'stakeOf',
     args: operatorAddress ? [operatorAddress] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {
@@ -436,11 +436,11 @@ export function useStakeOf(operatorAddress?: `0x${string}`) {
  */
 export function useIsJailed(operatorAddress?: `0x${string}`) {
   const { data: isJailed, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'isJailed',
     args: operatorAddress ? [operatorAddress] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {
@@ -454,10 +454,10 @@ export function useIsJailed(operatorAddress?: `0x${string}`) {
  */
 export function useActiveOperators() {
   const { data: operators, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'getActiveOperators',
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {
@@ -472,11 +472,11 @@ export function useActiveOperators() {
  */
 export function useUnbondingInfo(operatorAddress?: `0x${string}`) {
   const { data: unbondingRaw, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'unbondings',
     args: operatorAddress ? [operatorAddress] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   // Contract returns array: [staker, amount, releaseTime]
@@ -499,10 +499,10 @@ export function useUnbondingInfo(operatorAddress?: `0x${string}`) {
  */
 export function useUnstakeDelay() {
   const { data: delay, isLoading } = useReadContract({
-    address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+    address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'unstakeDelay',
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   return {

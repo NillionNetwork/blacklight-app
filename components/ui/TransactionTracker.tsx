@@ -1,6 +1,6 @@
 'use client';
 
-import { contracts } from '@/config';
+import { activeContracts } from '@/config';
 
 interface Transaction {
   /**
@@ -39,7 +39,7 @@ interface TransactionTrackerProps {
 export function TransactionTracker({
   transactions,
   title,
-  explorerBaseUrl = contracts.nilavTestnet.blockExplorer,
+  explorerBaseUrl = activeContracts.blockExplorer,
 }: TransactionTrackerProps) {
   // Determine overall completion state
   const allConfirmed = transactions.every((tx) => tx.status === 'confirmed');

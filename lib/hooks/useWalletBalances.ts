@@ -1,6 +1,6 @@
 import { useBalance, useReadContract } from 'wagmi';
 import { formatUnits } from 'viem';
-import { nilavTestnet, contracts } from '@/config';
+import { activeNetwork, activeContracts } from '@/config';
 
 // ERC20 ABI for balanceOf
 const erc20ABI = [
@@ -26,7 +26,7 @@ export function useWalletBalances(address?: `0x${string}`) {
     refetch: refetchEthBalance,
   } = useBalance({
     address: address,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   // Fetch staking token balance using contract read
@@ -35,11 +35,11 @@ export function useWalletBalances(address?: `0x${string}`) {
     isLoading: isLoadingToken,
     refetch: refetchTokenBalance,
   } = useReadContract({
-    address: contracts.nilavTestnet.nilToken as `0x${string}`,
+    address: activeContracts.nilToken as `0x${string}`,
     abi: erc20ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
-    chainId: nilavTestnet.id,
+    chainId: activeNetwork.id,
   });
 
   const ethBalanceFormatted = ethBalance

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getPublicClient } from '@wagmi/core';
 import { useConfig } from 'wagmi';
-import { contracts, nilavTestnet } from '@/config';
+import { activeContracts, activeNetwork } from '@/config';
 import { stakingOperatorsABI } from '@/lib/abis/StakingOperators';
 import { getStakedEvents } from '@/lib/indexer';
 
@@ -63,7 +63,7 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
         setError(null);
 
         const publicClient = getPublicClient(config, {
-          chainId: nilavTestnet.id,
+          chainId: activeNetwork.id,
         });
 
         if (!publicClient) {
@@ -73,7 +73,7 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
         // Step 1: Query StakedTo events from indexer
         // Use a large limit (500) to ensure we capture all unique operators
         // since users may have staked to the same operator multiple times
-        const fromBlock = contracts.nilavTestnet.stakingOperatorsDeploymentBlock;
+        const fromBlock = activeContracts.stakingOperatorsDeploymentBlock;
         const limit = 500; // Large enough to find all operators
         const stakedEventsResult = await getStakedEvents(
           userAddress!, // Safe because we return early if undefined
@@ -99,7 +99,7 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
           try {
             // Get current stake amount
             const stake = (await publicClient.readContract({
-              address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+              address: activeContracts.stakingOperators as `0x${string}`,
               abi: stakingOperatorsABI,
               functionName: 'stakeOf',
               args: [op],
@@ -107,7 +107,7 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
 
             // Get operator info (metadata and active status)
             const operatorInfo = (await publicClient.readContract({
-              address: contracts.nilavTestnet.stakingOperators as `0x${string}`,
+              address: activeContracts.stakingOperators as `0x${string}`,
               abi: stakingOperatorsABI,
               functionName: 'getOperatorInfo',
               args: [op],

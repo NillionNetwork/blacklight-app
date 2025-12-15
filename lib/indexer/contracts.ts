@@ -1,4 +1,4 @@
-import { indexer, contracts } from '@/config';
+import { indexer, activeContracts } from '@/config';
 import { ContractEventConfig } from './helpers';
 
 /**
@@ -25,7 +25,7 @@ import { ContractEventConfig } from './helpers';
  */
 export const STAKING_CONTRACT: ContractEventConfig = {
   chainId: indexer.chainId,
-  contractAddress: contracts.nilavTestnet.stakingOperators,
+  contractAddress: activeContracts.stakingOperators,
   contractName: 'StakingOperators',
 } as const;
 
@@ -35,7 +35,7 @@ export const STAKING_CONTRACT: ContractEventConfig = {
  */
 export const NILAV_ROUTER_CONTRACT: ContractEventConfig = {
   chainId: indexer.chainId,
-  contractAddress: contracts.nilavTestnet.nilavRouter,
+  contractAddress: activeContracts.nilavRouter,
   contractName: 'NilAVRouter',
 } as const;
 

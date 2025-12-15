@@ -6,7 +6,7 @@ import { useSwitchChain } from 'wagmi';
 import { formatUnits } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import { Button, TransactionTracker, Modal, BalanceWarning } from '@/components/ui';
-import { nilavTestnet, contracts, helpLinks } from '@/config';
+import { activeNetwork, activeContracts, helpLinks } from '@/config';
 import { useStakingOperators, useStakeOf, useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
 
@@ -93,8 +93,8 @@ export function StakingForm({
   const [error, setError] = useState<string | null>(null);
   const [showTxModal, setShowTxModal] = useState(false);
 
-  const isCorrectNetwork = chainId === nilavTestnet.id;
-  const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
+  const isCorrectNetwork = chainId === activeNetwork.id;
+  const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const handlePreset = (amount: number) => {
     setStakeAmount(amount.toString());
@@ -158,9 +158,9 @@ export function StakingForm({
       setShowTxModal(true); // Open the modal when staking starts
 
       // Switch to correct chain if needed
-      if (chainId !== nilavTestnet.id) {
+      if (chainId !== activeNetwork.id) {
         try {
-          await switchChain({ chainId: nilavTestnet.id });
+          await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
           throw new Error('Please switch to Nilav Testnet to continue');
         }
@@ -197,14 +197,14 @@ export function StakingForm({
         console.log('  Hash:', result.approveHash);
         console.log(
           '  Link:',
-          `${contracts.nilavTestnet.blockExplorer}/tx/${result.approveHash}`
+          `${activeContracts.blockExplorer}/tx/${result.approveHash}`
         );
         console.log('');
         console.log('Transaction 2: Stake');
         console.log('  Hash:', result.stakeHash);
         console.log(
           '  Link:',
-          `${contracts.nilavTestnet.blockExplorer}/tx/${result.stakeHash}`
+          `${activeContracts.blockExplorer}/tx/${result.stakeHash}`
         );
         console.log('========================================');
 
@@ -278,10 +278,10 @@ export function StakingForm({
         <Button
           variant="primary"
           size="large"
-          onClick={() => switchChain({ chainId: nilavTestnet.id })}
+          onClick={() => switchChain({ chainId: activeNetwork.id })}
           className="setup-button-full"
         >
-          Switch to Nilav Testnet
+          Switch to {activeNetwork.name}
         </Button>
       </div>
     );
@@ -576,7 +576,7 @@ export function StakingForm({
                 {(txStatus?.approveHash || txStatus?.stakeHash) && (
                   <div style={{ marginTop: '0.75rem' }}>
                     <a
-                      href={`${contracts.nilavTestnet.blockExplorer}/tx/${
+                      href={`${activeContracts.blockExplorer}/tx/${
                         txStatus.stakeHash || txStatus.approveHash
                       }`}
                       target="_blank"

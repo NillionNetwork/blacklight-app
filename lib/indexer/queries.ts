@@ -1,7 +1,7 @@
 import { queryIndexer, IndexerResponse } from './client';
 import { STAKING_EVENTS, NILAV_ROUTER_EVENTS } from './events';
 import { getEventSignatureHash, padAddressTo32Bytes } from './helpers';
-import { indexer, contracts } from '@/config';
+import { indexer, activeContracts } from '@/config';
 
 /**
  * Helper for building common operator event queries
@@ -56,7 +56,7 @@ function buildOperatorEventQuery(
   // Build WHERE clause with optional fromBlock filter
   let whereClause = `
       chain = ${indexer.chainId}
-      AND address = '${contracts.nilavTestnet.stakingOperators.toLowerCase()}'
+      AND address = '${activeContracts.stakingOperators.toLowerCase()}'
       AND topics[1] = '${eventSignature}'
       AND topics[2] = '${paddedOperator}'`;
 
@@ -115,7 +115,7 @@ function buildRouterEventQuery(
   // Build WHERE clause - NOTE: node address is in topics[3] for HTX events!
   let whereClause = `
       chain = ${indexer.chainId}
-      AND address = '${contracts.nilavTestnet.nilavRouter.toLowerCase()}'
+      AND address = '${activeContracts.nilavRouter.toLowerCase()}'
       AND topics[1] = '${eventSignature}'
       AND topics[3] = '${paddedNode}'`;
 
@@ -174,7 +174,7 @@ function buildStakerEventQuery(
   // Build WHERE clause - NOTE: staker address is in topics[2] for StakedTo events!
   let whereClause = `
       chain = ${indexer.chainId}
-      AND address = '${contracts.nilavTestnet.stakingOperators.toLowerCase()}'
+      AND address = '${activeContracts.stakingOperators.toLowerCase()}'
       AND topics[1] = '${eventSignature}'
       AND topics[2] = '${paddedStaker}'`;
 
@@ -198,8 +198,8 @@ function buildStakerEventQuery(
 // =============================================================================
 //
 // ALWAYS filter queries by contract address!
-// - Use contracts.nilavTestnet.stakingOperators for staking events
-// - Use contracts.nilavTestnet.nilavRouter for HTX events
+// - Use activeContracts.stakingOperators for staking events
+// - Use activeContracts.nilavRouter for HTX events
 // - NEVER query the entire chain
 //
 // Our helper functions in helpers.ts enforce this requirement.

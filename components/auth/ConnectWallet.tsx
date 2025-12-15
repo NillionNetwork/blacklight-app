@@ -2,7 +2,7 @@
 
 import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
 import { Button } from '@/components/ui'
-import { nilavTestnet } from '@/config'
+import { activeNetwork } from '@/config'
 import { useEffect, useState } from 'react'
 import { useSwitchChain } from 'wagmi'
 
@@ -20,9 +20,9 @@ export function ConnectWallet({ variant = 'primary', size = 'medium' }: ConnectW
 
   // Automatically switch network after connection
   useEffect(() => {
-    if (isConnected && chainId && chainId !== nilavTestnet.id && !autoSwitched && !isPending) {
+    if (isConnected && chainId && chainId !== activeNetwork.id && !autoSwitched && !isPending) {
       setAutoSwitched(true)
-      switchChain({ chainId: nilavTestnet.id })
+      switchChain({ chainId: activeNetwork.id })
     }
     // Reset autoSwitched when disconnected
     if (!isConnected) {
@@ -34,9 +34,9 @@ export function ConnectWallet({ variant = 'primary', size = 'medium' }: ConnectW
     if (!isConnected) {
       // Open wallet connection modal
       open()
-    } else if (chainId !== nilavTestnet.id) {
+    } else if (chainId !== activeNetwork.id) {
       // Switch network if on wrong network
-      switchChain({ chainId: nilavTestnet.id })
+      switchChain({ chainId: activeNetwork.id })
     }
   }
 
@@ -47,7 +47,7 @@ export function ConnectWallet({ variant = 'primary', size = 'medium' }: ConnectW
     if (isPending) {
       return 'Switching Network...'
     }
-    if (chainId !== nilavTestnet.id) {
+    if (chainId !== activeNetwork.id) {
       return 'Switch Network'
     }
     return 'Connected'
@@ -59,7 +59,7 @@ export function ConnectWallet({ variant = 'primary', size = 'medium' }: ConnectW
       size={size}
       onClick={handleClick}
       type="button"
-      disabled={(isConnected && chainId === nilavTestnet.id) || isPending}
+      disabled={(isConnected && chainId === activeNetwork.id) || isPending}
     >
       {getButtonText()}
     </Button>

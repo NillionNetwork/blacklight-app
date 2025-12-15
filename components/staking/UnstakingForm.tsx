@@ -8,7 +8,7 @@ import { Button, Input, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useStakeOf, useUnstakeDelay } from '@/lib/hooks/useStakingOperators';
-import { contracts, nilavTestnet } from '@/config';
+import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
 interface UnstakingFormProps {
@@ -47,7 +47,7 @@ export function UnstakingForm({
     hash?: string;
   } | null>(null);
 
-  const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
+  const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const stakedAmount = stake ? formatUnits(stake, 18) : '0';
   const hasStake = stake && stake > 0n;
@@ -105,9 +105,9 @@ export function UnstakingForm({
 
     try {
       // Switch to correct chain if needed
-      if (chainId !== nilavTestnet.id) {
+      if (chainId !== activeNetwork.id) {
         try {
-          await switchChain({ chainId: nilavTestnet.id });
+          await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
           throw new Error('Please switch to Nilav Testnet to continue');
         }
@@ -271,7 +271,7 @@ export function UnstakingForm({
               {txStatus?.hash && (
                 <div style={{ marginTop: '1rem' }}>
                   <a
-                    href={`${contracts.nilavTestnet.blockExplorer}/tx/${txStatus.hash}`}
+                    href={`${activeContracts.blockExplorer}/tx/${txStatus.hash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

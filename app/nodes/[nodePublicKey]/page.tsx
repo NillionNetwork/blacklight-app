@@ -24,7 +24,7 @@ import {
 } from '@/components/staking';
 import { FundNodeForm } from '@/components/transfer';
 import { ActivityFeed } from '@/components/activity';
-import { contracts, nilavTestnet } from '@/config';
+import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
 export default function NodeDetailPage() {
@@ -32,7 +32,7 @@ export default function NodeDetailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nodeAddress = params.nodePublicKey as `0x${string}`;
-  const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
+  const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const [activeTab, setActiveTab] = useState<
     'activity' | 'stake' | 'unstake' | 'withdraw' | 'fund'
@@ -72,7 +72,7 @@ export default function NodeDetailPage() {
   const { data: nodeBalanceData, isLoading: isLoadingNodeBalance } = useBalance(
     {
       address: nodeAddress,
-      chainId: nilavTestnet.id,
+      chainId: activeNetwork.id,
     }
   );
 
@@ -191,7 +191,7 @@ export default function NodeDetailPage() {
               >
                 Deactivated {formatTimeAgo(deactivationData.data[0].block_timestamp)}{' '}
                 <a
-                  href={`${contracts.nilavTestnet.blockExplorer}/tx/${deactivationData.data[0].tx_hash}`}
+                  href={`${activeContracts.blockExplorer}/tx/${deactivationData.data[0].tx_hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -219,7 +219,7 @@ export default function NodeDetailPage() {
               >
                 Registered {formatTimeAgo(registrationData.data[0].block_timestamp)}{' '}
                 <a
-                  href={`${contracts.nilavTestnet.blockExplorer}/tx/${registrationData.data[0].tx_hash}`}
+                  href={`${activeContracts.blockExplorer}/tx/${registrationData.data[0].tx_hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

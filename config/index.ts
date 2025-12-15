@@ -18,7 +18,22 @@ if (!projectId) {
   );
 }
 
-// Define Nilav (testnet)
+// Active network selection from environment
+// Defaults to nilavTestnet if not specified
+type NetworkKey = 'nilavTestnet' | 'nilavMainnet';
+const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as NetworkKey;
+
+if (!['nilavTestnet', 'nilavMainnet'].includes(NETWORK_KEY)) {
+  throw new Error(
+    `Invalid NEXT_PUBLIC_NETWORK: ${NETWORK_KEY}. Must be 'nilavTestnet' or 'nilavMainnet'`
+  );
+}
+
+// ==============================================
+// NETWORK DEFINITIONS
+// ==============================================
+
+// Define Nilav Testnet
 export const nilavTestnet = defineChain({
   id: 78651,
   name: 'Nilav Testnet',
@@ -54,8 +69,47 @@ export const nilavTestnet = defineChain({
   testnet: true,
 });
 
-// Network array for AppKit
-export const networks = [nilavTestnet];
+// Define Nilav Mainnet
+export const nilavMainnet = defineChain({
+  id: 0, // TODO: Update when mainnet chain ID is known
+  name: 'Nilav Mainnet',
+  nativeCurrency: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-nilav-mainnet.example.com'], // TODO: Update with actual RPC URL
+      webSocket: ['wss://rpc-nilav-mainnet.example.com'], // TODO: Update with actual WebSocket URL
+    },
+    public: {
+      http: ['https://rpc-nilav-mainnet.example.com'],
+      webSocket: ['wss://rpc-nilav-mainnet.example.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Nilav Explorer',
+      url: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
+      apiUrl: 'https://explorer-nilav-mainnet.example.com/api',
+    },
+  },
+  contracts: {},
+  testnet: false,
+});
+
+// Map of all available networks
+export const networkMap = {
+  nilavTestnet,
+  nilavMainnet,
+} as const;
+
+// Active network based on environment variable
+export const activeNetwork = networkMap[NETWORK_KEY];
+
+// Network array for AppKit (only includes active network)
+export const networks = [activeNetwork];
 
 // Wagmi Adapter configuration
 export const wagmiAdapter = new WagmiAdapter({
@@ -71,22 +125,8 @@ export const wagmiAdapter = new WagmiAdapter({
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // ==============================================
-// LEGACY NETWORK CONFIG (for reference/utilities)
+// PLATFORM CONFIGURATION
 // ==============================================
-
-export const networkInfo = {
-  nilavTestnet: {
-    id: 78651,
-    name: 'Nilav Testnet',
-    rpcUrl: 'https://rpc-nilav-shzvox09l5.t.conduit.xyz',
-    blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
-    nativeCurrency: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-  },
-} as const;
 
 export const platforms = {
   mac: {
@@ -116,7 +156,11 @@ export const platforms = {
   },
 } as const;
 
-// Contract addresses
+// ==============================================
+// CONTRACT ADDRESSES
+// ==============================================
+
+// Contract addresses for each network
 export const contracts = {
   nilavTestnet: {
     nilToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
@@ -128,32 +172,62 @@ export const contracts = {
     // This allows event queries to start from deployment instead of querying all history
     stakingOperatorsDeploymentBlock: 700000,
   },
+  nilavMainnet: {
+    nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    nilTokenSymbol: 'NIL',
+    stakingOperators: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    nilavRouter: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    blockExplorer: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
+    stakingOperatorsDeploymentBlock: 0, // TODO: Update with actual deployment block
+  },
 } as const;
 
-// Help and documentation links
+// Active contracts based on environment variable
+export const activeContracts = contracts[NETWORK_KEY];
+
+// ==============================================
+// HELP & DOCUMENTATION
+// ==============================================
+
 export const helpLinks = {
   nilavHelp: 'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
   discord: 'https://discord.gg/nillion',
 } as const;
 
-// Default network - use testnet for development
-export const defaultNetwork = nilavTestnet;
+// ==============================================
+// UTILITIES
+// ==============================================
 
-// Get contract addresses for current network
+// Default network (for backwards compatibility)
+export const defaultNetwork = activeNetwork;
+
+// Get contract addresses for a specific network ID
+// Useful for components that receive chainId from wagmi hooks
 export const getContractAddresses = (networkId: number) => {
   if (networkId === nilavTestnet.id) {
     return contracts.nilavTestnet;
   }
-  throw new Error(`Unsupported network: ${networkId}`);
+  if (networkId === nilavMainnet.id) {
+    return contracts.nilavMainnet;
+  }
+  throw new Error(`Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`);
 };
 
-// Indexer configuration
-// Note: API key is now stored server-side only (not exposed to clients)
+// ==============================================
+// INDEXER CONFIGURATION
+// ==============================================
+
+// Indexer configuration for active network
+// Note: API key is stored server-side only (not exposed to clients)
 // Queries are proxied through /api/indexer route
 export const indexer = {
-  chainId: nilavTestnet.id,
+  chainId: activeNetwork.id,
 } as const;
 
-// Type exports
+// ==============================================
+// TYPE EXPORTS
+// ==============================================
+
 export type Platform = keyof typeof platforms;
-export type NetworkName = keyof typeof networks;
+export type NetworkKey = keyof typeof networkMap;
+export type ContractConfig = typeof activeContracts;

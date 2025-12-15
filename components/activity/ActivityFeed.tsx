@@ -11,7 +11,7 @@ import {
 } from '@/lib/indexer';
 import { Spinner } from '@/components/ui';
 import { getEventConfig, formatEventDescription } from './eventConfig';
-import { contracts } from '@/config';
+import { activeContracts } from '@/config';
 import { toast } from 'sonner';
 
 interface ActivityFeedProps {
@@ -337,7 +337,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
         }}
       >
         <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-          Latest {htxLifecycles.length} HTXs
+          Latest {htxLifecycles.length} HTXs since registration
         </div>
         <button
           onClick={handleRefresh}
@@ -621,7 +621,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                       }}
                     >
                       <a
-                        href={`${contracts.nilavTestnet.blockExplorer}/tx/${htx.assignment.tx_hash}`}
+                        href={`${activeContracts.blockExplorer}/tx/${htx.assignment.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -645,7 +645,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                         <>
                           <span style={{ opacity: 0.5 }}>|</span>
                           <a
-                            href={`${contracts.nilavTestnet.blockExplorer}/tx/${htx.response.tx_hash}`}
+                            href={`${activeContracts.blockExplorer}/tx/${htx.response.tx_hash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{

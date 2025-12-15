@@ -6,7 +6,7 @@ import { formatUnits } from 'viem';
 import { useUserStakedOperators } from '@/lib/hooks';
 import { Spinner } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
-import { contracts } from '@/config';
+import { activeContracts } from '@/config';
 
 export default function NodesPage() {
   const { address, isConnected } = useAppKitAccount();
@@ -16,7 +16,7 @@ export default function NodesPage() {
     isLoading: loading,
     error,
   } = useUserStakedOperators(address as `0x${string}` | undefined);
-  const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
+  const tokenSymbol = activeContracts.nilTokenSymbol;
 
   // Sort operators: active first, then by stake amount
   const sortedOperators = operators

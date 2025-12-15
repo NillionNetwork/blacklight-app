@@ -11,7 +11,7 @@ import {
 import { parseEther, formatEther } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import { Button, TransactionTracker, Modal } from '@/components/ui';
-import { nilavTestnet, contracts } from '@/config';
+import { activeNetwork, activeContracts } from '@/config';
 import { useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
 
@@ -83,7 +83,7 @@ export function FundNodeForm({
   const { data: nodeBalanceData, isLoading: isLoadingNodeBalance } = useBalance(
     {
       address: isValidNodeAddress ? (nodeAddress as `0x${string}`) : undefined,
-      chainId: nilavTestnet.id,
+      chainId: activeNetwork.id,
     }
   );
 
@@ -103,7 +103,7 @@ export function FundNodeForm({
   const [error, setError] = useState<string | null>(null);
   const [showTxModal, setShowTxModal] = useState(false);
 
-  const isCorrectNetwork = chainId === nilavTestnet.id;
+  const isCorrectNetwork = chainId === activeNetwork.id;
 
   const handlePreset = (amount: number) => {
     setFundAmount(amount.toString());
@@ -165,9 +165,9 @@ export function FundNodeForm({
       setShowTxModal(true);
 
       // Switch to correct chain if needed
-      if (chainId !== nilavTestnet.id) {
+      if (chainId !== activeNetwork.id) {
         try {
-          await switchChain({ chainId: nilavTestnet.id });
+          await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
           throw new Error('Please switch to Nilav Testnet to continue');
         }
@@ -227,7 +227,7 @@ export function FundNodeForm({
       console.log('Transaction Hash:', txHash);
       console.log(
         'Explorer Link:',
-        `${contracts.nilavTestnet.blockExplorer}/tx/${txHash}`
+        `${activeContracts.blockExplorer}/tx/${txHash}`
       );
       console.log('===============================');
 
@@ -279,7 +279,7 @@ export function FundNodeForm({
         <Button
           variant="primary"
           size="large"
-          onClick={() => switchChain({ chainId: nilavTestnet.id })}
+          onClick={() => switchChain({ chainId: activeNetwork.id })}
           className="setup-button-full"
         >
           Switch to Nilav Testnet
@@ -542,7 +542,7 @@ export function FundNodeForm({
                 {txStatus?.hash && (
                   <div style={{ marginTop: '0.75rem' }}>
                     <a
-                      href={`${contracts.nilavTestnet.blockExplorer}/tx/${txStatus.hash}`}
+                      href={`${activeContracts.blockExplorer}/tx/${txStatus.hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

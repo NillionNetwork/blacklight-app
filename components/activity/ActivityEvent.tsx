@@ -1,6 +1,6 @@
 'use client';
 
-import { contracts } from '@/config';
+import { activeContracts } from '@/config';
 
 /**
  * Props for a single activity event in the timeline
@@ -126,7 +126,7 @@ export function ActivityEvent({
 
         {/* Transaction link */}
         <a
-          href={`${contracts.nilavTestnet.blockExplorer}/tx/${txHash}`}
+          href={`${activeContracts.blockExplorer}/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -252,7 +252,7 @@ export function ActivityEvent({
           }}
         >
           <a
-            href={`${contracts.nilavTestnet.blockExplorer}/tx/${txHash}`}
+            href={`${activeContracts.blockExplorer}/tx/${txHash}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{

@@ -8,7 +8,7 @@ import { Button, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useUnbondingInfo } from '@/lib/hooks/useStakingOperators';
-import { contracts, nilavTestnet } from '@/config';
+import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
 interface UnbondingFormProps {
@@ -46,7 +46,7 @@ export function UnbondingForm({
   const [error, setError] = useState<string | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
-  const tokenSymbol = contracts.nilavTestnet.nilTokenSymbol;
+  const tokenSymbol = activeContracts.nilTokenSymbol;
 
   // Calculate time remaining for unbonding
   useEffect(() => {
@@ -107,9 +107,9 @@ export function UnbondingForm({
 
     try {
       // Switch to correct chain if needed
-      if (chainId !== nilavTestnet.id) {
+      if (chainId !== activeNetwork.id) {
         try {
-          await switchChain({ chainId: nilavTestnet.id });
+          await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
           throw new Error('Please switch to Nilav Testnet to continue');
         }
@@ -292,7 +292,7 @@ export function UnbondingForm({
               {txStatus?.hash && (
                 <div style={{ marginTop: '1rem' }}>
                   <a
-                    href={`${contracts.nilavTestnet.blockExplorer}/tx/${txStatus.hash}`}
+                    href={`${activeContracts.blockExplorer}/tx/${txStatus.hash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
