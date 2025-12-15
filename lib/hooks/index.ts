@@ -9,3 +9,4 @@ export {
   useUnstakeDelay,
 } from './useStakingOperators'
 export { useUserStakedOperators } from './useUserStakedOperators'
+export { useWalletBalances } from './useWalletBalances'

@@ -12,6 +12,7 @@ import { parseEther, formatEther } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import { Button, TransactionTracker, Modal } from '@/components/ui';
 import { nilavTestnet, contracts } from '@/config';
+import { useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
 
 interface FundNodeFormProps {
@@ -66,11 +67,13 @@ export function FundNodeForm({
       hash: txHash,
     });
 
-  // Fetch ETH balance for connected wallet
-  const { data: balanceData, isLoading: isLoadingBalance } = useBalance({
-    address: address as `0x${string}` | undefined,
-    chainId: nilavTestnet.id,
-  });
+  // Fetch ETH balance for connected wallet using custom hook
+  const { ethBalance, isLoading: isLoadingBalance } = useWalletBalances(
+    address as `0x${string}`
+  );
+  const balanceData = ethBalance
+    ? { value: parseEther(ethBalance.toString()) }
+    : null;
 
   const [nodeAddress, setNodeAddress] = useState(nodeAddressProp || '');
 
@@ -107,22 +110,21 @@ export function FundNodeForm({
   };
 
   const handleMax = () => {
-    if (!balanceData) {
+    if (ethBalance === 0) {
       toast.error('Unable to fetch balance');
       return;
     }
 
     // Leave ~0.001 ETH for gas (rough estimate)
-    const gasReserve = parseEther('0.001');
-    const maxAmount =
-      balanceData.value > gasReserve ? balanceData.value - gasReserve : 0n;
+    const gasReserve = 0.001;
+    const maxAmount = ethBalance > gasReserve ? ethBalance - gasReserve : 0;
 
-    if (maxAmount <= 0n) {
+    if (maxAmount <= 0) {
       toast.error('Insufficient balance for transfer');
       return;
     }
 
-    setFundAmount(formatEther(maxAmount));
+    setFundAmount(maxAmount.toString());
   };
 
   const handleFund = async () => {
@@ -149,15 +151,12 @@ export function FundNodeForm({
     }
 
     // Check if user has enough balance
-    if (balanceData) {
-      const amountWei = parseEther(fundAmount);
-      const gasReserve = parseEther('0.001'); // Reserve for gas
-      const requiredBalance = amountWei + gasReserve;
+    const gasReserve = 0.001; // Reserve for gas
+    const requiredBalance = amount + gasReserve;
 
-      if (balanceData.value < requiredBalance) {
-        toast.error('Insufficient balance (including gas reserve)');
-        return;
-      }
+    if (ethBalance < requiredBalance) {
+      toast.error('Insufficient balance (including gas reserve)');
+      return;
     }
 
     try {
@@ -292,9 +291,7 @@ export function FundNodeForm({
   // Check if user has insufficient balance
   const smallestPresetAmount = Math.min(...presetAmounts);
   const hasInsufficientBalance =
-    balanceData &&
-    !isLoadingBalance &&
-    balanceData.value <= parseEther(smallestPresetAmount.toString());
+    !isLoadingBalance && ethBalance > 0 && ethBalance <= smallestPresetAmount;
 
   // Connected and on correct network - show funding form
   return (
@@ -336,14 +333,14 @@ export function FundNodeForm({
             Balance:{' '}
             {isLoadingBalance ? (
               <span>Loading...</span>
-            ) : balanceData ? (
+            ) : ethBalance > 0 ? (
               <span
                 style={{ color: 'var(--nillion-primary)', fontWeight: 600 }}
               >
-                {Number(formatEther(balanceData.value)).toFixed(4)} ETH
+                {ethBalance.toFixed(4)} ETH
               </span>
             ) : (
-              <span>—</span>
+              <span>0.0000 ETH</span>
             )}
           </div>
         </div>
@@ -459,11 +456,7 @@ export function FundNodeForm({
               <div className="fund-node-warning-title">Not Enough ETH</div>
               <div className="fund-node-warning-text">
                 You need at least {smallestPresetAmount} ETH (plus gas) to fund
-                a node. Your current balance is{' '}
-                {balanceData
-                  ? Number(formatEther(balanceData.value)).toFixed(4)
-                  : '0'}{' '}
-                ETH.
+                a node. Your current balance is {ethBalance.toFixed(4)} ETH.
               </div>
             </div>
           </div>

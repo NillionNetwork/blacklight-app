@@ -2,24 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
-import { useSwitchChain, useBalance, useReadContract } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import { formatUnits } from 'viem';
 import { ConnectWallet } from '@/components/auth';
-import { Button, TransactionTracker, Modal } from '@/components/ui';
+import { Button, TransactionTracker, Modal, BalanceWarning } from '@/components/ui';
 import { nilavTestnet, contracts, helpLinks } from '@/config';
-import { useStakingOperators, useStakeOf } from '@/lib/hooks';
+import { useStakingOperators, useStakeOf, useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
-
-// ERC20 ABI for balanceOf
-const erc20ABI = [
-  {
-    inputs: [{ name: 'account', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
 
 interface StakingFormProps {
   /**
@@ -76,27 +65,13 @@ export function StakingForm({
   const { stake } = useStakeOf(operatorAddress as `0x${string}`);
   const currentStake = stake ? parseFloat(formatUnits(stake, 18)) : 0;
 
-  // Fetch ETH balance
-  const { data: ethBalance, refetch: refetchEthBalance } = useBalance({
-    address: address as `0x${string}`,
-    chainId: nilavTestnet.id,
-  });
-
-  // Fetch staking token balance using contract read
-  const { data: tokenBalance, refetch: refetchTokenBalance } = useReadContract({
-    address: contracts.nilavTestnet.nilToken as `0x${string}`,
-    abi: erc20ABI,
-    functionName: 'balanceOf',
-    args: address ? [address as `0x${string}`] : undefined,
-    chainId: nilavTestnet.id,
-  });
-
-  const ethBalanceFormatted = ethBalance
-    ? parseFloat(formatUnits(ethBalance.value, 18))
-    : 0;
-  const tokenBalanceFormatted = tokenBalance
-    ? parseFloat(formatUnits(tokenBalance as bigint, 18))
-    : 0;
+  // Fetch balances using custom hook
+  const {
+    ethBalance: ethBalanceFormatted,
+    tokenBalance: tokenBalanceFormatted,
+    isLoading: isLoadingBalances,
+    refetchAll: refetchBalances,
+  } = useWalletBalances(address as `0x${string}`);
 
   // Notify parent about stake data changes
   useEffect(() => {
@@ -133,7 +108,7 @@ export function StakingForm({
 
   const handleRecheckBalances = async () => {
     toast.info('Rechecking balances...');
-    await Promise.all([refetchEthBalance(), refetchTokenBalance()]);
+    await refetchBalances();
     toast.success('Balances updated');
   };
 
@@ -397,117 +372,33 @@ export function StakingForm({
         </div>
 
         {/* Error messages for zero balances */}
-        {ethBalanceFormatted === 0 && (
-          <div
-            style={{
-              background: 'rgba(255, 100, 100, 0.1)',
-              border: '1px solid rgba(255, 100, 100, 0.3)',
-              borderRadius: '0.5rem',
-              padding: '0.875rem',
-              marginBottom: '0.75rem',
-              fontSize: '0.875rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.5rem',
-              }}
-            >
-              <span style={{ fontSize: '1rem', lineHeight: 1 }}>⚠️</span>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    color: '#ff6b6b',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  Insufficient ETH Balance
-                </div>
-                <div style={{ opacity: 0.9, marginBottom: '0.75rem' }}>
-                  You need ETH to pay for transaction fees. Please add ETH to
-                  your wallet before staking.
-                </div>
-                <Button
-                  variant="outline"
-                  size="small"
-                  onClick={() => window.open(helpLinks.nilavHelp, '_blank')}
-                  style={{
-                    fontSize: '0.8125rem',
-                    padding: '0.375rem 0.75rem',
-                    height: 'auto',
-                  }}
-                >
-                  Get Help
-                </Button>
-              </div>
-            </div>
-          </div>
+        {!isLoadingBalances && ethBalanceFormatted === 0 && (
+          <BalanceWarning
+            type="eth"
+            helpLink={helpLinks.nilavHelp}
+          />
         )}
 
-        {tokenBalanceFormatted === 0 && (
-          <div
-            style={{
-              background: 'rgba(255, 100, 100, 0.1)',
-              border: '1px solid rgba(255, 100, 100, 0.3)',
-              borderRadius: '0.5rem',
-              padding: '0.875rem',
-              marginBottom: '0.75rem',
-              fontSize: '0.875rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.5rem',
-              }}
-            >
-              <span style={{ fontSize: '1rem', lineHeight: 1 }}>⚠️</span>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    color: '#ff6b6b',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  No {tokenSymbol} Tokens
-                </div>
-                <div style={{ opacity: 0.9, marginBottom: '0.75rem' }}>
-                  You need {tokenSymbol} tokens to stake. Please add{' '}
-                  {tokenSymbol} tokens to your wallet.
-                </div>
-                <Button
-                  variant="outline"
-                  size="small"
-                  onClick={() => window.open(helpLinks.nilavHelp, '_blank')}
-                  style={{
-                    fontSize: '0.8125rem',
-                    padding: '0.375rem 0.75rem',
-                    height: 'auto',
-                  }}
-                >
-                  Get Help
-                </Button>
-              </div>
-            </div>
-          </div>
+        {!isLoadingBalances && tokenBalanceFormatted === 0 && (
+          <BalanceWarning
+            type="token"
+            tokenSymbol={tokenSymbol}
+            helpLink={helpLinks.nilavHelp}
+          />
         )}
 
         {/* Show recheck button when balances are zero */}
-        {(ethBalanceFormatted === 0 || tokenBalanceFormatted === 0) && (
-          <Button
-            variant="primary"
-            size="large"
-            onClick={handleRecheckBalances}
-            style={{ width: '100%' }}
-          >
-            Recheck Balances
-          </Button>
-        )}
+        {!isLoadingBalances &&
+          (ethBalanceFormatted === 0 || tokenBalanceFormatted === 0) && (
+            <Button
+              variant="primary"
+              size="large"
+              onClick={handleRecheckBalances}
+              style={{ width: '100%' }}
+            >
+              Recheck Balances
+            </Button>
+          )}
       </div>
 
       {/* Main Staking Form - Only show if both balances are > 0 */}

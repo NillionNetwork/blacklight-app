@@ -30,3 +30,6 @@ export { LoadingSkeleton } from './LoadingSkeleton';
 export type { LoadingSkeletonProps } from './LoadingSkeleton';
 
 export { TransactionTracker } from './TransactionTracker';
+
+export { BalanceWarning } from './BalanceWarning';
+export type { BalanceWarningProps } from './BalanceWarning';
