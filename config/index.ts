@@ -20,8 +20,7 @@ if (!projectId) {
 
 // Active network selection from environment
 // Defaults to nilavTestnet if not specified
-type NetworkKey = 'nilavTestnet' | 'nilavMainnet';
-const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as NetworkKey;
+const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as 'nilavTestnet' | 'nilavMainnet';
 
 if (!['nilavTestnet', 'nilavMainnet'].includes(NETWORK_KEY)) {
   throw new Error(
