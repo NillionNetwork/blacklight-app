@@ -459,9 +459,9 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
           </thead>
           <tbody>
             {htxLifecycles.map((htx, index) => {
-              const assignedTimeAgo = formatTimeAgo(
-                htx.assignment.block_timestamp
-              );
+              const assignedTimeAgo = htx.assignment.block_timestamp
+                ? formatTimeAgo(htx.assignment.block_timestamp)
+                : `Block #${htx.assignment.block_num}`;
 
               // Calculate verdict
               let verdictText = '';

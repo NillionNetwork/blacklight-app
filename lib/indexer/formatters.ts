@@ -18,21 +18,25 @@ export function normalizeConduitTimestamp(timestamp: string): string {
 
   let normalized = timestamp.trim();
 
-  // Conduit format: "2025-12-12 16:33:18.0 +00:00:00"
+  // Conduit format: "2025-12-12 16:33:18.0 +00:00:00" or "2025-12-16 2:01:12.0 +00:00:00" (with single-digit hour)
   // Target format: "2025-12-12T16:33:18.0+00:00" (ISO 8601)
 
-  // Extract date, time, and timezone parts
+  // Extract date, time, and timezone parts - handle both single and double digit hours
   const match = normalized.match(
-    /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}(?:\.\d+)?)\s+([+-]\d{2}):(\d{2}):(\d{2})$/
+    /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2}):(\d{2}(?:\.\d+)?)\s+([+-]\d{2}):(\d{2}):(\d{2})$/
   );
 
   if (match) {
-    const [, datePart, timePart, tzHour, tzMin] = match;
+    const [, datePart, hour, minute, second, tzHour, tzMin] = match;
+    // Ensure hour is zero-padded to 2 digits
+    const paddedHour = hour.padStart(2, '0');
     // Reconstruct in ISO 8601 format (drop seconds from timezone)
-    normalized = `${datePart}T${timePart}${tzHour}:${tzMin}`;
+    normalized = `${datePart}T${paddedHour}:${minute}:${second}${tzHour}:${tzMin}`;
   } else {
-    // Fallback: simple replacements
+    // Fallback: simple replacements with zero-padding for hour
     normalized = normalized.replace(/\s+([+-]\d{2}):(\d{2}):\d{2}$/, '$1:$2');
+    // Pad single-digit hours before replacing space with T
+    normalized = normalized.replace(/(\d{4}-\d{2}-\d{2})\s+(\d):/, '$1 0$2:');
     normalized = normalized.replace(' ', 'T');
   }
 
@@ -55,6 +59,11 @@ export function formatTimeAgo(timestamp: string): string {
 
   // Check if date is valid
   if (isNaN(date.getTime())) {
+    console.warn('[formatTimeAgo] Invalid timestamp', {
+      original: timestamp,
+      normalized,
+      dateResult: date.toString(),
+    });
     return 'Unknown time';
   }
 

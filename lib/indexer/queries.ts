@@ -363,14 +363,42 @@ export async function getHTXAssignments(
 
   // Strip padding from htxId and node address
   if (result.data && result.data.length > 0) {
-    result.data = result.data.map((event: any) => ({
-      ...event,
-      htxId: event.htxId || event.htxid || '',
-      node:
-        event.node && typeof event.node === 'string'
-          ? '0x' + event.node.replace('0x', '').slice(-40)
-          : nodeAddress.toLowerCase(),
-    }));
+    result.data = result.data.map((event: any) => {
+      // Extract block_timestamp as string (handle various formats from indexer)
+      let timestamp: string | null = null;
+      if (event.block_timestamp) {
+        if (typeof event.block_timestamp === 'string') {
+          timestamp = event.block_timestamp;
+        } else if (typeof event.block_timestamp === 'object' && event.block_timestamp.value) {
+          // Handle case where timestamp is wrapped in an object
+          timestamp = event.block_timestamp.value;
+        } else if (typeof event.block_timestamp === 'object') {
+          // Try to extract from object properties
+          console.warn(`[getHTXAssignments] block_timestamp is an object for HTX ${event.htxId || event.htxid}`, {
+            timestamp_obj: event.block_timestamp,
+            event,
+          });
+          // Try common properties
+          timestamp = event.block_timestamp.toString?.() || JSON.stringify(event.block_timestamp);
+        }
+      } else {
+        console.warn(`[getHTXAssignments] Missing block_timestamp for HTX ${event.htxId || event.htxid}`, {
+          event,
+          block_num: event.block_num,
+        });
+      }
+
+      return {
+        htxId: event.htxId || event.htxid || '',
+        node:
+          event.node && typeof event.node === 'string'
+            ? '0x' + event.node.replace('0x', '').slice(-40)
+            : nodeAddress.toLowerCase(),
+        block_num: event.block_num,
+        block_timestamp: timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
   }
 
   return result;
