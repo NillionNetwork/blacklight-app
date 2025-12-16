@@ -365,7 +365,7 @@ export async function getHTXAssignments(
   if (result.data && result.data.length > 0) {
     result.data = result.data.map((event: any) => {
       // Extract block_timestamp as string (handle various formats from indexer)
-      let timestamp: string | null = null;
+      let timestamp: string = '';
       if (event.block_timestamp) {
         if (typeof event.block_timestamp === 'string') {
           timestamp = event.block_timestamp;
@@ -381,8 +381,10 @@ export async function getHTXAssignments(
           // Try common properties
           timestamp = event.block_timestamp.toString?.() || JSON.stringify(event.block_timestamp);
         }
-      } else {
-        console.warn(`[getHTXAssignments] Missing block_timestamp for HTX ${event.htxId || event.htxid}`, {
+      }
+
+      if (!timestamp) {
+        console.warn(`[getHTXAssignments] Missing or invalid block_timestamp for HTX ${event.htxId || event.htxid}`, {
           event,
           block_num: event.block_num,
         });
