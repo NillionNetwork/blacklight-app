@@ -1,4 +1,4 @@
-# Cross-Node Stats (NilAV Router + StakingOperators)
+# Cross-Node Stats (nilUV Router + StakingOperators)
 
 Single-statement queries for network-wide views. Keep Conduit constraints in mind: no CTEs, no derived tables in FROM, one statement per request.
 

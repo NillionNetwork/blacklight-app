@@ -1,6 +1,6 @@
-# NILAV UI - Nillion Verifier Node Manager
+# nilUV UI - Nillion Universal Verifier Node Manager
 
-Web app that helps users for set up and manage nilAV nodes
+Web app that helps users for set up and manage nilUV nodes
 
 ## 🚀 Quick Start
 

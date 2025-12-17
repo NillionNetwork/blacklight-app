@@ -17,7 +17,7 @@ export default function Home() {
           <h1 className="hero-title">Manage your verifier node</h1>
 
           <p className="hero-subtitle">
-            Set up your nilAV node, contribute to the Blind Computer, and start
+            Set up your nilUV node, contribute to the Blind Computer, and start
             earning rewards in minutes
           </p>
 

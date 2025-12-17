@@ -1,4 +1,4 @@
-# Single Node Stats (NilAV Router + StakingOperators)
+# Single Node Stats (nilUV Router + StakingOperators)
 
 Concrete SQL you can run in Conduit for one node.
 

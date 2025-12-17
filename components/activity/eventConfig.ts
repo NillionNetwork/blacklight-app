@@ -34,7 +34,7 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
     icon: '🎉',
     title: 'Node Registered',
     variant: 'success',
-    descriptionTemplate: 'Operator registered on Nilav network',
+    descriptionTemplate: 'Operator registered on nilUV network',
   },
   operator_deactivated: {
     icon: '⏸️',

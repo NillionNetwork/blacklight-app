@@ -162,7 +162,7 @@ export function StakingForm({
         try {
           await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
-          throw new Error('Please switch to Nilav Testnet to continue');
+          throw new Error('Please switch to Blacklight Testnet to continue');
         }
       }
 
@@ -269,7 +269,7 @@ export function StakingForm({
           }}
         >
           <p style={{ marginBottom: '0.5rem' }}>
-            This app only supports <strong>Nilav Testnet</strong>.
+            This app only supports <strong>Blacklight Testnet</strong>.
           </p>
           <p style={{ fontSize: '0.875rem', opacity: 0.7 }}>
             Current network: {caipNetwork?.name || 'Unknown'}

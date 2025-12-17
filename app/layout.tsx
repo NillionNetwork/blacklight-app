@@ -5,8 +5,8 @@ import { LayoutWrapper } from '@/components/layout';
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "nilAV Dashboard",
-  description: "Set up and manage your Nillion verifier nodes",
+  title: "nilUV Dashboard",
+  description: "Set up and manage your Nillion universal verifier nodes",
 };
 
 export default function RootLayout({

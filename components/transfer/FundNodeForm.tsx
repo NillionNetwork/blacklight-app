@@ -169,7 +169,7 @@ export function FundNodeForm({
         try {
           await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
-          throw new Error('Please switch to Nilav Testnet to continue');
+          throw new Error('Please switch to Blacklight Testnet to continue');
         }
       }
 
@@ -270,7 +270,7 @@ export function FundNodeForm({
           }}
         >
           <p style={{ marginBottom: '0.5rem' }}>
-            This app only supports <strong>Nilav Testnet</strong>.
+            This app only supports <strong>Blacklight Testnet</strong>.
           </p>
           <p style={{ fontSize: '0.875rem', opacity: 0.7 }}>
             Current network: {caipNetwork?.name || 'Unknown'}
@@ -282,7 +282,7 @@ export function FundNodeForm({
           onClick={() => switchChain({ chainId: activeNetwork.id })}
           className="setup-button-full"
         >
-          Switch to Nilav Testnet
+          Switch to Blacklight Testnet
         </Button>
       </div>
     );

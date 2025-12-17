@@ -1,6 +1,6 @@
 // StakingOperators Contract ABI
 // Contract: 0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46: https://explorer-nilav-shzvox09l5.t.conduit.xyz/address/0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46?tab=contract_abi
-// Network: Nilav Testnet
+// Network: Blacklight Testnet
 
 export const stakingOperatorsABI = [
   {

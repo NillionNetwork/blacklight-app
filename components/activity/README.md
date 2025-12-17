@@ -1,6 +1,6 @@
 # Activity Timeline Components
 
-Reusable components for displaying blockchain event timelines in the NilAV UI.
+Reusable components for displaying blockchain event timelines in the nilUV UI.
 
 ## Quick Start
 

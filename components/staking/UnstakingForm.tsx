@@ -109,7 +109,7 @@ export function UnstakingForm({
         try {
           await switchChain({ chainId: activeNetwork.id });
         } catch (switchError: any) {
-          throw new Error('Please switch to Nilav Testnet to continue');
+          throw new Error('Please switch to Blacklight Testnet to continue');
         }
       }
 

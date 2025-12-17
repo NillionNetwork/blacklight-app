@@ -32,10 +32,10 @@ if (!['nilavTestnet', 'nilavMainnet'].includes(NETWORK_KEY)) {
 // NETWORK DEFINITIONS
 // ==============================================
 
-// Define Nilav Testnet
+// Define Blacklight Testnet
 export const nilavTestnet = defineChain({
   id: 78651,
-  name: 'Nilav Testnet',
+  name: 'Blacklight Testnet',
   nativeCurrency: {
     name: 'Ethereum',
     symbol: 'ETH',
@@ -53,7 +53,7 @@ export const nilavTestnet = defineChain({
   },
   blockExplorers: {
     default: {
-      name: 'Nilav Explorer',
+      name: 'Blacklight Explorer',
       url: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
       apiUrl: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz/api',
     },
@@ -68,10 +68,10 @@ export const nilavTestnet = defineChain({
   testnet: true,
 });
 
-// Define Nilav Mainnet
+// Define Blacklight Mainnet
 export const nilavMainnet = defineChain({
   id: 0, // TODO: Update when mainnet chain ID is known
-  name: 'Nilav Mainnet',
+  name: 'Blacklight Mainnet',
   nativeCurrency: {
     name: 'Ethereum',
     symbol: 'ETH',
@@ -89,7 +89,7 @@ export const nilavMainnet = defineChain({
   },
   blockExplorers: {
     default: {
-      name: 'Nilav Explorer',
+      name: 'Blacklight Explorer',
       url: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
       apiUrl: 'https://explorer-nilav-mainnet.example.com/api',
     },

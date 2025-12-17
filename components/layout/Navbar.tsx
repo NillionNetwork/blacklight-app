@@ -22,7 +22,7 @@ export function Navbar() {
               color: 'inherit',
             }}
           >
-            nilAV
+            nilUV
           </Link>
         </div>
 
