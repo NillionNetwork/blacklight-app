@@ -20,7 +20,9 @@ if (!projectId) {
 
 // Active network selection from environment
 // Defaults to nilavTestnet if not specified
-const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as 'nilavTestnet' | 'nilavMainnet';
+const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as
+  | 'nilavTestnet'
+  | 'nilavMainnet';
 
 if (!['nilavTestnet', 'nilavMainnet'].includes(NETWORK_KEY)) {
   throw new Error(
@@ -133,24 +135,31 @@ export const platforms = {
     displayName: 'macOS',
     dockerInstallCommand: 'brew install --cask docker',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
-    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand:
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
     nodeStartCommand: './nilav_node',
   },
   linux: {
     name: 'Linux',
     displayName: 'Linux',
-    dockerInstallCommand: 'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
-    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
-    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerInstallCommand:
+      'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand:
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
     nodeStartCommand: './nilav_node',
   },
   windows: {
     name: 'Windows',
     displayName: 'Windows',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand: 'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
-    dockerRunCommand: 'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+    dockerRunCommand:
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
     nodeStartCommand: './nilav_node',
   },
 } as const;
@@ -162,9 +171,9 @@ export const platforms = {
 // Contract addresses for each network
 export const contracts = {
   nilavTestnet: {
-    nilToken: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
+    nilToken: '0xf65b7cCF9f13ef932093bac19Eb5ea77ee70F4A4',
     nilTokenSymbol: 'NIL',
-    stakingOperators: '0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46',
+    stakingOperators: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
     nilavRouter: '0x34ED5BCD598619f7Aad6e3d9264C38CEb4Cd1edF',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
@@ -189,7 +198,8 @@ export const activeContracts = contracts[NETWORK_KEY];
 // ==============================================
 
 export const helpLinks = {
-  nilavHelp: 'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
+  nilavHelp:
+    'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
   discord: 'https://discord.gg/nillion',
 } as const;
 
@@ -209,7 +219,9 @@ export const getContractAddresses = (networkId: number) => {
   if (networkId === nilavMainnet.id) {
     return contracts.nilavMainnet;
   }
-  throw new Error(`Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`);
+  throw new Error(
+    `Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`
+  );
 };
 
 // ==============================================
