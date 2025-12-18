@@ -46,7 +46,7 @@ export function useWalletBalances(address?: `0x${string}`) {
     ? parseFloat(formatUnits(ethBalance.value, 18))
     : 0;
   const tokenBalanceFormatted = tokenBalance
-    ? parseFloat(formatUnits(tokenBalance as bigint, 18))
+    ? parseFloat(formatUnits(tokenBalance as bigint, activeContracts.nilTokenDecimals))
     : 0;
 
   return {

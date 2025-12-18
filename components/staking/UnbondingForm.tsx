@@ -237,7 +237,7 @@ export function UnbondingForm({
         <div className="unstaking-unbonding-row">
           <span className="unstaking-unbonding-label">Amount: </span>
           <span className="unstaking-unbonding-value">
-            {formatUnits(unbonding.amount, 18)} {tokenSymbol}
+            {formatUnits(unbonding.amount, activeContracts.nilTokenDecimals)} {tokenSymbol}
           </span>
         </div>
         <div className="unstaking-unbonding-row">

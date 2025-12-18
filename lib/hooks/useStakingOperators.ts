@@ -126,8 +126,8 @@ export function useStakingOperators() {
     let approveHash: `0x${string}` | undefined;
 
     try {
-      // Convert amount to wei (18 decimals)
-      const amountInWei = parseUnits(amount, 18);
+      // Convert amount to token base units
+      const amountInWei = parseUnits(amount, activeContracts.nilTokenDecimals);
 
       console.log('=== STAKING PROCESS STARTED ===');
       console.log('Step 1: Approving TEST tokens...');
@@ -240,7 +240,7 @@ export function useStakingOperators() {
     ) => void
   ) => {
     try {
-      const amountInWei = parseUnits(amount, 18);
+      const amountInWei = parseUnits(amount, activeContracts.nilTokenDecimals);
 
       console.log('=== UNSTAKE REQUEST STARTED ===');
       console.log('Requesting unstake...');

@@ -63,7 +63,7 @@ export function StakingForm({
 
   // Fetch current stake for the operator
   const { stake } = useStakeOf(operatorAddress as `0x${string}`);
-  const currentStake = stake ? parseFloat(formatUnits(stake, 18)) : 0;
+  const currentStake = stake ? parseFloat(formatUnits(stake, activeContracts.nilTokenDecimals)) : 0;
 
   // Fetch balances using custom hook
   const {

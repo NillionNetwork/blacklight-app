@@ -243,7 +243,7 @@ export default function NodeDetailPage() {
           <div className="node-overview-stat">
             <div className="node-overview-stat-label">Total Staked</div>
             <div className="node-overview-stat-value">
-              {stake ? formatUnits(stake, 18) : '0'} {tokenSymbol}
+              {stake ? formatUnits(stake, activeContracts.nilTokenDecimals) : '0'} {tokenSymbol}
             </div>
           </div>
 

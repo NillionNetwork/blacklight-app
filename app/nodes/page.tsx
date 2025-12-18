@@ -234,7 +234,7 @@ export default function NodesPage() {
                       lineHeight: 1,
                     }}
                   >
-                    {formatUnits(op.stake, 18)}{' '}
+                    {formatUnits(op.stake, activeContracts.nilTokenDecimals)}{' '}
                     <span style={{ fontSize: '1rem', opacity: 0.8 }}>
                       {tokenSymbol}
                     </span>
