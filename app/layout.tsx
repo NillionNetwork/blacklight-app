@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import { Providers } from './providers';
 import { LayoutWrapper } from '@/components/layout';
 import "./globals.css";
+import "./landing-page.css";
 
 export const metadata: Metadata = {
   title: "nilUV Dashboard",
