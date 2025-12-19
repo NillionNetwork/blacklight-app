@@ -1,12 +1,6 @@
 import { indexer } from '@/config';
 
 /**
- * Base URL for indexer API routes
- * All queries go through our server-side proxy to keep API key secure
- */
-const INDEXER_API_BASE = '/api/indexer';
-
-/**
  * Response structure from Conduit Indexer
  */
 export interface IndexerResponse<T = any> {
@@ -18,8 +12,15 @@ export interface IndexerResponse<T = any> {
 }
 
 /**
- * Query the Conduit Indexer API via our server-side proxy
- * This keeps the API key secure on the server
+ * Detect if running on server-side
+ */
+const isServer = typeof window === 'undefined';
+
+/**
+ * Query the Conduit Indexer API
+ *
+ * SERVER-SIDE: Calls Conduit API directly with API key from env
+ * CLIENT-SIDE: Should never be called - use Server Actions instead
  *
  * @param query - SQL query string
  * @param signatures - Array of event signatures to query
@@ -27,8 +28,9 @@ export interface IndexerResponse<T = any> {
  *
  * @example
  * ```typescript
+ * // Server-side only (in Server Actions or Server Components)
  * const result = await queryIndexer(
- *   "SELECT * FROM operator_registered WHERE operator = '0x...' AND chain = 78651",
+ *   "SELECT * FROM logs WHERE chain = 78651",
  *   ['OperatorRegistered(address indexed operator, string metadataURI)']
  * );
  * ```
@@ -37,8 +39,24 @@ export async function queryIndexer<T = any>(
   query: string,
   signatures: string[]
 ): Promise<IndexerResponse<T>> {
-  // Build URL with query parameters - call our API route instead of Conduit directly
+  if (!isServer) {
+    throw new Error(
+      'queryIndexer() can only be called server-side. Use Server Actions from lib/indexer/actions.ts instead.'
+    );
+  }
+
+  // Get API key from environment (server-side only)
+  const apiKey = process.env.INDEXER_API_KEY;
+  if (!apiKey) {
+    throw new Error('INDEXER_API_KEY environment variable not configured');
+  }
+
+  // Build request to Conduit Indexer API
+  const indexerUrl =
+    process.env.INDEXER_API_URL || 'https://indexing.conduit.xyz/v2/query';
+
   const params = new URLSearchParams({
+    'api-key': apiKey,
     query,
   });
 
@@ -47,7 +65,7 @@ export async function queryIndexer<T = any>(
     params.append('signatures', sig);
   });
 
-  const url = `${INDEXER_API_BASE}?${params.toString()}`;
+  const url = `${indexerUrl}?${params.toString()}`;
 
   try {
     const response = await fetch(url, {
@@ -97,13 +115,17 @@ export async function queryIndexer<T = any>(
 }
 
 /**
- * Test the indexer connection
+ * Test the indexer connection (server-side only)
  */
 export async function testIndexerConnection(): Promise<boolean> {
+  if (!isServer) {
+    throw new Error('testIndexerConnection() can only be called server-side');
+  }
+
   try {
     // Simple query to test connection
     const result = await queryIndexer(
-      `SELECT block_number FROM logs WHERE chain = ${indexer.chainId} LIMIT 1`,
+      `SELECT block_num FROM logs WHERE chain = ${indexer.chainId} LIMIT 1`,
       []
     );
     return result.data.length > 0;

@@ -232,7 +232,7 @@ export const getContractAddresses = (networkId: number) => {
 
 // Indexer configuration for active network
 // Note: API key is stored server-side only (not exposed to clients)
-// Queries are proxied through /api/indexer route
+// Client components use Server Actions from lib/indexer/actions.ts
 export const indexer = {
   chainId: activeNetwork.id,
 } as const;

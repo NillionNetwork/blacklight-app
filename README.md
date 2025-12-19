@@ -118,3 +118,18 @@ export default function NodesPage() {
 - Sonner (toasts)
 - Reown AppKit (wallet connection)
 - wagmi + viem (Web3 integration)
+
+## 🔍 Indexer
+
+Query blockchain events using Server Actions (secure, no SQL injection).
+
+**Complete docs:** **[lib/indexer/README.md](./lib/indexer/README.md)**
+
+**Quick example:**
+```typescript
+import { getHTXAssignments } from '@/lib/indexer';
+
+// Client component: use with useQuery
+// Server component: call directly
+const data = await getHTXAssignments(nodeAddress, undefined, 25);
+```

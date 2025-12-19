@@ -1,0 +1,142 @@
+'use server';
+
+import {
+  getOperatorRegistration as getOperatorRegistrationQuery,
+  getOperatorDeactivation as getOperatorDeactivationQuery,
+  getHTXAssignments as getHTXAssignmentsQuery,
+  getHTXResponses as getHTXResponsesQuery,
+  getStakedEvents as getStakedEventsQuery,
+} from './queries';
+
+/**
+ * ============================================================================
+ * INDEXER SERVER ACTIONS
+ * ============================================================================
+ *
+ * These Server Actions provide secure, validated access to the Conduit Indexer
+ * from client components. They prevent SQL injection by validating all inputs
+ * and only exposing predefined query functions.
+ *
+ * USAGE FROM CLIENT COMPONENTS:
+ * ```typescript
+ * import { getHTXAssignments } from '@/lib/indexer';
+ *
+ * const { data } = useQuery({
+ *   queryKey: ['htx', nodeAddress],
+ *   queryFn: () => getHTXAssignments(nodeAddress, undefined, 25),
+ * });
+ * ```
+ *
+ * SECURITY FEATURES:
+ * - ✅ Input validation (address format, ranges, limits)
+ * - ✅ No arbitrary SQL queries
+ * - ✅ API key never exposed to clients
+ * - ✅ All queries filter by contract address
+ *
+ * ADDING A NEW SERVER ACTION:
+ * 1. Create query function in queries.ts
+ * 2. Add Server Action here with validation
+ * 3. Export from index.ts
+ * 4. See README.md for full guide
+ *
+ * ============================================================================
+ */
+
+/**
+ * Get operator registration event
+ */
+export async function getOperatorRegistration(operatorAddress: string) {
+  // Validate address format
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  return await getOperatorRegistrationQuery(operatorAddress);
+}
+
+/**
+ * Get operator deactivation event
+ */
+export async function getOperatorDeactivation(
+  operatorAddress: string,
+  fromBlock?: number
+) {
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  return await getOperatorDeactivationQuery(operatorAddress, fromBlock);
+}
+
+/**
+ * Get HTX assignments for a node
+ */
+export async function getHTXAssignments(
+  nodeAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!nodeAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid node address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getHTXAssignmentsQuery(nodeAddress, fromBlock, limit);
+}
+
+/**
+ * Get HTX responses from a node
+ */
+export async function getHTXResponses(
+  nodeAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!nodeAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid node address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getHTXResponsesQuery(nodeAddress, fromBlock, limit);
+}
+
+/**
+ * Get staking events for a staker address
+ */
+export async function getStakedEvents(
+  stakerAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!stakerAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid staker address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getStakedEventsQuery(stakerAddress, fromBlock, limit);
+}
