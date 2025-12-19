@@ -50,7 +50,7 @@ export function FundNodeForm({
   onSuccess,
   onError,
   minAmount = 0.001,
-  presetAmounts = [0.005, 0.01],
+  presetAmounts = [0.001, 0.005, 0.01],
   onBalanceDataChange,
 }: FundNodeFormProps) {
   const { isConnected, address } = useAppKitAccount();

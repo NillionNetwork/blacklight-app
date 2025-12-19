@@ -136,9 +136,9 @@ export const platforms = {
     dockerInstallCommand: 'brew install --cask docker',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     nodeStartCommand: './nilav_node',
   },
   linux: {
@@ -147,9 +147,9 @@ export const platforms = {
     dockerInstallCommand:
       'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     nodeStartCommand: './nilav_node',
   },
   windows: {
@@ -157,9 +157,9 @@ export const platforms = {
     displayName: 'Windows',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/nilav/nilav_node:latest',
+      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     nodeStartCommand: './nilav_node',
   },
 } as const;
@@ -174,6 +174,7 @@ export const contracts = {
     nilToken: '0xf65b7cCF9f13ef932093bac19Eb5ea77ee70F4A4',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
+    nilTokenStakeMin: 10,
     stakingOperators: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
     nilavRouter: '0x34ED5BCD598619f7Aad6e3d9264C38CEb4Cd1edF',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
@@ -185,6 +186,7 @@ export const contracts = {
     nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
+    nilTokenStakeMin: 10,
     stakingOperators: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     nilavRouter: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     blockExplorer: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL

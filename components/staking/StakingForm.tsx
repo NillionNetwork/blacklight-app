@@ -5,9 +5,18 @@ import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { useSwitchChain } from 'wagmi';
 import { formatUnits } from 'viem';
 import { ConnectWallet } from '@/components/auth';
-import { Button, TransactionTracker, Modal, BalanceWarning } from '@/components/ui';
+import {
+  Button,
+  TransactionTracker,
+  Modal,
+  BalanceWarning,
+} from '@/components/ui';
 import { activeNetwork, activeContracts, helpLinks } from '@/config';
-import { useStakingOperators, useStakeOf, useWalletBalances } from '@/lib/hooks';
+import {
+  useStakingOperators,
+  useStakeOf,
+  useWalletBalances,
+} from '@/lib/hooks';
 import { toast } from 'sonner';
 
 interface StakingFormProps {
@@ -24,7 +33,7 @@ interface StakingFormProps {
    */
   onError?: (error: Error) => void;
   /**
-   * Minimum stake amount (defaults to 1000)
+   * Minimum stake amount (defaults to config value)
    */
   minStake?: number;
   /**
@@ -49,8 +58,8 @@ export function StakingForm({
   nodeAddress,
   onSuccess,
   onError,
-  minStake = 1,
-  presetAmounts = [1000, 5000, 10000],
+  minStake = activeContracts.nilTokenStakeMin,
+  presetAmounts = [activeContracts.nilTokenStakeMin, 1000, 5000],
   showContinueButton = false,
   onStakeDataChange,
 }: StakingFormProps) {
@@ -63,7 +72,9 @@ export function StakingForm({
 
   // Fetch current stake for the operator
   const { stake } = useStakeOf(operatorAddress as `0x${string}`);
-  const currentStake = stake ? parseFloat(formatUnits(stake, activeContracts.nilTokenDecimals)) : 0;
+  const currentStake = stake
+    ? parseFloat(formatUnits(stake, activeContracts.nilTokenDecimals))
+    : 0;
 
   // Fetch balances using custom hook
   const {
@@ -373,10 +384,7 @@ export function StakingForm({
 
         {/* Error messages for zero balances */}
         {!isLoadingBalances && ethBalanceFormatted === 0 && (
-          <BalanceWarning
-            type="eth"
-            helpLink={helpLinks.nilavHelp}
-          />
+          <BalanceWarning type="eth" helpLink={helpLinks.nilavHelp} />
         )}
 
         {!isLoadingBalances && tokenBalanceFormatted === 0 && (
@@ -404,334 +412,343 @@ export function StakingForm({
       {/* Main Staking Form - Only show if both balances are > 0 */}
       {ethBalanceFormatted > 0 && tokenBalanceFormatted > 0 && (
         <>
-      <div className="staking-form-container">
-        {/* Node Address */}
-        <label className="setup-label staking-label">
-          {nodeAddress ? 'Node Address' : 'Node Address'}
-        </label>
-        {nodeAddress ? (
-          <div className="staking-address-box">
-            <code className="staking-address-code">{operatorAddress}</code>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(operatorAddress);
-                toast.success('Node address copied');
-              }}
-              title="Copy address"
-              className="staking-address-copy-btn"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </button>
-          </div>
-        ) : (
-          <input
-            type="text"
-            value={operatorAddress}
-            onChange={(e) => setOperatorAddress(e.target.value)}
-            placeholder="0x..."
-            className="setup-input"
-            style={{ marginBottom: '1rem', fontSize: '0.875rem' }}
-          />
-        )}
-
-        {/* Stake Amount */}
-        <label className="setup-label staking-label">
-          Amount to Stake
-          <span className="staking-label-hint">
-            (min {minStake.toLocaleString()})
-          </span>
-        </label>
-        <input
-          type="number"
-          value={stakeAmount}
-          onChange={(e) => setStakeAmount(e.target.value)}
-          placeholder="0"
-          min={minStake}
-          className="setup-input"
-          style={{
-            fontSize: '1.25rem',
-            fontWeight: 600,
-            marginBottom: '0.5rem',
-          }}
-        />
-
-        {/* Preset Amounts */}
-        <div className="staking-preset-buttons">
-          {presetAmounts.map((amount) => (
-            <Button
-              key={amount}
-              variant="outline"
-              size="small"
-              onClick={() => handlePreset(amount)}
-            >
-              {amount.toLocaleString()}
-            </Button>
-          ))}
-          <Button
-            variant="outline"
-            size="small"
-            onClick={handleMax}
-            className="staking-max-button"
-          >
-            Max
-          </Button>
-        </div>
-      </div>
-
-      {/* Stake Button */}
-      <Button
-        variant="primary"
-        size="large"
-        disabled={
-          !operatorAddress ||
-          !stakeAmount ||
-          Number.parseFloat(stakeAmount) < minStake ||
-          isStaking ||
-          ethBalanceFormatted === 0 ||
-          tokenBalanceFormatted === 0
-        }
-        onClick={handleStake}
-        style={{ width: '100%' }}
-      >
-        {isStaking
-          ? txStatus?.step === 'approving'
-            ? 'Step 1/2: Approving Tokens...'
-            : txStatus?.step === 'confirming_approve'
-            ? 'Step 1/2: Confirming Approval...'
-            : txStatus?.step === 'staking'
-            ? 'Step 2/2: Staking Tokens...'
-            : txStatus?.step === 'confirming_stake'
-            ? 'Step 2/2: Confirming Stake...'
-            : 'Processing...'
-          : `Stake ${
-              stakeAmount && Number.parseFloat(stakeAmount) >= minStake
-                ? Number.parseFloat(stakeAmount).toLocaleString() +
-                  ' ' +
-                  tokenSymbol
-                : 'Tokens'
-            }`}
-      </Button>
-
-      {/* Transaction Progress Modal */}
-      <Modal
-        isOpen={showTxModal}
-        onClose={() => {
-          // Prevent closing - user must click button
-        }}
-        title={
-          txStatus?.step === 'complete'
-            ? '✓ Staking Complete'
-            : 'Staking in Progress'
-        }
-        showCloseButton={false}
-      >
-        {error ? (
-          <div>
-            <div
-              style={{
-                background: 'rgba(255, 100, 100, 0.1)',
-                border: '1px solid rgba(255, 100, 100, 0.3)',
-                borderRadius: '0.5rem',
-                padding: '1rem',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.75rem',
-              }}
-            >
-              <div style={{ flexShrink: 0, fontSize: '1.5rem', lineHeight: 1 }}>
-                ⚠️
+          <div className="staking-form-container">
+            {/* Node Address */}
+            <label className="setup-label staking-label">
+              {nodeAddress ? 'Node Address' : 'Node Address'}
+            </label>
+            {nodeAddress ? (
+              <div className="staking-address-box">
+                <code className="staking-address-code">{operatorAddress}</code>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(operatorAddress);
+                    toast.success('Node address copied');
+                  }}
+                  title="Copy address"
+                  className="staking-address-copy-btn"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
               </div>
-              <div style={{ flex: 1 }}>
+            ) : (
+              <input
+                type="text"
+                value={operatorAddress}
+                onChange={(e) => setOperatorAddress(e.target.value)}
+                placeholder="0x..."
+                className="setup-input"
+                style={{ marginBottom: '1rem', fontSize: '0.875rem' }}
+              />
+            )}
+
+            {/* Stake Amount */}
+            <label className="setup-label staking-label">
+              Amount to Stake
+              <span className="staking-label-hint">
+                (min {minStake.toLocaleString()})
+              </span>
+            </label>
+            <input
+              type="number"
+              value={stakeAmount}
+              onChange={(e) => setStakeAmount(e.target.value)}
+              placeholder="0"
+              min={minStake}
+              className="setup-input"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+              }}
+            />
+
+            {/* Preset Amounts */}
+            <div className="staking-preset-buttons">
+              {presetAmounts.map((amount) => (
+                <Button
+                  key={amount}
+                  variant="outline"
+                  size="small"
+                  onClick={() => handlePreset(amount)}
+                >
+                  {amount.toLocaleString()}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="small"
+                onClick={handleMax}
+                className="staking-max-button"
+              >
+                Max
+              </Button>
+            </div>
+          </div>
+
+          {/* Stake Button */}
+          <Button
+            variant="primary"
+            size="large"
+            disabled={
+              !operatorAddress ||
+              !stakeAmount ||
+              Number.parseFloat(stakeAmount) < minStake ||
+              isStaking ||
+              ethBalanceFormatted === 0 ||
+              tokenBalanceFormatted === 0
+            }
+            onClick={handleStake}
+            style={{ width: '100%' }}
+          >
+            {isStaking
+              ? txStatus?.step === 'approving'
+                ? 'Step 1/2: Approving Tokens...'
+                : txStatus?.step === 'confirming_approve'
+                ? 'Step 1/2: Confirming Approval...'
+                : txStatus?.step === 'staking'
+                ? 'Step 2/2: Staking Tokens...'
+                : txStatus?.step === 'confirming_stake'
+                ? 'Step 2/2: Confirming Stake...'
+                : 'Processing...'
+              : `Stake ${
+                  stakeAmount && Number.parseFloat(stakeAmount) >= minStake
+                    ? Number.parseFloat(stakeAmount).toLocaleString() +
+                      ' ' +
+                      tokenSymbol
+                    : 'Tokens'
+                }`}
+          </Button>
+
+          {/* Transaction Progress Modal */}
+          <Modal
+            isOpen={showTxModal}
+            onClose={() => {
+              // Prevent closing - user must click button
+            }}
+            title={
+              txStatus?.step === 'complete'
+                ? '✓ Staking Complete'
+                : 'Staking in Progress'
+            }
+            showCloseButton={false}
+          >
+            {error ? (
+              <div>
                 <div
                   style={{
-                    fontWeight: 600,
-                    fontSize: '0.875rem',
-                    color: '#ff6b6b',
-                    marginBottom: '0.375rem',
+                    background: 'rgba(255, 100, 100, 0.1)',
+                    border: '1px solid rgba(255, 100, 100, 0.3)',
+                    borderRadius: '0.5rem',
+                    padding: '1rem',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
                   }}
                 >
-                  Transaction Failed
+                  <div
+                    style={{ flexShrink: 0, fontSize: '1.5rem', lineHeight: 1 }}
+                  >
+                    ⚠️
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        fontSize: '0.875rem',
+                        color: '#ff6b6b',
+                        marginBottom: '0.375rem',
+                      }}
+                    >
+                      Transaction Failed
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.875rem',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                      }}
+                    >
+                      {error}
+                    </div>
+                    {(txStatus?.approveHash || txStatus?.stakeHash) && (
+                      <div style={{ marginTop: '0.75rem' }}>
+                        <a
+                          href={`${activeContracts.blockExplorer}/tx/${
+                            txStatus.stakeHash || txStatus.approveHash
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: 'var(--nillion-primary)',
+                            textDecoration: 'none',
+                            fontSize: '0.8125rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          View on Explorer →
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowTxModal(false);
+                      setError(null);
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setError(null);
+                      setShowTxModal(false);
+                      // Retry by triggering stake again
+                      handleStake();
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              </div>
+            ) : txStatus ? (
+              <div>
+                {/* Transaction Info */}
                 <div
                   style={{
+                    background: 'rgba(138, 137, 255, 0.05)',
+                    border: '1px solid rgba(138, 137, 255, 0.15)',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    marginBottom: '1rem',
                     fontSize: '0.875rem',
                     color: 'rgba(255, 255, 255, 0.8)',
                   }}
                 >
-                  {error}
-                </div>
-                {(txStatus?.approveHash || txStatus?.stakeHash) && (
-                  <div style={{ marginTop: '0.75rem' }}>
-                    <a
-                      href={`${activeContracts.blockExplorer}/tx/${
-                        txStatus.stakeHash || txStatus.approveHash
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    You'll be asked to confirm <strong>2 transactions</strong>:
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.375rem',
+                      fontSize: '0.8125rem',
+                    }}
+                  >
+                    <div
                       style={{
-                        color: 'var(--nillion-primary)',
-                        textDecoration: 'none',
-                        fontSize: '0.8125rem',
-                        display: 'inline-flex',
+                        display: 'flex',
                         alignItems: 'center',
-                        gap: '0.25rem',
+                        gap: '0.5rem',
                       }}
                     >
-                      View on Explorer →
-                    </a>
+                      <span style={{ opacity: 0.6 }}>1.</span>
+                      <span>Approve spending cap for {tokenSymbol} tokens</span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span style={{ opacity: 0.6 }}>2.</span>
+                      <span>Stake tokens to node</span>
+                    </div>
                   </div>
+                </div>
+
+                <TransactionTracker
+                  transactions={[
+                    {
+                      label: 'Token Approval',
+                      hash: txStatus.approveHash,
+                      status:
+                        txStatus.step === 'approving'
+                          ? 'submitted'
+                          : txStatus.step === 'confirming_approve'
+                          ? 'confirming'
+                          : txStatus.approveHash
+                          ? 'confirmed'
+                          : 'pending',
+                      description:
+                        txStatus.step === 'approving'
+                          ? 'Waiting for wallet...'
+                          : txStatus.step === 'confirming_approve'
+                          ? 'Confirming on-chain...'
+                          : txStatus.approveHash
+                          ? 'Confirmed'
+                          : 'Pending',
+                    },
+                    {
+                      label: 'Stake Tokens',
+                      hash: txStatus.stakeHash,
+                      status:
+                        txStatus.step === 'staking'
+                          ? 'submitted'
+                          : txStatus.step === 'confirming_stake'
+                          ? 'confirming'
+                          : txStatus.step === 'complete'
+                          ? 'confirmed'
+                          : 'pending',
+                      description:
+                        txStatus.step === 'staking'
+                          ? 'Waiting for wallet...'
+                          : txStatus.step === 'confirming_stake'
+                          ? 'Confirming on-chain...'
+                          : txStatus.step === 'complete'
+                          ? 'Confirmed'
+                          : 'Waiting for approval...',
+                    },
+                  ]}
+                />
+                {txStatus.step === 'complete' && (
+                  <Button
+                    variant="primary"
+                    size="large"
+                    onClick={() => {
+                      setShowTxModal(false);
+                      // Reset form
+                      setStakeAmount('');
+                      setTxStatus(null);
+                      // Call success callback when user clicks Continue
+                      onSuccess?.(operatorAddress, stakeAmount);
+                    }}
+                    style={{ width: '100%', marginTop: '1.5rem' }}
+                  >
+                    Continue
+                  </Button>
                 )}
               </div>
-            </div>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowTxModal(false);
-                  setError(null);
-                }}
-                style={{ flex: 1 }}
-              >
-                Close
-              </Button>
-              <Button
-                onClick={() => {
-                  setError(null);
-                  setShowTxModal(false);
-                  // Retry by triggering stake again
-                  handleStake();
-                }}
-                style={{ flex: 1 }}
-              >
-                Try Again
-              </Button>
-            </div>
-          </div>
-        ) : txStatus ? (
-          <div>
-            {/* Transaction Info */}
-            <div
-              style={{
-                background: 'rgba(138, 137, 255, 0.05)',
-                border: '1px solid rgba(138, 137, 255, 0.15)',
-                borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
-                marginBottom: '1rem',
-                fontSize: '0.875rem',
-                color: 'rgba(255, 255, 255, 0.8)',
-              }}
-            >
-              <div style={{ marginBottom: '0.5rem' }}>
-                You'll be asked to confirm <strong>2 transactions</strong>:
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.375rem',
-                  fontSize: '0.8125rem',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <span style={{ opacity: 0.6 }}>1.</span>
-                  <span>Approve spending cap for {tokenSymbol} tokens</span>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <span style={{ opacity: 0.6 }}>2.</span>
-                  <span>Stake tokens to node</span>
-                </div>
-              </div>
-            </div>
-
-            <TransactionTracker
-              transactions={[
-                {
-                  label: 'Token Approval',
-                  hash: txStatus.approveHash,
-                  status:
-                    txStatus.step === 'approving'
-                      ? 'submitted'
-                      : txStatus.step === 'confirming_approve'
-                      ? 'confirming'
-                      : txStatus.approveHash
-                      ? 'confirmed'
-                      : 'pending',
-                  description:
-                    txStatus.step === 'approving'
-                      ? 'Waiting for wallet...'
-                      : txStatus.step === 'confirming_approve'
-                      ? 'Confirming on-chain...'
-                      : txStatus.approveHash
-                      ? 'Confirmed'
-                      : 'Pending',
-                },
-                {
-                  label: 'Stake Tokens',
-                  hash: txStatus.stakeHash,
-                  status:
-                    txStatus.step === 'staking'
-                      ? 'submitted'
-                      : txStatus.step === 'confirming_stake'
-                      ? 'confirming'
-                      : txStatus.step === 'complete'
-                      ? 'confirmed'
-                      : 'pending',
-                  description:
-                    txStatus.step === 'staking'
-                      ? 'Waiting for wallet...'
-                      : txStatus.step === 'confirming_stake'
-                      ? 'Confirming on-chain...'
-                      : txStatus.step === 'complete'
-                      ? 'Confirmed'
-                      : 'Waiting for approval...',
-                },
-              ]}
-            />
-            {txStatus.step === 'complete' && (
-              <Button
-                variant="primary"
-                size="large"
-                onClick={() => {
-                  setShowTxModal(false);
-                  // Reset form
-                  setStakeAmount('');
-                  setTxStatus(null);
-                  // Call success callback when user clicks Continue
-                  onSuccess?.(operatorAddress, stakeAmount);
-                }}
-                style={{ width: '100%', marginTop: '1.5rem' }}
-              >
-                Continue
-              </Button>
-            )}
-          </div>
-        ) : null}
-      </Modal>
+            ) : null}
+          </Modal>
         </>
       )}
     </div>
