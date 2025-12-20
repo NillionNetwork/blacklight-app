@@ -780,3 +780,134 @@ export async function getOperatorVotes(
 
   return result;
 }
+
+/**
+ * Get RoundStarted events for specific heartbeatKeys (OPTIMIZED)
+ *
+ * WHEN TO USE:
+ * - When you already know which heartbeatKeys you care about
+ * - Example: After fetching OperatorVoted events, fetch only those rounds
+ *
+ * PERFORMANCE:
+ * - Much faster than getRoundStartedEvents() when filtering by heartbeatKeys
+ * - Only fetches the rounds you actually need
+ * - Example: Fetch 10 specific rounds instead of 100 all rounds
+ *
+ * PATTERN:
+ * ```
+ * // Step 1: Get operator's votes (SQL-filtered by operator)
+ * const votes = await getOperatorVotes(operator);
+ *
+ * // Step 2: Extract unique heartbeatKeys
+ * const heartbeatKeys = [...new Set(votes.data.map(v => v.heartbeatKey))];
+ *
+ * // Step 3: Fetch ONLY those RoundStarted events
+ * const rounds = await getRoundStartedByKeys(heartbeatKeys);
+ * ```
+ *
+ * @param heartbeatKeys - Array of heartbeatKeys to fetch
+ * @param fromBlock - Only return events after this block (optional)
+ * @returns RoundStarted events for the specified heartbeatKeys
+ */
+export async function getRoundStartedByKeys(
+  heartbeatKeys: string[],
+  fromBlock?: number
+): Promise<IndexerResponse<RoundStartedEvent>> {
+  // Handle empty array case
+  if (!heartbeatKeys || heartbeatKeys.length === 0) {
+    return { data: [] };
+  }
+
+  const eventSignature = getEventSignatureHash(HEARTBEAT_MANAGER_EVENTS.RoundStarted);
+
+  // Build IN clause for heartbeatKeys
+  // Need to pad each key to 32 bytes for topics comparison
+  const paddedKeys = heartbeatKeys.map(key => {
+    // If already padded (66 chars: 0x + 64 hex chars), use as-is
+    if (key.length === 66) {
+      return `'${key.toLowerCase()}'`;
+    }
+    // Otherwise pad it
+    const cleaned = key.replace('0x', '').padStart(64, '0');
+    return `'0x${cleaned.toLowerCase()}'`;
+  }).join(', ');
+
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.heartbeatManager.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[2] IN (${paddedKeys})`;
+
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as heartbeatKey,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+  `;
+
+  const result = await queryIndexer<RoundStartedEvent>(query, []);
+
+  // Decode data field (same logic as getRoundStartedEvents)
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      try {
+        // Decode the data field containing: (uint8 round, bytes32 committeeRoot, uint64 snapshotId, uint64 startedAt, uint64 deadline, address[] members, bytes rawHTX)
+        const decoded = decodeAbiParameters(
+          [
+            { type: 'uint8', name: 'round' },
+            { type: 'bytes32', name: 'committeeRoot' },
+            { type: 'uint64', name: 'snapshotId' },
+            { type: 'uint64', name: 'startedAt' },
+            { type: 'uint64', name: 'deadline' },
+            { type: 'address[]', name: 'members' },
+            { type: 'bytes', name: 'rawHTX' }
+          ],
+          event.data as `0x${string}`
+        );
+
+        // Handle case-insensitive field names from SQL
+        const heartbeatKey = event.heartbeatKey || event.heartbeatkey || '';
+
+        return {
+          heartbeatKey,
+          round: Number(decoded[0]),
+          committeeRoot: decoded[1] as string,
+          snapshotId: decoded[2].toString(),
+          startedAt: decoded[3].toString(),
+          deadline: decoded[4].toString(),
+          members: (decoded[5] as string[]).map(m => m.toLowerCase()),
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      } catch (error) {
+        console.error('[getRoundStartedByKeys] Failed to decode event data:', error, event);
+        // Return partial data if decoding fails
+        return {
+          heartbeatKey: event.heartbeatKey || event.heartbeatkey || '',
+          round: 0,
+          committeeRoot: '',
+          snapshotId: '',
+          startedAt: '',
+          deadline: '',
+          members: [],
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      }
+    });
+  }
+
+  return result;
+}
+

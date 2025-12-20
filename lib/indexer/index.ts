@@ -17,6 +17,7 @@ export {
   getStakedEvents,
   // HeartbeatManager actions (new system)
   getRoundStartedEvents,
+  getRoundStartedByKeys,
   getOperatorVotes,
   // Old HTX actions (deprecated - will be removed after migration)
   getHTXAssignments,

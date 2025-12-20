@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   getOperatorRegistration,
   getOperatorDeactivation,
-  getRoundStartedEvents,
+  getRoundStartedByKeys,
   getOperatorVotes,
   formatTimeAgo,
 } from '@/lib/indexer';
@@ -44,13 +44,17 @@ type HeartbeatVerificationLifecycle = {
 
 export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
   // ============================================================================
-  // HEARTBEAT VERIFICATION QUERY PATTERN
+  // OPTIMIZED HEARTBEAT VERIFICATION QUERY PATTERN
   // ============================================================================
-  // We fetch two types of events:
-  // 1. RoundStarted events → find rounds where this operator is in the committee
-  // 2. OperatorVoted events → get this operator's votes
+  // OPTIMIZATION: Instead of fetching ALL rounds and filtering client-side,
+  // we reverse the approach:
   //
-  // Then we combine them to show: Committee Assignment + Vote (if submitted)
+  // 1. Fetch OperatorVoted events (SQL-filtered by operator) ✅ Efficient
+  // 2. Extract unique heartbeatKeys from votes
+  // 3. Fetch ONLY those specific RoundStarted events ✅ Much faster!
+  //
+  // Before: Fetch 100 rounds, filter to ~10 client-side
+  // After:  Fetch ~10 votes, then fetch only those ~10 rounds
   // ============================================================================
 
   // Step 1: Fetch registration event first (this gives us the starting block)
@@ -67,22 +71,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
   // Get the registration block number (starting point for all other events)
   const registrationBlockNum = registrationData?.data?.[0]?.block_num;
 
-  // Step 2: Fetch all recent RoundStarted events (will filter client-side)
-  // NOTE: This returns ALL rounds, we filter by committee membership below
-  // Fetch more than 10 to ensure we get 10 after filtering
-  const {
-    data: roundsData,
-    isLoading: isLoadingRounds,
-    error: roundsError,
-    refetch: refetchRounds,
-  } = useQuery({
-    queryKey: ['round-started', registrationBlockNum],
-    queryFn: () => getRoundStartedEvents(registrationBlockNum, 100),
-    enabled: registrationBlockNum !== undefined,
-    staleTime: 30000, // Cache for 30 seconds (shared across all node pages)
-  });
-
-  // Step 3: Fetch operator's votes
+  // Step 2: Fetch operator's votes FIRST (SQL-filtered, efficient!)
   const {
     data: votesData,
     isLoading: isLoadingVotes,
@@ -92,6 +81,25 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
     queryKey: ['operator-votes', nodeAddress, registrationBlockNum],
     queryFn: () => getOperatorVotes(nodeAddress, registrationBlockNum, 50),
     enabled: registrationBlockNum !== undefined,
+  });
+
+  // Step 3: Extract unique heartbeatKeys from votes
+  const heartbeatKeysFromVotes = useMemo(() => {
+    if (!votesData?.data) return [];
+    const uniqueKeys = [...new Set(votesData.data.map(v => v.heartbeatKey))];
+    return uniqueKeys.filter(key => key && key !== ''); // Remove empty keys
+  }, [votesData]);
+
+  // Step 4: Fetch ONLY the RoundStarted events for those heartbeatKeys (optimized!)
+  const {
+    data: roundsData,
+    isLoading: isLoadingRounds,
+    error: roundsError,
+    refetch: refetchRounds,
+  } = useQuery({
+    queryKey: ['round-started-by-keys', heartbeatKeysFromVotes, registrationBlockNum],
+    queryFn: () => getRoundStartedByKeys(heartbeatKeysFromVotes, registrationBlockNum),
+    enabled: registrationBlockNum !== undefined && heartbeatKeysFromVotes.length > 0,
   });
 
   const isLoading =
@@ -119,16 +127,18 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
   };
 
   // ============================================================================
-  // DATA PROCESSING: Filter and combine committee assignments with votes
+  // DATA PROCESSING: Validate and combine committee assignments with votes
   // ============================================================================
   // NOTE: All hooks must be called before any early returns (Rules of Hooks)
 
-  // Filter rounds where this operator is in the committee
+  // Validate rounds where this operator is in the committee
+  // (This should match all rounds since we queried by operator's votes, but
+  // we validate anyway for data integrity)
   const myCommitteeAssignments = useMemo(() => {
     if (!roundsData?.data || !nodeAddress) return [];
 
     return roundsData.data.filter(round => {
-      // Check if nodeAddress is in the members[] array
+      // Validate: Check if nodeAddress is in the members[] array
       return round.members?.some(
         member => member.toLowerCase() === nodeAddress.toLowerCase()
       );

@@ -7,6 +7,7 @@ import {
   getHTXResponses as getHTXResponsesQuery,
   getStakedEvents as getStakedEventsQuery,
   getRoundStartedEvents as getRoundStartedEventsQuery,
+  getRoundStartedByKeys as getRoundStartedByKeysQuery,
   getOperatorVotes as getOperatorVotesQuery,
 } from './queries';
 
@@ -194,4 +195,39 @@ export async function getOperatorVotes(
   }
 
   return await getOperatorVotesQuery(operatorAddress, fromBlock, limit);
+}
+
+/**
+ * Get RoundStarted events for specific heartbeatKeys (OPTIMIZED)
+ *
+ * This is more efficient than getRoundStartedEvents when you already know
+ * which heartbeatKeys you need (e.g., from operator votes).
+ */
+export async function getRoundStartedByKeys(
+  heartbeatKeys: string[],
+  fromBlock?: number
+) {
+  // Validate heartbeatKeys array
+  if (!Array.isArray(heartbeatKeys)) {
+    throw new Error('heartbeatKeys must be an array');
+  }
+
+  // Validate each heartbeatKey is a valid hex string
+  for (const key of heartbeatKeys) {
+    if (!key.match(/^0x[a-fA-F0-9]+$/)) {
+      throw new Error(`Invalid heartbeatKey format: ${key}`);
+    }
+  }
+
+  // Prevent excessive queries
+  if (heartbeatKeys.length > 100) {
+    throw new Error('Cannot query more than 100 heartbeatKeys at once');
+  }
+
+  // Validate fromBlock
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  return await getRoundStartedByKeysQuery(heartbeatKeys, fromBlock);
 }
