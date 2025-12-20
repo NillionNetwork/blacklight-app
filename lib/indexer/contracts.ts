@@ -30,14 +30,20 @@ export const STAKING_CONTRACT: ContractEventConfig = {
 } as const;
 
 /**
- * NilAVRouter contract configuration
- * Use for: HTXSubmitted, HTXAssigned, HTXResponded
+ * HeartbeatManager contract configuration
+ * Use for: HeartbeatEnqueued, RoundStarted, OperatorVoted, RoundFinalized, HeartbeatStatusChanged
  */
-export const NILAV_ROUTER_CONTRACT: ContractEventConfig = {
+export const HEARTBEAT_MANAGER_CONTRACT: ContractEventConfig = {
   chainId: indexer.chainId,
-  contractAddress: activeContracts.nilavRouter,
-  contractName: 'NilAVRouter',
+  contractAddress: activeContracts.heartbeatManager,
+  contractName: 'HeartbeatManager',
 } as const;
+
+/**
+ * @deprecated Use HEARTBEAT_MANAGER_CONTRACT instead
+ * Legacy export for backward compatibility during migration
+ */
+export const NILAV_ROUTER_CONTRACT = HEARTBEAT_MANAGER_CONTRACT;
 
 /**
  * Helper function to validate a contract config
@@ -53,4 +59,4 @@ export function validateContractConfig(config: ContractEventConfig): void {
 
 // Validate on import to catch configuration errors early
 validateContractConfig(STAKING_CONTRACT);
-validateContractConfig(NILAV_ROUTER_CONTRACT);
+validateContractConfig(HEARTBEAT_MANAGER_CONTRACT);

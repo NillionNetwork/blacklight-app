@@ -6,6 +6,8 @@ import {
   getHTXAssignments as getHTXAssignmentsQuery,
   getHTXResponses as getHTXResponsesQuery,
   getStakedEvents as getStakedEventsQuery,
+  getRoundStartedEvents as getRoundStartedEventsQuery,
+  getOperatorVotes as getOperatorVotesQuery,
 } from './queries';
 
 /**
@@ -139,4 +141,57 @@ export async function getStakedEvents(
   }
 
   return await getStakedEventsQuery(stakerAddress, fromBlock, limit);
+}
+
+// =============================================================================
+// HeartbeatManager Server Actions (New System)
+// =============================================================================
+
+/**
+ * Get all recent RoundStarted events
+ *
+ * NOTE: This returns ALL RoundStarted events, not filtered by operator.
+ * Client must decode data field and filter by operator in members[] array.
+ */
+export async function getRoundStartedEvents(
+  fromBlock?: number,
+  limit?: number
+) {
+  // Validate fromBlock
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  // Validate limit
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getRoundStartedEventsQuery(fromBlock, limit);
+}
+
+/**
+ * Get operator votes for a specific operator
+ */
+export async function getOperatorVotes(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  // Validate address
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  // Validate fromBlock
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  // Validate limit
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getOperatorVotesQuery(operatorAddress, fromBlock, limit);
 }

@@ -269,7 +269,7 @@ export default function NodeDetailPage() {
             }`}
             onClick={() => handleTabChange('activity')}
           >
-            HTX Activity
+            Verification Activity
           </button>
           <button
             className={`node-staking-tab ${

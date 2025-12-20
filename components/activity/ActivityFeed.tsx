@@ -1,16 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   getOperatorRegistration,
   getOperatorDeactivation,
-  getHTXAssignments,
-  getHTXResponses,
+  getRoundStartedEvents,
+  getOperatorVotes,
   formatTimeAgo,
 } from '@/lib/indexer';
+import {
+  getVerdictLabel,
+  getVerdictIcon,
+  getVerdictColor,
+  truncateHeartbeatKey,
+} from '@/lib/utils/heartbeat';
 import { Spinner } from '@/components/ui';
-import { getEventConfig, formatEventDescription } from './eventConfig';
 import { activeContracts } from '@/config';
 import { toast } from 'sonner';
 
@@ -18,48 +23,34 @@ interface ActivityFeedProps {
   nodeAddress: string;
 }
 
-// Union type for all event types we display
-type TimelineEvent =
-  | {
-      type: 'operator_registered' | 'operator_deactivated';
-      block_num: number;
-      block_timestamp: string;
-      tx_hash: string;
-      operator: string;
-    }
-  | {
-      type: 'htx_assigned';
-      block_num: number;
-      block_timestamp: string;
-      tx_hash: string;
-      htxId: string;
-      node: string;
-    }
-  | {
-      type: 'htx_responded';
-      block_num: number;
-      block_timestamp: string;
-      tx_hash: string;
-      htxId: string;
-      node: string;
-      result: boolean;
-    };
+// Type for heartbeat verification lifecycle
+type HeartbeatVerificationLifecycle = {
+  heartbeatKey: string;
+  round: number;
+  assignment: {
+    block_num: number;
+    block_timestamp: string;
+    tx_hash: string;
+    members: string[];
+  };
+  vote?: {
+    block_num: number;
+    block_timestamp: string;
+    tx_hash: string;
+    verdict: number; // 1=Valid, 2=Invalid, 3=Error
+    weight: string;
+  };
+};
 
 export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
   // ============================================================================
-  // DEPENDENT QUERY PATTERN
+  // HEARTBEAT VERIFICATION QUERY PATTERN
   // ============================================================================
-  // We use a two-step approach for optimal performance:
-  // 1. Fetch registration event → get the block number when operator registered
-  // 2. Use that block as the starting point for all other event queries
+  // We fetch two types of events:
+  // 1. RoundStarted events → find rounds where this operator is in the committee
+  // 2. OperatorVoted events → get this operator's votes
   //
-  // Why? An operator can't have events before they registered! This:
-  // - Improves performance (only scans relevant blocks)
-  // - Reduces API costs (fewer blocks to query)
-  // - Makes logical sense (no events before registration)
-  //
-  // This pattern applies per operator address. When navigating to a different
-  // /nodes/[nodeAddress] page, we fetch that operator's registration and events.
+  // Then we combine them to show: Committee Assignment + Vote (if submitted)
   // ============================================================================
 
   // Step 1: Fetch registration event first (this gives us the starting block)
@@ -76,54 +67,41 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
   // Get the registration block number (starting point for all other events)
   const registrationBlockNum = registrationData?.data?.[0]?.block_num;
 
-  // Step 2: Fetch other events ONLY after registration is found
-  // This ensures we only query events that happened after this operator registered
+  // Step 2: Fetch all recent RoundStarted events (will filter client-side)
+  // NOTE: This returns ALL rounds, we filter by committee membership below
+  // Fetch more than 10 to ensure we get 10 after filtering
   const {
-    data: deactivationData,
-    isLoading: isLoadingDeactivation,
-    error: deactivationError,
-    refetch: refetchDeactivation,
+    data: roundsData,
+    isLoading: isLoadingRounds,
+    error: roundsError,
+    refetch: refetchRounds,
   } = useQuery({
-    queryKey: ['operator-deactivation', nodeAddress, registrationBlockNum],
-    queryFn: () => getOperatorDeactivation(nodeAddress, registrationBlockNum),
-    // Only run this query if we have a registration block number
+    queryKey: ['round-started', registrationBlockNum],
+    queryFn: () => getRoundStartedEvents(registrationBlockNum, 100),
     enabled: registrationBlockNum !== undefined,
+    staleTime: 30000, // Cache for 30 seconds (shared across all node pages)
   });
 
-  // Step 3: Fetch HTX events (these show the actual verification work)
-  // Limit to 25 events for performance
+  // Step 3: Fetch operator's votes
   const {
-    data: htxAssignmentsData,
-    isLoading: isLoadingHTXAssignments,
-    error: htxAssignmentsError,
-    refetch: refetchHTXAssignments,
+    data: votesData,
+    isLoading: isLoadingVotes,
+    error: votesError,
+    refetch: refetchVotes,
   } = useQuery({
-    queryKey: ['htx-assignments', nodeAddress, registrationBlockNum],
-    queryFn: () => getHTXAssignments(nodeAddress, registrationBlockNum, 10),
-    enabled: registrationBlockNum !== undefined,
-  });
-
-  const {
-    data: htxResponsesData,
-    isLoading: isLoadingHTXResponses,
-    error: htxResponsesError,
-    refetch: refetchHTXResponses,
-  } = useQuery({
-    queryKey: ['htx-responses', nodeAddress, registrationBlockNum],
-    queryFn: () => getHTXResponses(nodeAddress, registrationBlockNum, 10),
+    queryKey: ['operator-votes', nodeAddress, registrationBlockNum],
+    queryFn: () => getOperatorVotes(nodeAddress, registrationBlockNum, 50),
     enabled: registrationBlockNum !== undefined,
   });
 
   const isLoading =
     isLoadingRegistration ||
-    isLoadingDeactivation ||
-    isLoadingHTXAssignments ||
-    isLoadingHTXResponses;
+    isLoadingRounds ||
+    isLoadingVotes;
   const error =
     registrationError ||
-    deactivationError ||
-    htxAssignmentsError ||
-    htxResponsesError;
+    roundsError ||
+    votesError;
 
   // Manual refresh handler
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -132,14 +110,86 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
     try {
       await Promise.all([
         refetchRegistration(),
-        refetchDeactivation(),
-        refetchHTXAssignments(),
-        refetchHTXResponses(),
+        refetchRounds(),
+        refetchVotes(),
       ]);
     } finally {
       setIsRefreshing(false);
     }
   };
+
+  // ============================================================================
+  // DATA PROCESSING: Filter and combine committee assignments with votes
+  // ============================================================================
+  // NOTE: All hooks must be called before any early returns (Rules of Hooks)
+
+  // Filter rounds where this operator is in the committee
+  const myCommitteeAssignments = useMemo(() => {
+    if (!roundsData?.data || !nodeAddress) return [];
+
+    return roundsData.data.filter(round => {
+      // Check if nodeAddress is in the members[] array
+      return round.members?.some(
+        member => member.toLowerCase() === nodeAddress.toLowerCase()
+      );
+    });
+  }, [roundsData, nodeAddress]);
+
+  // Create a map of votes by heartbeatKey + round for quick lookup
+  const voteMap = useMemo(() => {
+    if (!votesData?.data) return new Map();
+
+    const map = new Map<string, typeof votesData.data[0]>();
+    votesData.data.forEach(vote => {
+      const key = `${vote.heartbeatKey}-${vote.round}`;
+      map.set(key, vote);
+    });
+    return map;
+  }, [votesData]);
+
+  // Combine committee assignments with votes
+  const heartbeatLifecycles = useMemo(() => {
+    // Filter out malformed assignments
+    const validAssignments = myCommitteeAssignments.filter(assignment => {
+      return assignment.heartbeatKey &&
+             assignment.round !== undefined &&
+             assignment.round >= 0 &&
+             assignment.tx_hash;
+    });
+
+    const lifecycles: HeartbeatVerificationLifecycle[] = validAssignments
+      .map(assignment => {
+        const voteKey = `${assignment.heartbeatKey}-${assignment.round}`;
+        const vote = voteMap.get(voteKey);
+
+        return {
+          heartbeatKey: assignment.heartbeatKey,
+          round: assignment.round,
+          assignment: {
+            block_num: assignment.block_num,
+            block_timestamp: assignment.block_timestamp,
+            tx_hash: assignment.tx_hash,
+            members: assignment.members,
+          },
+          vote: vote ? {
+            block_num: vote.block_num,
+            block_timestamp: vote.block_timestamp,
+            tx_hash: vote.tx_hash,
+            verdict: vote.verdict,
+            weight: vote.weight,
+          } : undefined,
+        };
+      });
+
+    // Sort by assignment time (most recent first) and limit to 10
+    return lifecycles
+      .sort((a, b) => b.assignment.block_num - a.assignment.block_num)
+      .slice(0, 10);
+  }, [myCommitteeAssignments, voteMap]);
+
+  // ============================================================================
+  // EARLY RETURNS (after all hooks are called)
+  // ============================================================================
 
   if (isLoading) {
     return (
@@ -170,76 +220,8 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
     );
   }
 
-  // Group HTX events by htxId to show lifecycle
-  type HTXLifecycle = {
-    htxId: string;
-    assignment: {
-      block_num: number;
-      block_timestamp: string;
-      tx_hash: string;
-    };
-    response?: {
-      block_num: number;
-      block_timestamp: string;
-      tx_hash: string;
-      result: boolean;
-    };
-  };
-
-  const htxMap = new Map<string, HTXLifecycle>();
-
-  // Process assignments
-  if (htxAssignmentsData?.data) {
-    htxAssignmentsData.data.forEach((event) => {
-      htxMap.set(event.htxId, {
-        htxId: event.htxId,
-        assignment: {
-          block_num: event.block_num,
-          block_timestamp: event.block_timestamp,
-          tx_hash: event.tx_hash,
-        },
-      });
-    });
-  }
-
-  // Process responses
-  if (htxResponsesData?.data) {
-    htxResponsesData.data.forEach((event) => {
-      const existing = htxMap.get(event.htxId);
-      if (existing) {
-        existing.response = {
-          block_num: event.block_num,
-          block_timestamp: event.block_timestamp,
-          tx_hash: event.tx_hash,
-          result: event.result,
-        };
-      } else {
-        // Response without assignment (shouldn't happen, but handle it)
-        htxMap.set(event.htxId, {
-          htxId: event.htxId,
-          assignment: {
-            block_num: event.block_num,
-            block_timestamp: event.block_timestamp,
-            tx_hash: event.tx_hash,
-          },
-          response: {
-            block_num: event.block_num,
-            block_timestamp: event.block_timestamp,
-            tx_hash: event.tx_hash,
-            result: event.result,
-          },
-        });
-      }
-    });
-  }
-
-  // Convert map to array and sort by assignment time (most recent first)
-  const htxLifecycles = Array.from(htxMap.values()).sort(
-    (a, b) => b.assignment.block_num - a.assignment.block_num
-  );
-
-  // No HTX activity yet
-  if (htxLifecycles.length === 0) {
+  // No committee assignments yet
+  if (heartbeatLifecycles.length === 0) {
     return (
       <div>
         {/* Header with refresh button */}
@@ -252,7 +234,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
           }}
         >
           <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-            No HTX events yet
+            No committee assignments yet
           </div>
           <button
             onClick={handleRefresh}
@@ -313,12 +295,12 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
               marginBottom: '0.5rem',
             }}
           >
-            No HTX Activity Yet
+            No Verification Activity Yet
           </div>
           <div style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>
-            Once this node is assigned HTX verification tasks,
+            Once this node is selected for committee verification,
             <br />
-            they will appear here.
+            assignments will appear here.
           </div>
         </div>
       </div>
@@ -337,7 +319,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
         }}
       >
         <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-          Latest {htxLifecycles.length} HTXs since registration
+          Latest 10 committee assignments
         </div>
         <button
           onClick={handleRefresh}
@@ -414,7 +396,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                HTX ID
+                Heartbeat
               </th>
               <th
                 style={{
@@ -427,7 +409,33 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                Verdict
+                Round
+              </th>
+              <th
+                style={{
+                  padding: '0.875rem 1rem',
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  fontSize: '0.8125rem',
+                  opacity: 0.7,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Committee
+              </th>
+              <th
+                style={{
+                  padding: '0.875rem 1rem',
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  fontSize: '0.8125rem',
+                  opacity: 0.7,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                My Verdict
               </th>
               <th
                 style={{
@@ -458,28 +466,36 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
             </tr>
           </thead>
           <tbody>
-            {htxLifecycles.map((htx, index) => {
-              const assignedTimeAgo = htx.assignment.block_timestamp
-                ? formatTimeAgo(htx.assignment.block_timestamp)
-                : `Block #${htx.assignment.block_num}`;
+            {heartbeatLifecycles.map((heartbeat, index) => {
+              const assignedTimeAgo = heartbeat.assignment.block_timestamp
+                ? formatTimeAgo(heartbeat.assignment.block_timestamp)
+                : `Block #${heartbeat.assignment.block_num}`;
 
-              // Calculate verdict
+              // Calculate verdict display
               let verdictText = '';
               let verdictIcon = '';
               let verdictColor = '';
               let bgColor = '';
 
-              if (htx.response) {
-                if (htx.response.result) {
-                  verdictText = 'Valid';
-                  verdictIcon = '✓';
+              if (heartbeat.vote) {
+                // Use utility functions for verdict display
+                const verdict = heartbeat.vote.verdict;
+                verdictText = getVerdictLabel(verdict);
+                verdictIcon = getVerdictIcon(verdict);
+
+                // Color mapping
+                if (verdict === 1) { // Valid
                   verdictColor = 'rgba(76, 175, 80, 1)';
                   bgColor = 'rgba(76, 175, 80, 0.1)';
-                } else {
-                  verdictText = 'Invalid';
-                  verdictIcon = '✗';
+                } else if (verdict === 2) { // Invalid
                   verdictColor = 'rgba(244, 67, 54, 1)';
                   bgColor = 'rgba(244, 67, 54, 0.1)';
+                } else if (verdict === 3) { // Error
+                  verdictColor = 'rgba(255, 152, 0, 1)';
+                  bgColor = 'rgba(255, 152, 0, 0.1)';
+                } else {
+                  verdictColor = 'rgba(158, 158, 158, 1)';
+                  bgColor = 'rgba(158, 158, 158, 0.1)';
                 }
               } else {
                 // Still pending verdict
@@ -489,11 +505,11 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                 bgColor = 'rgba(255, 152, 0, 0.1)';
               }
 
-              const isLastRow = index === htxLifecycles.length - 1;
+              const isLastRow = index === heartbeatLifecycles.length - 1;
 
               return (
                 <tr
-                  key={htx.htxId}
+                  key={`${heartbeat.heartbeatKey || 'unknown'}-${heartbeat.round}-${heartbeat.assignment.tx_hash}`}
                   style={{
                     borderBottom: isLastRow
                       ? 'none'
@@ -507,7 +523,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                     e.currentTarget.style.background = 'transparent';
                   }}
                 >
-                  {/* HTX ID Column */}
+                  {/* Heartbeat Key Column */}
                   <td style={{ padding: '0.875rem 1rem' }}>
                     <div
                       style={{
@@ -523,14 +539,14 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                           opacity: 0.8,
                           whiteSpace: 'nowrap',
                         }}
-                        title={htx.htxId}
+                        title={heartbeat.heartbeatKey}
                       >
-                        {htx.htxId.slice(0, 10)}...{htx.htxId.slice(-6)}
+                        {truncateHeartbeatKey(heartbeat.heartbeatKey)}
                       </code>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(htx.htxId);
-                          toast.success('HTX ID copied to clipboard');
+                          navigator.clipboard.writeText(heartbeat.heartbeatKey);
+                          toast.success('Heartbeat key copied to clipboard');
                         }}
                         style={{
                           background: 'none',
@@ -549,7 +565,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.opacity = '0.6';
                         }}
-                        title="Copy HTX ID"
+                        title="Copy heartbeat key"
                       >
                         <svg
                           width="14"
@@ -573,6 +589,20 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                         </svg>
                       </button>
                     </div>
+                  </td>
+
+                  {/* Round Column */}
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    <span style={{ fontSize: '0.875rem', opacity: 0.8 }}>
+                      #{heartbeat.round}
+                    </span>
+                  </td>
+
+                  {/* Committee Size Column */}
+                  <td style={{ padding: '0.875rem 1rem' }}>
+                    <span style={{ fontSize: '0.875rem', opacity: 0.7 }}>
+                      {heartbeat.assignment.members.length} members
+                    </span>
                   </td>
 
                   {/* Verdict Column */}
@@ -621,7 +651,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                       }}
                     >
                       <a
-                        href={`${activeContracts.blockExplorer}/tx/${htx.assignment.tx_hash}`}
+                        href={`${activeContracts.blockExplorer}/tx/${heartbeat.assignment.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -637,15 +667,15 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.textDecoration = 'none';
                         }}
-                        title="View assignment transaction"
+                        title="View committee assignment transaction"
                       >
                         Assignment ↗
                       </a>
-                      {htx.response && (
+                      {heartbeat.vote && (
                         <>
                           <span style={{ opacity: 0.5 }}>|</span>
                           <a
-                            href={`${activeContracts.blockExplorer}/tx/${htx.response.tx_hash}`}
+                            href={`${activeContracts.blockExplorer}/tx/${heartbeat.vote.tx_hash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -662,9 +692,9 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                             onMouseLeave={(e) => {
                               e.currentTarget.style.textDecoration = 'none';
                             }}
-                            title="View response transaction"
+                            title="View vote transaction"
                           >
-                            Response ↗
+                            Vote ↗
                           </a>
                         </>
                       )}

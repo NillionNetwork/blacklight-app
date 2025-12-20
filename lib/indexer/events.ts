@@ -6,9 +6,29 @@
  */
 
 // =============================================================================
-// NilAVRouter Events
+// HeartbeatManager Events (New System)
 // =============================================================================
 
+export const HEARTBEAT_MANAGER_EVENTS = {
+  HeartbeatEnqueued: 'HeartbeatEnqueued(bytes32 indexed heartbeatKey, bytes rawHTX, address indexed submitter)',
+
+  RoundStarted: 'RoundStarted(bytes32 indexed heartbeatKey, uint8 round, bytes32 committeeRoot, uint64 snapshotId, uint64 startedAt, uint64 deadline, address[] members, bytes rawHTX)',
+
+  OperatorVoted: 'OperatorVoted(bytes32 indexed heartbeatKey, uint8 round, address indexed operator, uint8 verdict, uint256 weight)',
+
+  RoundFinalized: 'RoundFinalized(bytes32 indexed heartbeatKey, uint8 round, uint8 outcome)',
+
+  HeartbeatStatusChanged: 'HeartbeatStatusChanged(bytes32 indexed heartbeatKey, uint8 oldStatus, uint8 newStatus, uint8 round)',
+} as const;
+
+// =============================================================================
+// NilAVRouter Events (DEPRECATED - Old HTX System)
+// =============================================================================
+
+/**
+ * @deprecated Use HEARTBEAT_MANAGER_EVENTS instead
+ * These events are from the old HTX-based system and will be removed after migration
+ */
 export const NILAV_ROUTER_EVENTS = {
   HTXSubmitted: 'HTXSubmitted(bytes32 indexed htxId, bytes32 indexed rawHTXHash, address indexed sender)',
   HTXAssigned: 'HTXAssigned(bytes32 indexed htxId, address indexed node)',
@@ -36,6 +56,8 @@ export const STAKING_EVENTS = {
 // =============================================================================
 
 export const ALL_EVENTS = {
-  ...NILAV_ROUTER_EVENTS,
+  ...HEARTBEAT_MANAGER_EVENTS,
   ...STAKING_EVENTS,
+  // Old HTX events still exported for backward compatibility during migration
+  ...NILAV_ROUTER_EVENTS,
 } as const;

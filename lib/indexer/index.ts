@@ -14,9 +14,13 @@
 export {
   getOperatorRegistration,
   getOperatorDeactivation,
+  getStakedEvents,
+  // HeartbeatManager actions (new system)
+  getRoundStartedEvents,
+  getOperatorVotes,
+  // Old HTX actions (deprecated - will be removed after migration)
   getHTXAssignments,
   getHTXResponses,
-  getStakedEvents,
 } from './actions';
 
 // Export server-side utilities (Server Components/Actions only)

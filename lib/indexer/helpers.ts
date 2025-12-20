@@ -1,4 +1,6 @@
 import { keccak256, toBytes, pad, getAddress } from 'viem';
+import { indexer, activeContracts } from '@/config';
+import { HEARTBEAT_MANAGER_EVENTS } from './events';
 
 /**
  * Helper utilities for building Conduit Indexer queries
@@ -310,4 +312,67 @@ export function buildContractEventQuery(
     eventSignature,
     options
   );
+}
+
+// =============================================================================
+// HeartbeatManager-Specific Query Builders
+// =============================================================================
+
+/**
+ * Helper for building HeartbeatManager event queries
+ *
+ * WHEN TO USE:
+ * - OperatorVoted events (filter by specific operator)
+ * - Any HeartbeatManager event indexed by operator address
+ *
+ * HOW IT WORKS:
+ * - Filters events by operator address in topics[3]
+ * - Returns SQL query string for Conduit Indexer
+ *
+ * DON'T USE FOR:
+ * - RoundStarted events (see getRoundStartedEvents query instead - requires special handling)
+ *
+ * @param eventName - Event from HEARTBEAT_MANAGER_EVENTS
+ * @param operatorAddress - Operator to filter by
+ * @param options - Query customization (fields, limit, ordering)
+ * @returns SQL query string
+ */
+export function buildHeartbeatEventQuery(
+  eventName: keyof typeof HEARTBEAT_MANAGER_EVENTS,
+  operatorAddress: string,
+  options: {
+    selectFields?: string[];
+    limit?: number;
+    orderBy?: string;
+    fromBlock?: number;
+  } = {}
+): string {
+  const {
+    selectFields = ['topics[2] as heartbeatKey', 'topics[3] as operator', 'block_num', 'block_timestamp', 'tx_hash'],
+    limit = 50,
+    orderBy = 'block_num DESC',
+    fromBlock,
+  } = options;
+
+  const eventSignature = getEventSignatureHash(HEARTBEAT_MANAGER_EVENTS[eventName]);
+  const paddedOperator = padAddressTo32Bytes(operatorAddress);
+
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.heartbeatManager.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[3] = '${paddedOperator}'`;
+
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  return `
+    SELECT
+      ${selectFields.join(',\n      ')}
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY ${orderBy}
+    LIMIT ${limit}
+  `;
 }

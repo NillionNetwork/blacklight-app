@@ -176,7 +176,7 @@ export const contracts = {
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
     stakingOperators: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
-    nilavRouter: '0x34ED5BCD598619f7Aad6e3d9264C38CEb4Cd1edF',
+    heartbeatManager: '0x3dbE95E20B370C5295E7436e2d887cFda8bcb02c',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
@@ -188,7 +188,7 @@ export const contracts = {
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
     stakingOperators: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
-    nilavRouter: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    heartbeatManager: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     blockExplorer: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
     stakingOperatorsDeploymentBlock: 0, // TODO: Update with actual deployment block
   },

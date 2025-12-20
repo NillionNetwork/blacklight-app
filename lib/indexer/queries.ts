@@ -1,7 +1,8 @@
 import { queryIndexer, IndexerResponse } from './client';
-import { STAKING_EVENTS, NILAV_ROUTER_EVENTS } from './events';
-import { getEventSignatureHash, padAddressTo32Bytes } from './helpers';
+import { STAKING_EVENTS, NILAV_ROUTER_EVENTS, HEARTBEAT_MANAGER_EVENTS } from './events';
+import { getEventSignatureHash, padAddressTo32Bytes, buildHeartbeatEventQuery } from './helpers';
 import { indexer, activeContracts } from '@/config';
+import { decodeAbiParameters } from 'viem';
 
 /**
  * Helper for building common operator event queries
@@ -115,7 +116,7 @@ function buildRouterEventQuery(
   // Build WHERE clause - NOTE: node address is in topics[3] for HTX events!
   let whereClause = `
       chain = ${indexer.chainId}
-      AND address = '${activeContracts.nilavRouter.toLowerCase()}'
+      AND address = '${activeContracts.heartbeatManager.toLowerCase()}'
       AND topics[1] = '${eventSignature}'
       AND topics[3] = '${paddedNode}'`;
 
@@ -199,10 +200,13 @@ function buildStakerEventQuery(
 //
 // ALWAYS filter queries by contract address!
 // - Use activeContracts.stakingOperators for staking events
-// - Use activeContracts.nilavRouter for HTX events
+// - Use activeContracts.heartbeatManager for heartbeat/verification events
 // - NEVER query the entire chain
 //
 // Our helper functions in helpers.ts enforce this requirement.
+//
+// ⚠️ NOTE: Event queries below still use old HTX event format.
+// See docs/MIGRATION.md for complete HeartbeatManager event migration guide.
 //
 // =============================================================================
 
@@ -249,6 +253,76 @@ export interface StakedEvent extends BlockchainEvent {
 }
 
 /**
+ * HeartbeatEnqueued event
+ *
+ * WHEN EMITTED: When a new heartbeat is submitted to the system
+ * USE CASE: Track heartbeat submissions, show recent activity
+ */
+export interface HeartbeatEnqueuedEvent extends BlockchainEvent {
+  heartbeatKey: string;
+  submitter: string;
+  // rawHTX is in data field
+}
+
+/**
+ * RoundStarted event
+ *
+ * WHEN EMITTED: When a new verification round begins with selected committee
+ * USE CASE: Show committee assignments, check if operator is selected
+ * IMPORTANT: members[] array is in data field - requires client-side decoding
+ */
+export interface RoundStartedEvent extends BlockchainEvent {
+  heartbeatKey: string;
+  round: number;
+  committeeRoot: string;
+  snapshotId: string;
+  startedAt: string;
+  deadline: string;
+  members: string[];  // Decoded from data field - committee member addresses
+  // rawHTX is in data field
+}
+
+/**
+ * OperatorVoted event
+ *
+ * WHEN EMITTED: When an operator submits their verification vote
+ * USE CASE: Show operator's voting history, track participation
+ */
+export interface OperatorVotedEvent extends BlockchainEvent {
+  heartbeatKey: string;
+  round: number;
+  operator: string;
+  verdict: number;  // 1=Valid, 2=Invalid, 3=Error
+  weight: string;   // Stake weight at time of vote
+}
+
+/**
+ * RoundFinalized event
+ *
+ * WHEN EMITTED: When a round completes and outcome is determined
+ * USE CASE: Show round results, track consensus outcomes
+ */
+export interface RoundFinalizedEvent extends BlockchainEvent {
+  heartbeatKey: string;
+  round: number;
+  outcome: number;  // 0=Inconclusive, 1=ValidThreshold, 2=InvalidThreshold
+}
+
+/**
+ * HeartbeatStatusChanged event
+ *
+ * WHEN EMITTED: When heartbeat status changes (e.g., Pending → Verified)
+ * USE CASE: Show final heartbeat verification results
+ */
+export interface HeartbeatStatusChangedEvent extends BlockchainEvent {
+  heartbeatKey: string;
+  oldStatus: number;
+  newStatus: number;  // 0=None, 1=Pending, 2=Verified, 3=Invalid, 4=Expired
+  round: number;
+}
+
+/**
+ * @deprecated Use HeartbeatManager events instead
  * HTXAssigned event data
  * Emitted when an HTX verification task is assigned to a node
  */
@@ -258,6 +332,7 @@ export interface HTXAssignedEvent extends BlockchainEvent {
 }
 
 /**
+ * @deprecated Use HeartbeatManager events instead
  * HTXResponded event data
  * Emitted when a node responds to an HTX verification task
  */
@@ -499,6 +574,208 @@ export async function getStakedEvents(
       block_timestamp: event.block_timestamp,
       tx_hash: event.tx_hash,
     }));
+  }
+
+  return result;
+}
+
+// =============================================================================
+// HeartbeatManager Query Functions (New System)
+// =============================================================================
+
+/**
+ * Get RoundStarted events (all recent committees)
+ *
+ * WHAT IT RETURNS:
+ * - All RoundStarted events (not filtered by operator)
+ * - Contains raw data field that needs client-side decoding
+ *
+ * CLIENT-SIDE STEPS:
+ * 1. Decode data field to extract members[] array
+ * 2. Filter to find events where your operator is in members[]
+ * 3. Display those as "Your Committee Assignments"
+ *
+ * PERFORMANCE:
+ * - Use a reasonable limit (50-100 events)
+ * - Cache globally (shared across all node pages)
+ * - Consider pagination if needed
+ *
+ * @param fromBlock - Only return events after this block (performance optimization)
+ * @param limit - Maximum number of events to return (default: 50)
+ * @returns All recent RoundStarted events with raw data field
+ */
+export async function getRoundStartedEvents(
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<RoundStartedEvent>> {
+  const eventSignature = getEventSignatureHash(HEARTBEAT_MANAGER_EVENTS.RoundStarted);
+
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.heartbeatManager.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'`;
+
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as heartbeatKey,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<RoundStartedEvent>(query, []);
+
+  // Decode data field to extract round, committeeRoot, members[], etc.
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      try {
+        // Decode the data field containing: (uint8 round, bytes32 committeeRoot, uint64 snapshotId, uint64 startedAt, uint64 deadline, address[] members, bytes rawHTX)
+        const decoded = decodeAbiParameters(
+          [
+            { type: 'uint8', name: 'round' },
+            { type: 'bytes32', name: 'committeeRoot' },
+            { type: 'uint64', name: 'snapshotId' },
+            { type: 'uint64', name: 'startedAt' },
+            { type: 'uint64', name: 'deadline' },
+            { type: 'address[]', name: 'members' },
+            { type: 'bytes', name: 'rawHTX' }
+          ],
+          event.data as `0x${string}`
+        );
+
+        // Handle case-insensitive field names from SQL
+        const heartbeatKey = event.heartbeatKey || event.heartbeatkey || '';
+
+        return {
+          heartbeatKey,
+          round: Number(decoded[0]),
+          committeeRoot: decoded[1] as string,
+          snapshotId: decoded[2].toString(),
+          startedAt: decoded[3].toString(),
+          deadline: decoded[4].toString(),
+          members: (decoded[5] as string[]).map(m => m.toLowerCase()),
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      } catch (error) {
+        console.error('[getRoundStartedEvents] Failed to decode event data:', error, event);
+        // Return partial data if decoding fails
+        return {
+          heartbeatKey: event.heartbeatKey || event.heartbeatkey || '',
+          round: 0,
+          committeeRoot: '',
+          snapshotId: '',
+          startedAt: '',
+          deadline: '',
+          members: [],
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      }
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Get OperatorVoted events for a specific operator
+ *
+ * WHAT IT RETURNS:
+ * - All votes submitted by the operator
+ * - Decoded verdict (1=Valid, 2=Invalid, 3=Error)
+ * - Stake weight used for the vote
+ *
+ * SQL FILTERING:
+ * - Filters by operator address in topics[3] ✅
+ * - Much simpler than RoundStarted (no array decoding needed)
+ *
+ * DATA DECODING:
+ * - Decodes data field: (uint8 round, uint8 verdict, uint256 weight)
+ * - Uses viem's decodeAbiParameters
+ *
+ * @param operatorAddress - Operator to get votes for
+ * @param fromBlock - Only return votes after this block
+ * @param limit - Maximum number of votes to return (default: 50)
+ * @returns Operator's voting history with decoded verdicts
+ */
+export async function getOperatorVotes(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<OperatorVotedEvent>> {
+  const query = buildHeartbeatEventQuery('OperatorVoted', operatorAddress, {
+    selectFields: [
+      'topics[2] as heartbeatKey',
+      'data',  // Contains: round (uint8), verdict (uint8), weight (uint256)
+      'topics[3] as operator',
+      'block_num',
+      'block_timestamp',
+      'tx_hash'
+    ],
+    fromBlock,
+    limit,
+  });
+
+  const result = await queryIndexer<OperatorVotedEvent>(query, []);
+
+  // Decode data field
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      try {
+        // Decode: (uint8 round, uint8 verdict, uint256 weight) from data
+        const decoded = decodeAbiParameters(
+          [
+            { type: 'uint8', name: 'round' },
+            { type: 'uint8', name: 'verdict' },
+            { type: 'uint256', name: 'weight' }
+          ],
+          event.data as `0x${string}`
+        );
+
+        // Handle case-insensitive field names from SQL
+        const heartbeatKey = event.heartbeatKey || event.heartbeatkey || '';
+
+        return {
+          heartbeatKey,
+          round: Number(decoded[0]),
+          operator: event.operator && typeof event.operator === 'string'
+            ? '0x' + event.operator.replace('0x', '').slice(-40)
+            : operatorAddress.toLowerCase(),
+          verdict: Number(decoded[1]),
+          weight: decoded[2].toString(),
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      } catch (error) {
+        console.error('[getOperatorVotes] Failed to decode event data:', error, event);
+        // Return partial data if decoding fails
+        return {
+          heartbeatKey: event.heartbeatKey || event.heartbeatkey || '',
+          round: 0,
+          operator: event.operator && typeof event.operator === 'string'
+            ? '0x' + event.operator.replace('0x', '').slice(-40)
+            : operatorAddress.toLowerCase(),
+          verdict: 0,
+          weight: '0',
+          block_num: event.block_num,
+          block_timestamp: event.block_timestamp,
+          tx_hash: event.tx_hash,
+        };
+      }
+    });
   }
 
   return result;
