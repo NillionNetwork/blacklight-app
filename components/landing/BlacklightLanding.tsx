@@ -1,22 +1,46 @@
 "use client"
 
 import { ArrowRight, Shield, ChevronLeft, ChevronRight } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { NetworkGlobe, networkExampleData } from "../globe/globe.js"
 
 export function BlacklightLanding() {
   const router = useRouter()
-  const [activeStep, setActiveStep] = useState(1) // 1-based: 1, 2, or 3
+  const canvasRef = useRef(null)
+  const [activeStep, setActiveStep] = useState(1)
   const [mounted, setMounted] = useState(false)
+
+  const activeIndexRef = useRef(0);
 
   useEffect(() => {
     setMounted(true)
-  }, [])
+    if (!canvasRef.current) return
+
+    // Network globe background.
+    const networkGlobe = new NetworkGlobe(
+      canvasRef.current.parentElement,
+      (function () { return canvasRef.current; }),
+      networkExampleData,
+      true
+    );
+
+    let animationFrameId
+    const animate = () => {
+      networkGlobe.render()
+      animationFrameId = requestAnimationFrame(animate)
+    }
+    animate()
+
+    return () => {
+      networkGlobe.unload(animationFrameId);
+    }
+  }, [mounted])
 
   const steps = [
     {
-      title: "Setup & run your node",
+      title: "Install and run your node",
       subtext: "Pull the Blacklight verifier Docker image, run it to generate your node wallet, and register the node's wallet address.",
       image: "/images/step1.png"
     },
@@ -26,7 +50,7 @@ export function BlacklightLanding() {
       image: "/images/step2.png"
     },
     {
-      title: "Monitor your node & rewards",
+      title: "Monitor your node and rewards",
       subtext: "View the rewards your node has earned and monitor the verification work your node has performed.",
       image: "/images/step3.png"
     }
@@ -54,11 +78,28 @@ export function BlacklightLanding() {
   }
 
   return (
-    <div className="blacklight-landing">
-      <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: '#000000' }}>
+    <div id="scroll-container" className="blacklight-landing h-screen overflow-y-auto scroll-smooth">
+
+      <section className="relative h-screen w-full snap-start snap-alwaysshrink-0 overflow-hidden" style={{ backgroundColor: '#000000' }}>
+        {/* Network globe visualization */}
+        <canvas
+          ref={canvasRef}
+          className="fixed inset-0 z-100 pointer-events-auto w-full h-full"
+          style={{ 
+            display: 'block', 
+            width: '100vw', 
+            height: '100vh',
+            minHeight: '700px',
+            zIndex: 5 
+          }}
+        />
+
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 z-0" style={{ background: 'linear-gradient(to bottom right, rgba(1, 1, 29, 0.3), transparent, rgba(65, 89, 246, 0.2))' }} />
+
         {/* Abstract blue dot pattern background */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-full h-full">
+        <div className="fixed inset-0 z-0 overflow-hidden">
+          <div className="fixed top-0 right-0 w-full h-full">
             <svg
               className="w-full h-full"
               viewBox="0 0 1200 800"
@@ -140,134 +181,6 @@ export function BlacklightLanding() {
           </div>
         </div>
 
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 z-0" style={{ background: 'linear-gradient(to bottom right, rgba(1, 1, 29, 0.3), transparent, rgba(65, 89, 246, 0.2))' }} />
-
-        {/* Torch spotlights from top */}
-        <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none">
-          {/* Torch 1 - Left side */}
-          <div className="absolute inset-0">
-            {/* Main cone beam */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '30%',
-                width: '100%',
-                height: '100%',
-                background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.4) 0%, rgba(65, 89, 246, 0.38) 8%, rgba(0, 0, 255, 0.32) 18%, rgba(65, 89, 246, 0.25) 30%, rgba(0, 0, 255, 0.18) 45%, rgba(65, 89, 246, 0.12) 60%, rgba(0, 0, 255, 0.08) 75%, rgba(65, 89, 246, 0.04) 88%, transparent 95%)',
-                clipPath: 'polygon(48% 0%, 52% 0%, 95% 100%, 5% 100%)',
-                filter: 'blur(60px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing 7s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              }}
-            />
-
-            {/* Secondary beam layer */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '30%',
-                width: '100%',
-                height: '90%',
-                background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.3) 0%, rgba(0, 0, 255, 0.25) 12%, rgba(65, 89, 246, 0.2) 25%, rgba(0, 0, 255, 0.15) 40%, rgba(65, 89, 246, 0.1) 55%, rgba(0, 0, 255, 0.06) 70%, rgba(65, 89, 246, 0.04) 85%, transparent 95%)',
-                clipPath: 'polygon(49% 0%, 51% 0%, 92% 100%, 8% 100%)',
-                filter: 'blur(40px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing 7.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              }}
-            />
-
-            {/* Bright light source */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '30%',
-                width: '100px',
-                height: '100px',
-                background: 'radial-gradient(ellipse at center, rgba(65, 89, 246, 0.9) 0%, rgba(65, 89, 246, 0.85) 8%, rgba(0, 0, 255, 0.75) 18%, rgba(65, 89, 246, 0.6) 30%, rgba(0, 0, 255, 0.4) 45%, rgba(65, 89, 246, 0.25) 60%, transparent 75%)',
-                filter: 'blur(25px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing 7s cubic-bezier(0.4, 0, 0.6, 1) infinite, blacklight-torchFlicker 2.5s ease-in-out infinite',
-              }}
-            />
-
-            {/* Inner bright core */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '30%',
-                width: '50px',
-                height: '50px',
-                background: 'radial-gradient(circle, rgba(65, 89, 246, 0.9) 0%, rgba(0, 0, 255, 0.8) 25%, rgba(65, 89, 246, 0.6) 45%, rgba(0, 0, 255, 0.4) 65%, transparent 85%)',
-                filter: 'blur(12px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing 7s cubic-bezier(0.4, 0, 0.6, 1) infinite, blacklight-torchFlicker 1.8s ease-in-out infinite',
-              }}
-            />
-          </div>
-
-          {/* Torch 2 - Right side (70%) */}
-          <div className="absolute inset-0">
-            {/* Main cone beam */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '70%',
-                width: '100%',
-                height: '100%',
-                background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.4) 0%, rgba(65, 89, 246, 0.38) 8%, rgba(0, 0, 255, 0.32) 18%, rgba(65, 89, 246, 0.25) 30%, rgba(0, 0, 255, 0.18) 45%, rgba(65, 89, 246, 0.12) 60%, rgba(0, 0, 255, 0.08) 75%, rgba(65, 89, 246, 0.04) 88%, transparent 95%)',
-                clipPath: 'polygon(48% 0%, 52% 0%, 95% 100%, 5% 100%)',
-                filter: 'blur(60px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing2 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              }}
-            />
-
-            {/* Secondary beam layer */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '70%',
-                width: '100%',
-                height: '90%',
-                background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.3) 0%, rgba(0, 0, 255, 0.25) 12%, rgba(65, 89, 246, 0.2) 25%, rgba(0, 0, 255, 0.15) 40%, rgba(65, 89, 246, 0.1) 55%, rgba(0, 0, 255, 0.06) 70%, rgba(65, 89, 246, 0.04) 85%, transparent 95%)',
-                clipPath: 'polygon(49% 0%, 51% 0%, 92% 100%, 8% 100%)',
-                filter: 'blur(40px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing2 8.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              }}
-            />
-
-            {/* Bright light source */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '70%',
-                width: '100px',
-                height: '100px',
-                background: 'radial-gradient(ellipse at center, rgba(65, 89, 246, 0.9) 0%, rgba(65, 89, 246, 0.85) 8%, rgba(0, 0, 255, 0.75) 18%, rgba(65, 89, 246, 0.6) 30%, rgba(0, 0, 255, 0.4) 45%, rgba(65, 89, 246, 0.25) 60%, transparent 75%)',
-                filter: 'blur(25px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing2 8s cubic-bezier(0.4, 0, 0.6, 1) infinite, blacklight-torchFlicker 3s ease-in-out infinite',
-              }}
-            />
-
-            {/* Inner bright core */}
-            <div
-              className="absolute top-0"
-              style={{
-                left: '70%',
-                width: '50px',
-                height: '50px',
-                background: 'radial-gradient(circle, rgba(65, 89, 246, 0.9) 0%, rgba(0, 0, 255, 0.8) 25%, rgba(65, 89, 246, 0.6) 45%, rgba(0, 0, 255, 0.4) 65%, transparent 85%)',
-                filter: 'blur(12px)',
-                transformOrigin: '50% 0%',
-                animation: 'blacklight-torchSwing2 8s cubic-bezier(0.4, 0, 0.6, 1) infinite, blacklight-torchFlicker 2.2s ease-in-out infinite',
-              }}
-            />
-          </div>
-        </div>
-
         {/* Top left logo */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-12 z-10">
           <img
@@ -286,7 +199,7 @@ export function BlacklightLanding() {
             <div className="pl-0 sm:pl-2 md:pl-4 lg:pl-12">
               {/* Nillion's Blacklight Network label */}
               <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-wider uppercase mb-3 sm:mb-2" style={{ color: '#F2F2FF' }}>
-                Nillion's Blacklight Network
+                Blacklight Network
               </div>
 
               {/* Main headline */}
@@ -297,14 +210,15 @@ export function BlacklightLanding() {
                   <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(to right, #4159F6, #0000FF, #FFFFFF)' }}>
                     verifying
                   </span>
+                  {' '}as
                 </span>
                 <br className="hidden sm:block" />
-                <span className="block sm:inline">so you don't have to.</span>
+                <span className="block sm:inline">you focus on what matters.</span>
               </h1>
 
               {/* Subtext */}
               <p className="text-sm sm:text-base md:text-lg leading-relaxed max-w-4xl pr-2 sm:pr-0" style={{ color: '#F2F2FF' }}>
-              The Blacklight Network is a decentralised network of verification nodes that continuously verifies TEEs across multiple operators.
+              The Blacklight Network is a decentralised collection of verifier nodes that continuously verify TEEs across multiple operators.
               </p>
 
               {/* CTAs - Functional navigation */}
@@ -359,6 +273,7 @@ export function BlacklightLanding() {
 
           {/* Logo carousel - full width, below CTAs */}
           <div className="relative z-10 py-4 sm:py-6 mt-8 sm:mt-10 md:mt-12 lg:mt-16 -mx-4 sm:-mx-6 lg:-mx-12 xl:-mx-20 2xl:-mx-32" style={{
+            marginTop: '150px',
             borderTop: '1px solid rgba(242, 242, 255, 0.2)',
             borderBottom: '1px solid rgba(242, 242, 255, 0.2)'
           }}>
@@ -444,20 +359,20 @@ export function BlacklightLanding() {
                       />
                     </div>
 
-                    {/* Divider between last and first logo for seamless loop */}
-                    <div className="h-6 sm:h-7 md:h-8 w-px" style={{ backgroundColor: 'rgba(242, 242, 255, 0.2)' }} />
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
+      </section>
 
+      <section className="relative z-10 min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#0D1235', opacity: 0.9 }}>
         {/* Running a node section - Carousel */}
-        <div className="relative z-10 w-full pt-12 lg:pt-16 pb-12 lg:pb-16 overflow-hidden" style={{ backgroundColor: '#0D1235' }}>
+        <div className="relative w-full pt-12 lg:pt-16 pb-12 lg:pb-16 overflow-hidden" style={{ backgroundColor: '#0D1235' }}>
           {/* Torch spotlight for Section 2 - From right side */}
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            <div className="absolute inset-0">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ opacity: 0.5 }}>
+            <div className="absolute inset-0" style={{ opacity: 0.5 }}>
               {/* Main cone beam */}
               <div
                 className="absolute top-0"
@@ -465,12 +380,21 @@ export function BlacklightLanding() {
                   right: '15%',
                   width: '100%',
                   height: '100%',
-                  background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.3) 0%, rgba(65, 89, 246, 0.27) 8%, rgba(0, 0, 255, 0.22) 18%, rgba(65, 89, 246, 0.17) 30%, rgba(0, 0, 255, 0.12) 45%, rgba(65, 89, 246, 0.07) 60%, rgba(0, 0, 255, 0.04) 75%, rgba(65, 89, 246, 0.02) 88%, transparent 95%)',
+                  // Modified background to fade in at the top and fade out at the bottom
+                  background: `linear-gradient(to bottom, 
+                    rgba(65, 89, 246, 0) 0%,
+                    rgba(65, 89, 246, 0.3) 10%,
+                    rgba(0, 0, 255, 0.22) 25%, 
+                    rgba(65, 89, 246, 0.12) 50%, 
+                    rgba(0, 0, 255, 0.04) 75%, 
+                    rgba(65, 89, 246, 0.01) 90%,
+                    rgba(65, 89, 246, 0) 100%
+                  )`,
                   clipPath: 'polygon(48% 0%, 52% 0%, 95% 100%, 5% 100%)',
-                  filter: 'blur(60px)',
+                  filter: 'blur(80px)',
                   transformOrigin: '50% 0%',
                   transform: 'rotate(-6deg)',
-                }}
+                  }}
               />
               {/* Secondary beam layer */}
               <div
@@ -483,7 +407,7 @@ export function BlacklightLanding() {
                   clipPath: 'polygon(49% 0%, 51% 0%, 92% 100%, 8% 100%)',
                   filter: 'blur(40px)',
                   transformOrigin: '50% 0%',
-                  transform: 'rotate(-6deg)',
+                  transform: 'rotate(-6deg)'
                 }}
               />
             </div>
@@ -491,12 +415,12 @@ export function BlacklightLanding() {
           <div className="relative z-10 w-full px-6 lg:px-12 xl:px-20 2xl:px-32">
             {/* Title at the top */}
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6" style={{ color: '#FFFFFF' }}>
-              Running a Blacklight verifier node
+              Running a Blacklight Verifier Node
             </h2>
 
             {/* Intro Text */}
             <p className="text-lg md:text-xl leading-relaxed mb-12 lg:mb-16" style={{ color: '#F2F2FF' }}>
-              Set up your node in 5 minutes and start to earn rewards.
+              Set up your node in 5 minutes and begin earning rewards.
             </p>
 
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start lg:items-center">
@@ -577,7 +501,7 @@ export function BlacklightLanding() {
               </div>
 
               {/* Divider */}
-              <div className="hidden lg:block absolute left-1/2 top-1/2 h-16 w-px -translate-x-1/2 -translate-y-1/2" style={{ backgroundColor: 'rgba(242, 242, 255, 0.2)' }} />
+              <div className="hidden lg:block absolute left-1/2 top-1/2 h-16 w-px -translate-x-1/2 -translate-y-1/2" style={{ opacity: 0.0 }} />
 
               {/* Right side - Screenshot */}
               <div className="hidden lg:flex relative h-[400px] lg:h-[450px] w-full order-1 lg:order-2 -mt-8 lg:-mt-0 items-center justify-center">
@@ -626,41 +550,57 @@ export function BlacklightLanding() {
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Divider between sections */}
-        <div className="w-full border-t" style={{ borderColor: 'rgba(242, 242, 255, 0.2)' }} />
-
+      <section className="z-10 relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#000022', opacity: 0.9 }}>
         {/* Section 3 - Verifying Many TEE Operators */}
-        <div className="relative z-10 w-full pt-12 lg:pt-16 pb-20 lg:pb-32 overflow-hidden" style={{ backgroundColor: '#0F1538' }}>
+        <div className="relative z-10 w-full pt-12 lg:pt-16 pb-20 lg:pb-32 overflow-hidden" style={{ backgroundColor: '#000033' }}>
           {/* Torch spotlight for Section 3 - From left side */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div className="absolute inset-0">
-              {/* Main cone beam - left side */}
+              {/* Main cone beam. */}
               <div
                 className="absolute top-0"
                 style={{
-                  left: '15%',
+                  left: '-10%', // Moved from 15% to -10% to shift left
                   width: '100%',
                   height: '100%',
-                  background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.3) 0%, rgba(65, 89, 246, 0.27) 8%, rgba(0, 0, 255, 0.22) 18%, rgba(65, 89, 246, 0.17) 30%, rgba(0, 0, 255, 0.12) 45%, rgba(65, 89, 246, 0.07) 60%, rgba(0, 0, 255, 0.04) 75%, rgba(65, 89, 246, 0.02) 88%, transparent 95%)',
+                  background: `linear-gradient(to bottom, 
+                    rgba(65, 89, 246, 0) 0%,           
+                    rgba(65, 89, 246, 0) 10%,          
+                    rgba(65, 89, 246, 0.3) 25%,        
+                    rgba(0, 0, 255, 0.15) 50%,         
+                    rgba(65, 89, 246, 0) 75%,          
+                    rgba(65, 89, 246, 0) 100%
+                  )`,
                   clipPath: 'polygon(48% 0%, 52% 0%, 95% 100%, 5% 100%)',
-                  filter: 'blur(60px)',
+                  filter: 'blur(70px)', 
                   transformOrigin: '50% 0%',
-                  transform: 'rotate(6deg)',
+                  transform: 'rotate(8deg)', // Slightly increased rotation to sweep across the text
+                  opacity: 0.7,
                 }}
               />
-              {/* Secondary beam layer */}
+
+              {/* Secondary beam layer. */}
               <div
                 className="absolute top-0"
                 style={{
-                  left: '15%',
+                  left: '-10%',
                   width: '100%',
-                  height: '90%',
-                  background: 'linear-gradient(to bottom, rgba(65, 89, 246, 0.22) 0%, rgba(0, 0, 255, 0.18) 12%, rgba(65, 89, 246, 0.14) 25%, rgba(0, 0, 255, 0.1) 40%, rgba(65, 89, 246, 0.07) 55%, rgba(0, 0, 255, 0.04) 70%, rgba(65, 89, 246, 0.02) 85%, transparent 95%)',
+                  height: '100%',
+                  background: `linear-gradient(to bottom, 
+                    rgba(65, 89, 246, 0) 0%, 
+                    rgba(65, 89, 246, 0) 15%,          
+                    rgba(65, 89, 246, 0.22) 30%, 
+                    rgba(0, 0, 255, 0.1) 45%, 
+                    rgba(65, 89, 246, 0) 65%,          
+                    rgba(65, 89, 246, 0) 100%
+                  )`,
                   clipPath: 'polygon(49% 0%, 51% 0%, 92% 100%, 8% 100%)',
-                  filter: 'blur(40px)',
+                  filter: 'blur(45px)',
                   transformOrigin: '50% 0%',
-                  transform: 'rotate(6deg)',
+                  transform: 'rotate(8deg)', // Matches rotation
+                  opacity: 0.7,
                 }}
               />
             </div>
@@ -669,7 +609,7 @@ export function BlacklightLanding() {
             {/* Section Title and CTA */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-12 lg:mb-16 max-w-7xl mx-auto gap-6">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold" style={{ color: '#FFFFFF' }}>
-                The universal verification layer
+                The Universal Verification Layer
               </h2>
               <div className="flex justify-start lg:justify-end">
                 <button
@@ -704,7 +644,7 @@ export function BlacklightLanding() {
                   The problem
                 </h3>
                 <p className="text-base md:text-lg leading-relaxed" style={{ color: '#F2F2FF' }}>
-                  TEEs are becoming commoditised and more widely used. They need to be continuously verified and held to account to maintain trustworthiness.
+                  TEEs are becoming commoditised and are used widely. But how can they be held accountable for the workflows they are continuously executing?
                 </p>
               </div>
 
@@ -714,7 +654,7 @@ export function BlacklightLanding() {
                   Blacklight's solution
                 </h3>
                 <p className="text-base md:text-lg leading-relaxed" style={{ color: '#F2F2FF' }}>
-                  The Blacklight network's decentralised verifiers continuously verify TEE attestations assigned to them. Ensure on-going trustworthiness.
+                  Blacklight's decentralised network consists of nodes that continuously verify attestations of TEEs, ensuring their trustworthiness.
                 </p>
               </div>
 
@@ -724,7 +664,7 @@ export function BlacklightLanding() {
                   Verify your apps
                 </h3>
                 <p className="text-base md:text-lg leading-relaxed mb-6" style={{ color: '#F2F2FF' }}>
-                  Verify your apps and workloads running on multiple TEE providers by submitting the app to the Blacklight network.
+                  Verify your apps and workloads that rely on multiple TEE providers by submitting them to the Blacklight Network.
                 </p>
                 <div className="pt-2">
                   <button
@@ -753,9 +693,11 @@ export function BlacklightLanding() {
             </div>
           </div>
         </div>
+      </section>
 
+      <section className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#0D1235' }}>
         {/* Navigation Cards Section */}
-        <div className="blacklight-nav-cards">
+        <div className="blacklight-nav-cards z-10">
           <div className="blacklight-nav-cards-container">
             <h2 className="blacklight-nav-cards-title">Get Started</h2>
             <div className="blacklight-nav-cards-grid">
@@ -788,8 +730,8 @@ export function BlacklightLanding() {
             </div>
           </div>
         </div>
+      </section>
 
-      </div>
     </div>
   )
 }
