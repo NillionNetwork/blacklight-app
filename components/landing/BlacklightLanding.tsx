@@ -26,7 +26,7 @@ export function BlacklightLanding() {
       true
     )
 
-    let animationFrameId
+    let animationFrameId: number
     const animate = () => {
       networkGlobe.render()
       animationFrameId = requestAnimationFrame(animate)
