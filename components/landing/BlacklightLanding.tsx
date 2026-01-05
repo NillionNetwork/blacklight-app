@@ -8,11 +8,11 @@ import { NetworkGlobe, networkExampleData } from "../globe/globe.js"
 
 export function BlacklightLanding() {
   const router = useRouter()
-  const canvasRef = useRef(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeStep, setActiveStep] = useState(1)
   const [mounted, setMounted] = useState(false)
 
-  const activeIndexRef = useRef(0);
+  const activeIndexRef = useRef(0)
 
   useEffect(() => {
     setMounted(true)
@@ -21,10 +21,10 @@ export function BlacklightLanding() {
     // Network globe background.
     const networkGlobe = new NetworkGlobe(
       canvasRef.current.parentElement,
-      (function () { return canvasRef.current; }),
+      () => canvasRef.current!,
       networkExampleData,
       true
-    );
+    )
 
     let animationFrameId
     const animate = () => {
@@ -34,7 +34,7 @@ export function BlacklightLanding() {
     animate()
 
     return () => {
-      networkGlobe.unload(animationFrameId);
+      networkGlobe.unload(animationFrameId)
     }
   }, [mounted])
 
