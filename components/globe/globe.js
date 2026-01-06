@@ -620,8 +620,7 @@ export class NetworkGlobe {
 
           const sprite = new THREE.Sprite(material);
           
-          // Adjust scale relative to globe radius
-          // width/height ratio keeps the box from stretching
+          // Adjust scale relative to globe radius; width/height ratio keeps the box from stretching.
           const aspectRatio = width / height;
           const labelSize = 3; 
           sprite.scale.set(labelSize * aspectRatio, labelSize, 1);
@@ -843,7 +842,7 @@ export class NetworkGlobe {
 
     // 2. Draw the box background.
     ctx.beginPath();
-    ctx.rect(5, 5, boxWidth, boxHeight);
+    ctx.rect(5, 0, boxWidth, boxHeight);
     ctx.fillStyle = "rgba(0, 0, 114, 0.7)"; 
     ctx.fill();
 
@@ -898,6 +897,7 @@ export class NetworkGlobe {
 
     canvas.addEventListener("mousedown", () => { isDragging = true; });
     canvas.addEventListener("mouseup", () => { isDragging = false; });
+    canvas.addEventListener("mouseover", () => { isDragging = false; });
     canvas.addEventListener("mousemove", (e) => {
       if (isDragging) {
         const deltaMove = {

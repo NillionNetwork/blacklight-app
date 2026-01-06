@@ -96,7 +96,7 @@ export function BlacklightLanding() {
         {webGLSupported ? (
           <canvas
             ref={canvasRef}
-            className="fixed inset-0 pointer-events-auto w-full h-full"
+            className="fixed inset-0 w-full h-full pointer-events-auto"
             style={{ 
               display: 'block', 
               width: '100vw', 
@@ -121,10 +121,13 @@ export function BlacklightLanding() {
         )}
 
         {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 z-0" style={{ background: 'linear-gradient(to bottom right, rgba(1, 1, 29, 0.3), transparent, rgba(65, 89, 246, 0.2))' }} />
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom right, rgba(1, 1, 29, 0.3), transparent, rgba(65, 89, 246, 0.2))' }} 
+        />
 
         {/* Abstract blue dot pattern background */}
-        <div className="fixed inset-0 z-0 overflow-hidden">
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="fixed top-0 right-0 w-full h-full">
             <svg
               className="w-full h-full"
@@ -207,92 +210,102 @@ export function BlacklightLanding() {
           </div>
         </div>
 
-        {/* Top left logo */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-12 z-10">
+        {/* Logo in top left. */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-12 z-10 pointer-events-none">
           <img
             src="/images/nillion-logo.png"
             alt="Nillion"
             className="h-5 sm:h-6 md:h-8 lg:h-10 w-auto"
-            onError={(e) => {
-              // Image failed to load
-            }}
+            onError={(e) => { /* Image failed to load */ }}
           />
         </div>
 
         {/* Main content */}
-        <div className="relative z-10 min-h-screen flex flex-col justify-center pt-20 pb-12 sm:pt-28 sm:pb-16 md:pt-32 md:pb-20 lg:pt-40">
+        <div className="relative z-10 min-h-screen flex flex-col justify-center pt-20 pb-12 sm:pt-28 sm:pb-16 md:pt-32 md:pb-20 lg:pt-40 pointer-events-none">
           <div className="w-full px-4 sm:px-6 lg:px-12 xl:px-20 2xl:px-32">
             <div className="pl-0 sm:pl-2 md:pl-4 lg:pl-12">
+
               {/* Nillion's Blacklight Network label */}
-              <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-wider uppercase mb-3 sm:mb-2" style={{ color: '#F2F2FF' }}>
+              <div
+                className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-wider uppercase mb-3 sm:mb-2"
+                style={{ color: '#F2F2FF' }}
+              >
                 Blacklight Network
               </div>
 
               {/* Main headline */}
               <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12 xl:space-y-16">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] sm:leading-[1.05] tracking-tight" style={{ color: '#FFFFFF' }}>
-                <span className="block sm:inline">
-                  Continuously{' '}
-                  <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(to right, #4159F6, #0000FF, #FFFFFF)' }}>
-                    verifying
+                <h1
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] sm:leading-[1.05] tracking-tight"
+                  style={{ color: '#FFFFFF' }}
+                >
+                  <span className="block sm:inline">
+                    Continuously{' '}
+                    <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(to right, #4159F6, #0000FF, #FFFFFF)' }}>
+                      verifying
+                    </span>
+                    {' '}as
                   </span>
-                  {' '}as
-                </span>
-                <br className="hidden sm:block" />
-                <span className="block sm:inline">you focus on what matters.</span>
-              </h1>
+                  <br className="hidden sm:block" />
+                  <span className="block sm:inline">you focus on what matters.</span>
+                </h1>
 
-              {/* Subtext */}
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed max-w-4xl pr-2 sm:pr-0" style={{ color: '#F2F2FF' }}>
-              The Blacklight Network is a decentralised collection of verifier nodes that continuously verify TEEs across multiple operators.
-              </p>
-
-              {/* CTAs - Functional navigation */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
-                <button
-                  onClick={() => router.push('/setup')}
-                  className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-xl shadow-2xl transition-all hover:scale-105 border-0 w-full sm:w-auto"
-                  style={{
-                    background: 'linear-gradient(to right, #4159F6, #0000FF)',
-                    color: '#FFFFFF',
-                    boxShadow: '0 25px 50px -12px rgba(65, 89, 246, 0.3)',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(to right, #0000FF, #4159F6)'
-                    e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(65, 89, 246, 0.5)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(to right, #4159F6, #0000FF)'
-                    e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(65, 89, 246, 0.3)'
-                  }}
+                {/* Subtext */}
+                <p
+                  className="text-sm sm:text-base md:text-lg leading-relaxed max-w-4xl pr-2 sm:pr-0"
+                  style={{ color: '#F2F2FF' }}
                 >
-                  <span className="whitespace-normal sm:whitespace-nowrap">Set up node and earn rewards</span>
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1 flex-shrink-0 inline-block" />
-                </button>
+                  The Blacklight Network is a decentralised collection of verifier nodes that continuously verify TEEs across multiple operators.
+                </p>
 
-                <button
-                  onClick={() => router.push('/workloads')}
-                  className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-xl backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto"
-                  style={{
-                    border: '2px solid rgba(242, 242, 255, 0.2)',
-                    backgroundColor: 'rgba(242, 242, 255, 0.05)',
-                    color: '#FFFFFF',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(242, 242, 255, 0.1)'
-                    e.currentTarget.style.borderColor = 'rgba(242, 242, 255, 0.3)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(242, 242, 255, 0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(242, 242, 255, 0.2)'
-                  }}
-                >
-                  <Shield className="mr-2 h-4 w-4 sm:h-5 sm:w-5 inline-block" />
-                  Verify your apps
-                </button>
-              </div>
+                {/* CTAs - Functional navigation */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4 pointer-events-none select-none">
+                  <button
+                    onClick={() => router.push('/setup')}
+                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-xl shadow-2xl transition-all hover:scale-105 border-0 w-full sm:w-auto select-none"
+                    style={{
+                      background: 'linear-gradient(to right, #4159F6, #0000FF)',
+                      color: '#FFFFFF',
+                      boxShadow: '0 25px 50px -12px rgba(65, 89, 246, 0.3)',
+                      cursor: 'pointer'
+                    }}
+                    ref={(el) => { if (el) { el.style.setProperty('pointer-events', 'auto', 'important'); } }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(to right, #0000FF, #4159F6)'
+                      e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(65, 89, 246, 0.5)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(to right, #4159F6, #0000FF)'
+                      e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(65, 89, 246, 0.3)'
+                    }}
+                  >
+                    <span className="whitespace-normal sm:whitespace-nowrap">Set up node and earn rewards</span>
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1 flex-shrink-0 inline-block" />
+                  </button>
+                  <button
+                    onClick={() => router.push('/workloads')}
+                    className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-xl backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto select-none"
+                    style={{
+                      border: '2px solid rgba(242, 242, 255, 0.2)',
+                      backgroundColor: 'rgba(242, 242, 255, 0.05)',
+                      color: '#FFFFFF',
+                      cursor: 'pointer'
+                    }}
+                    ref={(el) => { if (el) { el.style.setProperty('pointer-events', 'auto', 'important'); } }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(242, 242, 255, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(242, 242, 255, 0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(242, 242, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(242, 242, 255, 0.2)'
+                    }}
+                  >
+                    <Shield className="mr-2 h-4 w-4 sm:h-5 sm:w-5 inline-block" />
+                    Verify your apps
+                  </button>
+                </div>
+
               </div>
             </div>
           </div>
@@ -305,9 +318,11 @@ export function BlacklightLanding() {
           }}>
             <div className="relative w-full overflow-hidden">
               <div className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center">
+
                 {/* Duplicate sets for seamless infinite loop */}
                 {[...Array(4)].map((_, setIndex) => (
                   <div key={setIndex} className="flex gap-8 sm:gap-12 md:gap-16 items-center">
+
                     {/* PHALA Logo */}
                     <div className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 md:h-16 px-4 sm:px-6 md:px-8 opacity-80 hover:opacity-100 transition-opacity">
                       <img
@@ -385,6 +400,9 @@ export function BlacklightLanding() {
                       />
                     </div>
 
+                    {/* Divider */}
+                    <div className="h-6 sm:h-7 md:h-8 w-px" style={{ backgroundColor: 'rgba(242, 242, 255, 0.2)' }} />
+
                   </div>
                 ))}
               </div>
@@ -396,6 +414,7 @@ export function BlacklightLanding() {
       <section className="relative z-10 min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#0D1235', opacity: 0.9 }}>
         {/* Running a node section - Carousel */}
         <div className="relative w-full pt-12 lg:pt-16 pb-12 lg:pb-16 overflow-hidden" style={{ backgroundColor: '#0D1235' }}>
+
           {/* Torch spotlight for Section 2 - From right side */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ opacity: 0.5 }}>
             <div className="absolute inset-0" style={{ opacity: 0.5 }}>
@@ -438,7 +457,9 @@ export function BlacklightLanding() {
               />
             </div>
           </div>
+
           <div className="relative z-10 w-full px-6 lg:px-12 xl:px-20 2xl:px-32">
+
             {/* Title at the top */}
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6" style={{ color: '#FFFFFF' }}>
               Running a Blacklight Verifier Node
@@ -584,6 +605,7 @@ export function BlacklightLanding() {
           {/* Torch spotlight for Section 3 - From left side */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div className="absolute inset-0">
+
               {/* Main cone beam. */}
               <div
                 className="absolute top-0"
@@ -664,6 +686,7 @@ export function BlacklightLanding() {
 
             {/* Three Card Layout - Context → Layer → Action */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
+
               {/* Card 1 - The Problem */}
               <div className="p-6 lg:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(65, 89, 246, 0.05)', border: '1px solid rgba(242, 242, 255, 0.1)' }}>
                 <h3 className="text-sm md:text-base uppercase tracking-wider mb-4" style={{ color: '#F2F2FF', opacity: 0.8 }}>
@@ -716,19 +739,26 @@ export function BlacklightLanding() {
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </section>
 
-      <section className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#000022' }}>
+      <section
+        className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6 pointer-events-none"
+        style={{ backgroundColor: '#000022' }}
+      >
         {/* Navigation Cards Section */}
         <div className="blacklight-nav-cards z-10">
           <div className="blacklight-nav-cards-container">
             <h2 className="blacklight-nav-cards-title">Get Started</h2>
             <div className="blacklight-nav-cards-grid">
               {/* Card 1: Node Dashboard */}
-              <Link href="/nodes" className="blacklight-nav-card">
+              <Link
+                href="/nodes" className="blacklight-nav-card" 
+                ref={(el) => { if (el) { el.style.setProperty('pointer-events', 'auto', 'important'); } }}
+              >
                 <div className="blacklight-nav-card-title">Node Dashboard</div>
                 <p className="blacklight-nav-card-description">
                   View and manage your staked operators and monitor their performance.
@@ -736,7 +766,10 @@ export function BlacklightLanding() {
               </Link>
 
               {/* Card 2: Set up Node */}
-              <Link href="/setup" className="blacklight-nav-card">
+              <Link
+                href="/setup" className="blacklight-nav-card"
+                ref={(el) => { if (el) { el.style.setProperty('pointer-events', 'auto', 'important'); } }}
+              >
                 <div className="blacklight-nav-card-title">Set up Node</div>
                 <p className="blacklight-nav-card-description">
                   Configure a new verification node and start earning rewards.
@@ -744,7 +777,10 @@ export function BlacklightLanding() {
               </Link>
 
               {/* Card 3: Developers */}
-              <Link href="/workloads" className="blacklight-nav-card blacklight-nav-card-full">
+              <Link
+                href="/workloads" className="blacklight-nav-card blacklight-nav-card-full"
+                ref={(el) => { if (el) { el.style.setProperty('pointer-events', 'auto', 'important'); } }}
+              >
                 <div className="blacklight-nav-card-header">
                   <div className="blacklight-nav-card-badge">NEW</div>
                   <div className="blacklight-nav-card-title" style={{ marginBottom: 0 }}>Submit TEE Workload</div>
