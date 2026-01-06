@@ -20,14 +20,29 @@
 
 /* Override and enforce dark mode colors */
 body {
-  /* Nillion dark mode background - deep blue */
-  background: #12125a;
+  /* Nillion dark mode background - deep blue base */
+  background-color: #080833;
   color: white;
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  position: relative; /* Necessary for the pseudo-element anchor */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/images/earth/earth-generic.png');
+  background-attachment: fixed;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.5; 
+  mix-blend-mode: overlay; 
 }
 
 html {
@@ -623,7 +638,7 @@ select {
   top: 0;
   z-index: 100;
   width: 100%;
-  background: rgba(18, 18, 90, 0.95);
+  background: rgba(18, 18, 90, 0.50);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(138, 137, 255, 0.2);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
@@ -692,7 +707,8 @@ select {
    ======================================== */
 
 .setup-page {
-  background: var(--nillion-bg);
+  /* Prefer Blacklight background PNG. */
+  /* background: var(--nillion-bg); */
   position: relative;
   overflow: hidden;
   min-height: calc(100vh - 5rem);
@@ -705,21 +721,23 @@ select {
 }
 
 .setup-page-gradient-top-right {
-  background: linear-gradient(
+  /* Prefer Blacklight background PNG. */
+  /* background: linear-gradient(
     to top right,
     var(--nillion-bg) 0%,
     var(--nillion-bg-secondary) 50%,
     rgba(138, 137, 255, 0.2) 100%
-  );
+  ); */
 }
 
 .setup-page-gradient-bottom-left {
-  background: linear-gradient(
+  /* Prefer Blacklight background PNG. */
+  /* background: linear-gradient(
     to bottom left,
     rgba(138, 137, 255, 0.2) 0%,
     var(--nillion-bg) 50%,
     var(--nillion-bg-secondary) 100%
-  );
+  ); */
 }
 
 .setup-page-content {

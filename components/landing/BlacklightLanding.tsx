@@ -11,11 +11,21 @@ export function BlacklightLanding() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeStep, setActiveStep] = useState(1)
   const [mounted, setMounted] = useState(false)
+  const [webGLSupported, setWebGLSupported] = useState(true)
 
   const activeIndexRef = useRef(0)
 
   useEffect(() => {
     setMounted(true)
+
+    // WebGL Support Check
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) {
+      setWebGLSupported(false);
+      return;
+    }
+
     if (!canvasRef.current) return
 
     // Network globe background.
@@ -81,18 +91,34 @@ export function BlacklightLanding() {
     <div id="scroll-container" className="blacklight-landing h-screen overflow-y-auto scroll-smooth">
 
       <section className="relative h-screen w-full snap-start snap-alwaysshrink-0 overflow-hidden" style={{ backgroundColor: '#000000' }}>
-        {/* Network globe visualization */}
-        <canvas
-          ref={canvasRef}
-          className="fixed inset-0 z-100 pointer-events-auto w-full h-full"
-          style={{ 
-            display: 'block', 
-            width: '100vw', 
-            height: '100vh',
-            minHeight: '700px',
-            zIndex: 5 
-          }}
-        />
+
+        {/* Network globe visualization or fallback image. */}
+        {webGLSupported ? (
+          <canvas
+            ref={canvasRef}
+            className="fixed inset-0 pointer-events-auto w-full h-full"
+            style={{ 
+              display: 'block', 
+              width: '100vw', 
+              height: '100vh',
+              minHeight: '700px',
+              zIndex: 5 
+            }}
+          />
+        ) : (
+          <img
+            src="/images/earth/earth-landing.png"
+            alt="Blacklight Network"
+            className="fixed inset-0 w-full h-full object-cover"
+            style={{ 
+                zIndex: 5,
+                opacity: 0.8,
+                // This creates a transparency gradient from top to bottom
+                WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+              }}
+          />
+        )}
 
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 z-0" style={{ background: 'linear-gradient(to bottom right, rgba(1, 1, 29, 0.3), transparent, rgba(65, 89, 246, 0.2))' }} />
@@ -554,7 +580,7 @@ export function BlacklightLanding() {
 
       <section className="z-10 relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#000022', opacity: 0.9 }}>
         {/* Section 3 - Verifying Many TEE Operators */}
-        <div className="relative z-10 w-full pt-12 lg:pt-16 pb-20 lg:pb-32 overflow-hidden" style={{ backgroundColor: '#000033' }}>
+        <div className="relative z-10 w-full pt-12 lg:pt-16 pb-20 lg:pb-32 overflow-hidden" style={{ backgroundColor: '#000022' }}>
           {/* Torch spotlight for Section 3 - From left side */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div className="absolute inset-0">
@@ -695,7 +721,7 @@ export function BlacklightLanding() {
         </div>
       </section>
 
-      <section className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#0D1235' }}>
+      <section className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center py-[20vh] px-6" style={{ backgroundColor: '#000022' }}>
         {/* Navigation Cards Section */}
         <div className="blacklight-nav-cards z-10">
           <div className="blacklight-nav-cards-container">

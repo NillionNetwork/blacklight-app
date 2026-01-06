@@ -265,7 +265,7 @@ export class NetworkGlobe {
       //const points = new THREE.Points(earth_border, pointMaterial);
       //this.earthGroup.add(points);
 
-      if (geography) {
+      if (geography === true) {
         this.uniforms.map.value = this.options.textures.earth;
       }
 
@@ -357,9 +357,15 @@ export class NetworkGlobe {
       const geometry = new THREE.SphereGeometry(R * 1.18, 64, 64);
       const glowMesh = new THREE.Mesh(geometry, material);
       if (!centered) {
-        glowMesh.scale.y = 0.96;
+        glowMesh.scale.y = 0.94;
+        glowMesh.position.y += 0.8;
+        glowMesh.position.x += 2.6;
       }
-      this.earthGroup.add(glowMesh);
+      const glowMeshGroup = new THREE.Group();
+      glowMeshGroup.add(glowMesh);
+      glowMeshGroup.scale.set(0.001, 0.001, 0.001);
+      this.glowMesh = glowMeshGroup;
+      this.networkGlobe.scene.add(glowMeshGroup);
     }
 
     createRotatingBeams() {
@@ -730,8 +736,13 @@ export class NetworkGlobe {
 
     show() {
       const self = this;
-        
+
       gsap.to(self.group.scale, {
+        x: 1, y: 1, z: 1,
+        duration: 1.5,
+        ease: "power2.inOut",
+      });
+      gsap.to(self.glowMesh.scale, {
         x: 1, y: 1, z: 1,
         duration: 1.5,
         ease: "power2.inOut",
@@ -976,7 +987,7 @@ export class NetworkGlobe {
     `;
 
     this.option = {dom: dom};
-    this.geography = geography === undefined ? false : geography;
+    this.geography = geography === undefined ? true : geography;
     this.zoom = zoom === undefined ? false : zoom;
 
     this.scene = new THREE.Scene();

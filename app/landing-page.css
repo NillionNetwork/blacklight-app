@@ -8,6 +8,8 @@
    ============================================ */
 
 .blacklight-landing {
+  background-color:#000000;
+
   /* Use nilav-ui body font */
   font-family: var(--nillion-font-body);
 }
