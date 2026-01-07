@@ -126,45 +126,6 @@ export const wagmiAdapter = new WagmiAdapter({
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // ==============================================
-// PLATFORM CONFIGURATION
-// ==============================================
-
-export const platforms = {
-  mac: {
-    name: 'Mac',
-    displayName: 'macOS',
-    dockerInstallCommand: 'brew install --cask docker',
-    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    nodeStartCommand: './nilav_node',
-  },
-  linux: {
-    name: 'Linux',
-    displayName: 'Linux',
-    dockerInstallCommand:
-      'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
-    dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    nodeStartCommand: './nilav_node',
-  },
-  windows: {
-    name: 'Windows',
-    displayName: 'Windows',
-    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    dockerRunCommand:
-      'docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest',
-    nodeStartCommand: './nilav_node',
-  },
-} as const;
-
-// ==============================================
 // CONTRACT ADDRESSES
 // ==============================================
 
@@ -196,6 +157,52 @@ export const contracts = {
 
 // Active contracts based on environment variable
 export const activeContracts = contracts[NETWORK_KEY];
+
+// ==============================================
+// PLATFORM CONFIGURATION
+// ==============================================
+
+// Helper function to generate docker run command with network-specific arguments
+const getDockerRunCommand = () => {
+  const rpcUrl = activeNetwork.rpcUrls.default.http[0];
+  const managerAddress = activeContracts.heartbeatManager;
+  const stakingAddress = activeContracts.stakingOperators;
+  const tokenAddress = activeContracts.nilToken;
+
+  return `docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest --rpc-url ${rpcUrl} --manager-contract-address ${managerAddress} --staking-contract-address ${stakingAddress} --token-contract-address ${tokenAddress}`;
+};
+
+export const platforms = {
+  mac: {
+    name: 'Mac',
+    displayName: 'macOS',
+    dockerInstallCommand: 'brew install --cask docker',
+    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+    dockerRunCommand: getDockerRunCommand(),
+    nodeStartCommand: './nilav_node',
+  },
+  linux: {
+    name: 'Linux',
+    displayName: 'Linux',
+    dockerInstallCommand:
+      'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+    dockerRunCommand: getDockerRunCommand(),
+    nodeStartCommand: './nilav_node',
+  },
+  windows: {
+    name: 'Windows',
+    displayName: 'Windows',
+    dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
+    dockerPullCommand:
+      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+    dockerRunCommand: getDockerRunCommand(),
+    nodeStartCommand: './nilav_node',
+  },
+} as const;
 
 // ==============================================
 // HELP & DOCUMENTATION

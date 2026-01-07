@@ -20,8 +20,8 @@
 
 /* Override and enforce dark mode colors */
 body {
-  /* Nillion dark mode background - deep blue base */
-  background-color: #080833;
+  /* Blacklight Network dark mode background - matches landing page */
+  background-color: #000022;
   color: white;
   min-height: 100vh;
   margin: 0;
@@ -98,7 +98,7 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a5a;
+  background: #000022;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -387,7 +387,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #12125a 0%, #1a1a6e 100%);
+  background: #000022;
   position: relative;
   overflow: hidden;
 }
@@ -395,7 +395,7 @@ select {
 /* Components Test Page - matches landing page background */
 .components-test-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #12125a 0%, #1a1a6e 100%);
+  background: #000022;
   position: relative;
 }
 
@@ -638,9 +638,9 @@ select {
   top: 0;
   z-index: 100;
   width: 100%;
-  background: rgba(18, 18, 90, 0.50);
+  background: rgba(0, 0, 34, 0.80);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(138, 137, 255, 0.2);
+  border-bottom: 1px solid rgba(242, 242, 255, 0.2);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -1191,7 +1191,7 @@ button.nillion-button-outline.setup-button-compact {
 .node-staking-tabs {
   display: flex;
   gap: 0.5rem;
-  background: var(--nillion-bg);
+  background: #000022;
   padding: 0;
 }
 

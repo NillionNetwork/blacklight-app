@@ -34,7 +34,7 @@ export interface ActivityEventProps {
  * <ActivityEvent
  *   icon="🎉"
  *   title="Node Registered"
- *   description="Operator registered on nilUV network"
+ *   description="Operator registered on Blacklight Network"
  *   timeAgo="2 hours ago"
  *   txHash="0xfc35d..."
  * />

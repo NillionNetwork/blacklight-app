@@ -22,13 +22,17 @@ export function Navbar() {
               color: 'inherit',
             }}
           >
-            nilUV
+            Blacklight Network
           </Link>
         </div>
 
         <div
-          className="navbar-links"
-          style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}
+          style={{
+            display: 'flex',
+            gap: '2rem',
+            alignItems: 'center',
+            marginLeft: 'auto',
+          }}
         >
           {isConnected && (
             <Link
@@ -52,14 +56,13 @@ export function Navbar() {
           >
             Set up Node
           </Link>
-        </div>
-
-        <div className="navbar-wallet">
-          {isConnected ? (
-            <AccountButton size="small" variant="outline" />
-          ) : (
-            <ConnectWallet size="small" />
-          )}
+          <div className="navbar-wallet">
+            {isConnected ? (
+              <AccountButton size="small" variant="outline" />
+            ) : (
+              <ConnectWallet size="small" />
+            )}
+          </div>
         </div>
       </div>
     </nav>

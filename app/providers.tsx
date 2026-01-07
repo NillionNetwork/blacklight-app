@@ -29,7 +29,7 @@ createAppKit({
   networks: networks as any, // Type assertion needed for custom networks
   defaultNetwork: networks[0],
   metadata: {
-    name: 'nilUV',
+    name: 'Blacklight Network',
     description: 'Nillion Universal Verifier Node Manager',
     url: typeof window !== 'undefined' ? window.location.origin : 'https://nilav.nillion.com',
     icons: ['https://nillion.com/favicon.ico'],
