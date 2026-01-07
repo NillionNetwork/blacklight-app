@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
+import { Footer } from './Footer'
 import { ReactNode } from 'react'
 
 interface LayoutWrapperProps {
@@ -13,9 +14,12 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   const showNavbar = pathname !== '/'
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {showNavbar && <Navbar />}
-      {children}
-    </>
+      <main style={{ flex: 1 }}>
+        {children}
+      </main>
+      <Footer />
+    </div>
   )
 }

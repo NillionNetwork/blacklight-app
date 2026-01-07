@@ -6,8 +6,8 @@ import "./globals.css";
 import "./landing-page.css";
 
 export const metadata: Metadata = {
-  title: "nilUV Dashboard",
-  description: "Set up and manage your Nillion universal verifier nodes",
+  title: "Blacklight Network",
+  description: "The universal verification layer for TEE workloads",
 };
 
 export default function RootLayout({

@@ -1,0 +1,102 @@
+/* ============================================
+   FOOTER STYLES
+   ============================================ */
+
+.app-footer {
+  position: relative;
+  width: 100%;
+  background-color: #000022;
+  border-top: 1px solid rgba(242, 242, 255, 0.2);
+  z-index: 50;
+}
+
+.app-footer-container {
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+
+.app-footer-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.app-footer-brand {
+  font-family: var(--nillion-font-heading);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: #F2F2FF;
+}
+
+.app-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.app-footer-link {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #F2F2FF;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.app-footer-link:hover {
+  color: #FFFFFF;
+}
+
+/* Responsive - md (768px+) */
+@media (min-width: 768px) {
+  .app-footer-container {
+    padding: 3rem 3rem;
+  }
+
+  .app-footer-content {
+    flex-direction: row;
+  }
+
+  .app-footer-brand {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  .app-footer-links {
+    gap: 2rem;
+  }
+
+  .app-footer-link {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
+/* Responsive - lg (1024px+) */
+@media (min-width: 1024px) {
+  .app-footer-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* Responsive - xl (1280px+) */
+@media (min-width: 1280px) {
+  .app-footer-container {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+/* Responsive - 2xl (1536px+) */
+@media (min-width: 1536px) {
+  .app-footer-container {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+}
