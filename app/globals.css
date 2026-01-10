@@ -850,7 +850,7 @@ select {
 }
 
 .setup-platform-button.selected {
-  background: var(--nillion-primary);
+  background: var(--nillion-primary-active);
   color: white;
   border: 2px solid var(--nillion-primary);
 }

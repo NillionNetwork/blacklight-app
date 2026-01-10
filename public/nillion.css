@@ -16,9 +16,9 @@
 /* CSS Variables - Dark Mode Only */
 :root {
   /* Primary Colors */
-  --nillion-primary: #8a89ff;
-  --nillion-primary-hover: #a5a4ff;
-  --nillion-primary-active: #6f6eff;
+  --nillion-primary: #FFFFFF;
+  --nillion-primary-hover: #0000FF;
+  --nillion-primary-active: #0000FF;
   --nillion-primary-light: #9f9eeb;
   --nillion-primary-lighter: #b5b4f5;
   --nillion-primary-lightest: #cccbff;
@@ -33,7 +33,7 @@
   --nillion-bg-secondary: #1a1a6e;
   --nillion-text: #ffffff;
   --nillion-text-secondary: #b0b0b0;
-  --nillion-border: #4746a7;
+  --nillion-border: #4658a7;
 
   /* Typography */
   --nillion-font-heading: "TWKEverett", -apple-system, BlinkMacSystemFont,
@@ -104,7 +104,7 @@ button {
   font-size: 1rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
-  background-color: var(--nillion-primary);
+  background-color: var(--nillion-primary-active);
   color: white;
   border: none;
   cursor: pointer;
@@ -132,9 +132,9 @@ button:disabled {
 
 /* Secondary button style - add type="button" */
 button[type="button"] {
-  background-color: #A0A0BF;
+  background-color: #A0AABF;
   color: white;
-  border: 1px solid #A0A0BF;
+  border: 1px solid #A0AABF;
 }
 
 button[type="button"]:hover:not(:disabled) {
@@ -370,7 +370,7 @@ input[type="range"] {
 
 /* Button variants */
 .nillion-button-primary {
-  background-color: var(--nillion-primary) !important;
+  background-color: var(--nillion-primary-active) !important;
   color: white !important;
 }
 
@@ -386,7 +386,7 @@ input[type="range"] {
 }
 
 .nillion-button-outline:hover:not(:disabled) {
-  background-color: var(--nillion-primary) !important;
+  background-color: var(--nillion-primary-hover) !important;
   color: white !important;
 }
 

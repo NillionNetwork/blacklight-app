@@ -249,14 +249,23 @@ export function BlacklightLanding() {
 
         {/* Logo in top left. */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-12 z-10 pointer-events-none">
-          <img
-            src="/images/nillion-logo.png"
-            alt="Nillion"
-            className="h-5 sm:h-6 md:h-8 lg:h-10 w-auto"
-            onError={(e) => {
-              /* Image failed to load */
+          <Link
+            href="https://nillion.com"
+            ref={(el) => {
+              if (el) {
+                el.style.setProperty('pointer-events', 'auto', 'important');
+              }
             }}
-          />
+          >
+            <img
+              src="/images/nillion-logo.png"
+              alt="Nillion"
+              className="h-5 sm:h-6 md:h-8 lg:h-10 w-auto"
+              onError={(e) => {
+                /* Image failed to load */
+              }}
+            />
+          </Link>
         </div>
 
         {/* Main content */}
@@ -268,7 +277,7 @@ export function BlacklightLanding() {
                 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-wider uppercase mb-3 sm:mb-2"
                 style={{ color: '#F2F2FF' }}
               >
-                Blacklight Network
+                Nillion Blacklight
               </div>
 
               {/* Main headline */}
@@ -301,7 +310,7 @@ export function BlacklightLanding() {
                   className="text-sm sm:text-base md:text-lg leading-relaxed max-w-4xl pr-2 sm:pr-0"
                   style={{ color: '#F2F2FF' }}
                 >
-                  The Blacklight Network is a decentralised collection of
+                  The Nillion Blacklight network is a decentralised collection of
                   verifier nodes that continuously verify TEEs across multiple
                   operators.
                 </p>
@@ -387,18 +396,27 @@ export function BlacklightLanding() {
           <div
             className="relative z-10 py-4 sm:py-6 mt-8 sm:mt-10 md:mt-12 lg:mt-16 -mx-4 sm:-mx-6 lg:-mx-12 xl:-mx-20 2xl:-mx-32"
             style={{
-              marginTop: '48px',
+              marginTop: '72px',
               borderTop: '1px solid rgba(242, 242, 255, 0.2)',
               borderBottom: '1px solid rgba(242, 242, 255, 0.2)',
             }}
           >
             <div className="relative w-full overflow-hidden">
-              <div className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center">
+              <div 
+                  className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center"
+                  style={{ 
+                    animationIterationCount: 'infinite', 
+                    width: 'max-content',
+                    display: 'flex',
+                    animationName: 'scroll'
+                  }}
+                >
                 {/* Duplicate sets for seamless infinite loop */}
                 {[...Array(4)].map((_, setIndex) => (
                   <div
                     key={setIndex}
                     className="flex gap-8 sm:gap-12 md:gap-16 items-center"
+                    style={{transform: 'translateX(0)'}}
                   >
                     {/* PHALA Logo */}
                     <div className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 md:h-16 px-4 sm:px-6 md:px-8 opacity-80 hover:opacity-100 transition-opacity">
@@ -497,6 +515,15 @@ export function BlacklightLanding() {
                   </div>
                 ))}
               </div>
+              <style dangerouslySetInnerHTML={{ __html: `
+                @keyframes scroll {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-1380px); }
+                }
+                .animate-scroll {
+                  animation: scroll 16s linear infinite !important;
+                }
+              `}} />
             </div>
           </div>
         </div>
@@ -563,25 +590,26 @@ export function BlacklightLanding() {
           </div>
 
           <div className="relative z-10 w-full px-6 lg:px-12 xl:px-20 2xl:px-32">
-            {/* Title at the top */}
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6"
-              style={{ color: '#FFFFFF' }}
-            >
-              Running a Blacklight Verifier Node
-            </h2>
-
-            {/* Intro Text */}
-            <p
-              className="text-lg md:text-xl leading-relaxed mb-6 lg:mb-8"
-              style={{ color: '#F2F2FF' }}
-            >
-              Set up your node in 5 minutes and begin earning rewards.
-            </p>
-
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start lg:items-center">
               {/* Left side - Active Step + Controls */}
               <div className="space-y-8 order-1 lg:order-1 -mt-4 lg:-mt-2">
+              
+              {/* Title at the top */}
+              <h2
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6"
+                style={{ color: '#FFFFFF' }}
+              >
+                Running a Blacklight Verifier Node
+              </h2>
+
+              {/* Intro Text */}
+              <p
+                className="text-lg md:text-xl leading-relaxed mb-6 lg:mb-8"
+                style={{ color: '#F2F2FF' }}
+              >
+                Set up your node in 5 minutes and begin earning rewards.
+              </p>
+              
                 {/* Stage Indicator and Title Group */}
                 <div className="space-y-1">
                   {/* Stage Indicator */}
@@ -686,7 +714,6 @@ export function BlacklightLanding() {
               {/* Right side - Screenshot */}
               <div className="hidden lg:flex relative h-[400px] lg:h-[450px] w-full order-1 lg:order-2 -mt-8 lg:-mt-0 items-center justify-center">
                 {steps.map((step, index) => {
-                  const imageSize = index < 2 ? '90%' : '100%';
                   const isActive = activeStep === index + 1;
                   return (
                     <div
@@ -704,8 +731,7 @@ export function BlacklightLanding() {
                       <div
                         className="step-image-wrapper"
                         style={{
-                          width: imageSize,
-                          height: imageSize,
+                          height: '120%',
                           position: 'relative',
                           display: 'flex',
                           alignItems: 'center',
@@ -1050,7 +1076,7 @@ export function BlacklightLanding() {
                   }
                 }}
               >
-                <div className="blacklight-nav-card-title">Set up Node</div>
+                <div className="blacklight-nav-card-title">Set Up Node</div>
                 <p className="blacklight-nav-card-description">
                   Configure a new verification node and start earning rewards.
                 </p>

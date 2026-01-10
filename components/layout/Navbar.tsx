@@ -22,7 +22,7 @@ export function Navbar() {
               color: 'inherit',
             }}
           >
-            Blacklight Network
+            Nillion Blacklight
           </Link>
         </div>
 
@@ -54,7 +54,7 @@ export function Navbar() {
               fontWeight: 500,
             }}
           >
-            Set up Node
+            Set Up Node
           </Link>
           <div className="navbar-wallet">
             {isConnected ? (

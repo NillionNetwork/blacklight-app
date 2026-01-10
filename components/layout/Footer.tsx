@@ -8,7 +8,7 @@ export function Footer() {
         <div className="app-footer-content">
           {/* Left side - Brand text */}
           <div className="app-footer-brand">
-            Nillion's Blacklight Network
+            Nillion Blacklight
           </div>
 
           {/* Right side - Links */}
