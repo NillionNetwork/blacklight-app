@@ -310,7 +310,7 @@ export function BlacklightLanding() {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4 pointer-events-none select-none">
                   <button
                     onClick={() => router.push('/setup')}
-                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-xl shadow-2xl transition-all hover:scale-105 border-0 w-full sm:w-auto select-none"
+                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0 w-full sm:w-auto select-none"
                     style={{
                       background: 'linear-gradient(to right, #4159F6, #0000FF)',
                       color: '#FFFFFF',
@@ -346,7 +346,7 @@ export function BlacklightLanding() {
                   </button>
                   <button
                     onClick={() => router.push('/workloads')}
-                    className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-xl backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto select-none"
+                    className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-none backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto select-none"
                     style={{
                       border: '2px solid rgba(242, 242, 255, 0.2)',
                       backgroundColor: 'rgba(242, 242, 255, 0.05)',
@@ -614,7 +614,7 @@ export function BlacklightLanding() {
                   <button
                     onClick={handlePrevious}
                     disabled={activeStep === 1}
-                    className="p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-3 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       border: '2px solid rgba(242, 242, 255, 0.2)',
                       backgroundColor:
@@ -630,7 +630,7 @@ export function BlacklightLanding() {
                   <button
                     onClick={handleNext}
                     disabled={activeStep === 3}
-                    className="p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-3 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       border: '2px solid rgba(242, 242, 255, 0.2)',
                       backgroundColor:
@@ -649,7 +649,7 @@ export function BlacklightLanding() {
                 <div className="pt-6">
                   <button
                     onClick={() => router.push('/setup')}
-                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-xl shadow-2xl transition-all hover:scale-105 border-0 w-full"
+                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0 w-full"
                     style={{
                       background: 'linear-gradient(to right, #4159F6, #0000FF)',
                       color: '#FFFFFF',
@@ -812,7 +812,7 @@ export function BlacklightLanding() {
               <div className="flex justify-start lg:justify-end">
                 <button
                   onClick={() => router.push('/workloads')}
-                  className="group px-8 py-6 text-lg font-semibold rounded-xl shadow-2xl transition-all hover:scale-105 border-0"
+                  className="group px-8 py-6 text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0"
                   style={{
                     background: 'linear-gradient(to right, #4159F6, #0000FF)',
                     color: '#FFFFFF',
@@ -842,7 +842,7 @@ export function BlacklightLanding() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
               {/* Card 1 - The Problem */}
               <div
-                className="p-6 lg:p-8 rounded-2xl"
+                className="p-6 lg:p-8 rounded-none"
                 style={{
                   backgroundColor: 'rgba(65, 89, 246, 0.05)',
                   border: '1px solid rgba(242, 242, 255, 0.1)',
@@ -866,7 +866,7 @@ export function BlacklightLanding() {
 
               {/* Card 2 - Blacklight's Solution */}
               <div
-                className="p-6 lg:p-8 rounded-2xl"
+                className="p-6 lg:p-8 rounded-none"
                 style={{
                   backgroundColor: 'rgba(65, 89, 246, 0.05)',
                   border: '1px solid rgba(242, 242, 255, 0.1)',
@@ -890,7 +890,7 @@ export function BlacklightLanding() {
 
               {/* Card 3 - Verify Your Apps */}
               <div
-                className="p-6 lg:p-8 rounded-2xl"
+                className="p-6 lg:p-8 rounded-none"
                 style={{
                   backgroundColor: 'rgba(65, 89, 246, 0.05)',
                   border: '1px solid rgba(242, 242, 255, 0.1)',
@@ -912,7 +912,7 @@ export function BlacklightLanding() {
                 <div className="pt-2">
                   <button
                     onClick={() => router.push('/workloads')}
-                    className="group px-6 py-3 text-base font-semibold rounded-xl shadow-xl transition-all hover:scale-105 border-0"
+                    className="group px-6 py-3 text-base font-semibold rounded-none shadow-xl transition-all hover:scale-105 border-0"
                     style={{
                       background: 'linear-gradient(to right, #4159F6, #0000FF)',
                       color: '#FFFFFF',
@@ -963,7 +963,7 @@ export function BlacklightLanding() {
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="rounded-xl overflow-hidden"
+                  className="rounded-none overflow-hidden"
                   style={{
                     backgroundColor: 'rgba(65, 89, 246, 0.05)',
                     border: '1px solid rgba(242, 242, 255, 0.1)'

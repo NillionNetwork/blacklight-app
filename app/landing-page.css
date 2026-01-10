@@ -106,14 +106,10 @@
 }
 
 .blacklight-landing .step-image-rounded {
-  border-radius: 16px !important;
-  -webkit-border-radius: 16px !important;
-  -moz-border-radius: 16px !important;
   overflow: hidden !important;
 }
 
 .blacklight-landing .step-image-wrapper {
-  border-radius: 16px !important;
   overflow: hidden !important;
 }
 
@@ -155,7 +151,6 @@
   padding: 2rem;
   background: rgba(65, 89, 246, 0.3);
   border: 1px solid rgba(242, 242, 255, 0.3);
-  border-radius: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
@@ -185,7 +180,6 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 0.5rem;
 }
 
 .blacklight-landing .blacklight-nav-card-title {

@@ -147,7 +147,6 @@ select {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  border-radius: 1rem;
   padding: 2.5rem;
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid rgba(138, 137, 255, 0.3);
@@ -182,7 +181,6 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
   color: rgba(255, 255, 255, 0.5);
   transition: all 0.2s ease;
 }
@@ -335,7 +333,6 @@ select {
   display: flex;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
   background: rgba(255, 50, 50, 0.1);
   border: 1px solid rgba(255, 50, 50, 0.3);
   color: white;
@@ -460,7 +457,6 @@ select {
   padding: 1.25rem 2.5rem;
   font-size: 1.125rem;
   font-weight: 600;
-  border-radius: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   width: fit-content;
@@ -500,7 +496,6 @@ select {
   align-items: center;
   gap: 1.5rem;
   padding: 1rem 1.25rem;
-  border-radius: 1rem;
   background: rgba(138, 137, 255, 0.05);
   border: 1px solid rgba(138, 137, 255, 0.2);
 }
@@ -530,7 +525,6 @@ select {
   color: #8a89ff;
   background: rgba(138, 137, 255, 0.1);
   padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
 }
 
 .wallet-info-network,
@@ -572,7 +566,6 @@ select {
   text-align: center;
   max-width: 500px;
   padding: 3rem;
-  border-radius: 1rem;
   background: rgba(138, 137, 255, 0.05);
   border: 1px solid rgba(138, 137, 255, 0.2);
   display: flex;
@@ -679,7 +672,6 @@ select {
   font-family: monospace;
   background: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -765,7 +757,6 @@ select {
   width: 500px;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(20px);
-  border-radius: 1.5rem;
   padding: 2.5rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -819,7 +810,6 @@ select {
   justify-content: space-between;
   background: rgba(0, 0, 0, 0.5);
   padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
   margin-bottom: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 3.5rem;
@@ -846,7 +836,6 @@ select {
 
 .setup-platform-button {
   padding: 1rem;
-  border-radius: 0.75rem;
   background: transparent;
   border: 2px solid var(--nillion-primary);
   color: var(--nillion-primary);
@@ -869,7 +858,6 @@ select {
 .setup-download-card {
   background: rgba(138, 137, 255, 0.05);
   border: 1px solid rgba(138, 137, 255, 0.2);
-  border-radius: 0.75rem;
   padding: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -907,7 +895,6 @@ select {
 .setup-command-box {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
   padding: 1.25rem 3.5rem 1.25rem 1.25rem;
   font-family: monospace;
   font-size: 0.875rem;
@@ -923,7 +910,6 @@ select {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   padding: 0.5rem;
-  border-radius: 0.375rem;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -944,7 +930,6 @@ select {
 .setup-input {
   width: 100%;
   padding: 1rem;
-  border-radius: 0.75rem;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
@@ -963,7 +948,6 @@ select {
 .setup-wallet-info {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 0.75rem;
   padding: 1rem;
   margin-bottom: 2rem;
 }
@@ -991,7 +975,6 @@ select {
 .setup-button-group button {
   flex: 1;
   height: 3.5rem;
-  border-radius: 0.75rem;
 }
 
 .setup-button-full {
@@ -999,7 +982,6 @@ select {
   font-size: 1rem;
   font-weight: 600;
   height: 3.5rem;
-  border-radius: 0.75rem;
 }
 
 button.nillion-button-outline.setup-button-compact {
@@ -1035,7 +1017,6 @@ button.nillion-button-outline.setup-button-compact {
 .setup-wrong-network-box {
   background: rgba(255, 150, 50, 0.1);
   border: 1px solid rgba(255, 150, 50, 0.3);
-  border-radius: 0.75rem;
   padding: 2rem;
   margin-bottom: 2rem;
 }
@@ -1155,7 +1136,6 @@ button.nillion-button-outline.setup-button-compact {
 .node-overview-copy-btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.25rem;
   padding: 0.25rem;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
@@ -1204,7 +1184,6 @@ button.nillion-button-outline.setup-button-compact {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  border-radius: 0.5rem 0.5rem 0 0;
   position: relative;
 }
 
@@ -1225,7 +1204,6 @@ button.nillion-button-outline.setup-button-compact {
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   /* border-top: none; */
-  border-radius: 0 0.5rem 0.5rem 0.5rem;
   background: rgba(138, 137, 255, 0.02);
 }
 
@@ -1234,7 +1212,6 @@ button.nillion-button-outline.setup-button-compact {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
   font-weight: 600;
   font-size: 0.875rem;
   width: fit-content;
@@ -1276,7 +1253,6 @@ button.nillion-button-outline.setup-button-compact {
 .node-jailed-warning {
   background: rgba(255, 165, 0, 0.1);
   border: 1px solid rgba(255, 165, 0, 0.3);
-  border-radius: 0.5rem;
   padding: 1rem;
 }
 
@@ -1322,7 +1298,6 @@ button.nillion-button-outline.setup-button-compact {
 .node-unbonding-box {
   background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
-  border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1406,7 +1381,6 @@ button.nillion-button-outline.setup-button-compact {
 .fund-node-form-container {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -1434,7 +1408,6 @@ button.nillion-button-outline.setup-button-compact {
   gap: 0.5rem;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
 }
 
@@ -1481,7 +1454,6 @@ button.nillion-button-outline.setup-button-compact {
 .fund-node-warning {
   background: rgba(255, 165, 0, 0.1);
   border: 1px solid rgba(255, 165, 0, 0.3);
-  border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
   display: flex;
@@ -1525,7 +1497,6 @@ button.nillion-button-outline.setup-button-compact {
   flex: 1;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 0.375rem;
   padding: 0.375rem 0.5rem;
 }
 
@@ -1567,7 +1538,6 @@ button.nillion-button-outline.setup-button-compact {
 .staking-form-container {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -1590,7 +1560,6 @@ button.nillion-button-outline.setup-button-compact {
   gap: 0.5rem;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   margin-bottom: 1rem;
 }
@@ -1656,7 +1625,6 @@ button.nillion-button-outline.setup-button-compact {
   padding: 1rem;
   background: rgba(138, 137, 255, 0.1);
   border: 1px solid rgba(138, 137, 255, 0.3);
-  border-radius: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1708,7 +1676,6 @@ button.nillion-button-outline.setup-button-compact {
   transform: translateY(-50%);
   background: rgba(138, 137, 255, 0.2);
   border: 1px solid rgba(138, 137, 255, 0.4);
-  border-radius: 0.25rem;
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -1726,7 +1693,6 @@ button.nillion-button-outline.setup-button-compact {
   opacity: 0.6;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 0.375rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1749,7 +1715,6 @@ button.nillion-button-outline.setup-button-compact {
   padding: 1rem;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 0.5rem;
   margin-bottom: 1rem;
 }
 
@@ -1768,7 +1733,6 @@ button.nillion-button-outline.setup-button-compact {
   margin-bottom: 1rem;
   padding: 0.75rem;
   background: rgba(138, 137, 255, 0.1);
-  border-radius: 0.5rem;
   font-size: 0.875rem;
 }
 
@@ -1790,7 +1754,6 @@ button.nillion-button-outline.setup-button-compact {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.2s;
 }
@@ -1806,7 +1769,6 @@ button.nillion-button-outline.setup-button-compact {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border-radius: 4px;
   background: rgba(138, 137, 255, 0.2);
   color: #8a89ff;
   border: 1px solid rgba(138, 137, 255, 0.3);
@@ -1833,7 +1795,6 @@ button.nillion-button-outline.setup-button-compact {
 .validation-success {
   background: rgba(34, 197, 94, 0.2);
   border: 1px solid rgba(34, 197, 94, 0.3);
-  border-radius: 8px;
   padding: 1rem;
   color: #86efac;
 }
@@ -1841,7 +1802,6 @@ button.nillion-button-outline.setup-button-compact {
 .validation-error {
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
   padding: 1rem;
   color: #fca5a5;
 }
@@ -1849,7 +1809,6 @@ button.nillion-button-outline.setup-button-compact {
 .validation-validating {
   background: rgba(138, 137, 255, 0.2);
   border: 1px solid rgba(138, 137, 255, 0.3);
-  border-radius: 8px;
   padding: 1rem;
 }
 
@@ -1931,7 +1890,6 @@ button.nillion-button-outline.setup-button-compact {
   background: rgba(239, 68, 68, 0.8);
   color: white;
   padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
   font-weight: 500;
   transition: background 0.2s;
 }
