@@ -50,7 +50,7 @@ export function UnstakingForm({
   const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const stakedAmount = stake ? formatUnits(stake, activeContracts.nilTokenDecimals) : '0';
-  const hasStake = stake && stake > 0n;
+  const hasStake = Boolean(stake && stake > 0n);
 
   // Format unstake delay for display
   const formatUnstakeDelay = (): string => {

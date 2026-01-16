@@ -7,7 +7,7 @@ import { formatUnits } from 'viem';
 import { Button, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
-import { useStakingOperators, useUnbondingInfo } from '@/lib/hooks/useStakingOperators';
+import { useStakingOperators, useUnbondingInfo, useUnstakeDelay } from '@/lib/hooks/useStakingOperators';
 import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
@@ -36,6 +36,7 @@ export function UnbondingForm({
   const { switchChain } = useSwitchChain();
   const { withdrawUnstaked } = useStakingOperators();
   const { unbonding, isLoading: isLoadingUnbonding } = useUnbondingInfo(operatorAddress);
+  const { delay: unstakeDelay, isLoading: isLoadingDelay } = useUnstakeDelay();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [showTxModal, setShowTxModal] = useState(false);
@@ -70,6 +71,28 @@ export function UnbondingForm({
 
   const hasUnbonding = unbonding && unbonding.amount > 0n;
   const canWithdraw = hasUnbonding && timeRemaining === 0;
+
+  // Format unstake delay for display
+  const formatUnstakeDelay = (): string => {
+    if (isLoadingDelay) return 'Loading...';
+    if (!unstakeDelay) return 'an';
+
+    const days = Number(unstakeDelay) / 86400;
+
+    // Handle whole days
+    if (days === Math.floor(days)) {
+      return `${days} day${days !== 1 ? 's' : ''}`;
+    }
+
+    // Handle fractional days (show in hours if less than 1 day)
+    if (days < 1) {
+      const hours = Number(unstakeDelay) / 3600;
+      return `${Math.floor(hours)} hour${hours !== 1 ? 's' : ''}`;
+    }
+
+    // Round to 1 decimal for partial days
+    return `${days.toFixed(1)} days`;
+  };
 
   const formatTime = (seconds: number): string => {
     if (seconds === 0) return 'Ready to withdraw';
@@ -189,6 +212,15 @@ export function UnbondingForm({
         <div className="unstaking-empty-state">
           No unbonding tokens for this operator
         </div>
+
+        <div className="unstaking-info-box" style={{ marginTop: '1rem' }}>
+          <div className="unstaking-info-line">
+            ℹ️ When you unstake tokens, they enter a {formatUnstakeDelay()} unbonding period.
+          </div>
+          <div className="unstaking-info-line">
+            Tokens can be withdrawn here once the unbonding period completes.
+          </div>
+        </div>
       </div>
     );
   }
@@ -263,6 +295,15 @@ export function UnbondingForm({
         >
           {canWithdraw ? 'Withdraw Tokens' : 'Waiting for Unbonding Period'}
         </Button>
+      </div>
+
+      <div className="unstaking-info-box" style={{ marginTop: '1rem' }}>
+        <div className="unstaking-info-line">
+          ℹ️ Unstaked tokens have a {formatUnstakeDelay()} unbonding period for network security.
+        </div>
+        <div className="unstaking-info-line">
+          You can withdraw your tokens once the countdown reaches zero.
+        </div>
       </div>
 
       {/* Transaction Modal */}
