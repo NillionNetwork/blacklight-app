@@ -31,7 +31,7 @@ interface StakedOperator {
  * 1. Queries StakedTo events from the indexer filtered by user's wallet address
  * 2. Extracts unique operator addresses from events
  * 3. Verifies current stake amounts for each operator
- * 4. Returns only operators with active stakes (stake > 0)
+ * 4. Returns all operators the user has ever staked to (including current stake = 0)
  *
  * Benefits over previous RPC-based approach:
  * - No block range limitations (queries from contract deployment)
@@ -131,10 +131,8 @@ export function useUserStakedOperators(userAddress?: `0x${string}`) {
 
         const results = await Promise.all(operatorPromises);
 
-        // Step 4: Filter to only operators with active stake
-        const activeOperators = results.filter((r) => r.stake > 0n);
-
-        setOperators(activeOperators);
+        // Step 4: Return all operators (including those with stake = 0)
+        setOperators(results);
       } catch (err) {
         const errorMessage = (err as Error).message;
         console.error('Error fetching staked operators:', err);
