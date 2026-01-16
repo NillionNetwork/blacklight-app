@@ -993,6 +993,29 @@ button.nillion-button-outline.setup-button-compact {
   border: 1px solid rgba(138, 137, 255, 0.15) !important;
 }
 
+/* Command block with subtle scrollbar */
+.command-block {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(138, 137, 255, 0.3) transparent;
+}
+
+.command-block::-webkit-scrollbar {
+  height: 6px;
+}
+
+.command-block::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.command-block::-webkit-scrollbar-thumb {
+  background: rgba(138, 137, 255, 0.3);
+  border-radius: 3px;
+}
+
+.command-block::-webkit-scrollbar-thumb:hover {
+  background: rgba(138, 137, 255, 0.5);
+}
+
 /* Wrong Network Page */
 .setup-wrong-network {
   background: var(--nillion-bg);

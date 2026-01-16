@@ -187,10 +187,11 @@ export default function SetupPage() {
                           display: 'flex',
                           gap: '0.75rem',
                           marginBottom: '1rem',
-                          alignItems: 'flex-start',
+                          alignItems: 'stretch',
                         }}
                       >
                         <div
+                          className="command-block"
                           style={{
                             flex: 1,
                             background: 'rgba(0, 0, 0, 0.5)',
@@ -200,7 +201,8 @@ export default function SetupPage() {
                             fontFamily: 'monospace',
                             fontSize: '0.875rem',
                             color: 'var(--nillion-primary-lighter)',
-                            wordBreak: 'break-all',
+                            overflowX: 'auto',
+                            whiteSpace: 'nowrap',
                             minWidth: 0,
                           }}
                         >
@@ -215,7 +217,7 @@ export default function SetupPage() {
                           style={{
                             background: 'rgba(255, 255, 255, 0.1)',
                             border: 'none',
-                            padding: '0.5rem 1rem',
+                            padding: '0 1rem',
                             borderRadius: '0.375rem',
                             color: 'rgba(255, 255, 255, 0.6)',
                             cursor: 'pointer',
@@ -284,10 +286,11 @@ export default function SetupPage() {
                       display: 'flex',
                       gap: '0.75rem',
                       marginBottom: '1.5rem',
-                      alignItems: 'flex-start',
+                      alignItems: 'stretch',
                     }}
                   >
                     <div
+                      className="command-block"
                       style={{
                         flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
@@ -297,7 +300,8 @@ export default function SetupPage() {
                         fontFamily: 'monospace',
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
-                        wordBreak: 'break-all',
+                        overflowX: 'auto',
+                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
@@ -310,7 +314,7 @@ export default function SetupPage() {
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: 'none',
-                        padding: '0.5rem 1rem',
+                        padding: '0 1rem',
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
@@ -328,10 +332,11 @@ export default function SetupPage() {
                       display: 'flex',
                       gap: '0.75rem',
                       marginBottom: '1rem',
-                      alignItems: 'flex-start',
+                      alignItems: 'stretch',
                     }}
                   >
                     <div
+                      className="command-block"
                       style={{
                         flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
@@ -341,7 +346,8 @@ export default function SetupPage() {
                         fontFamily: 'monospace',
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
-                        wordBreak: 'break-all',
+                        overflowX: 'auto',
+                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
@@ -354,7 +360,7 @@ export default function SetupPage() {
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: 'none',
-                        padding: '0.5rem 1rem',
+                        padding: '0 1rem',
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
@@ -507,10 +513,11 @@ export default function SetupPage() {
                       display: 'flex',
                       gap: '0.75rem',
                       marginBottom: '1rem',
-                      alignItems: 'flex-start',
+                      alignItems: 'stretch',
                     }}
                   >
                     <div
+                      className="command-block"
                       style={{
                         flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
@@ -520,7 +527,8 @@ export default function SetupPage() {
                         fontFamily: 'monospace',
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
-                        wordBreak: 'break-all',
+                        overflowX: 'auto',
+                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
@@ -533,7 +541,7 @@ export default function SetupPage() {
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: 'none',
-                        padding: '0.5rem 1rem',
+                        padding: '0 1rem',
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
