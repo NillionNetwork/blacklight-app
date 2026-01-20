@@ -85,20 +85,22 @@ export function BlacklightLanding() {
 
   const faqs = [
     {
-      question: "What is the Blacklight Network?",
-      answer: "..."
+      question: "What is the Nillion Blacklight?",
+      answer: "Nillion Blacklight is a decentralized, always-on verification layer for Trusted Execution Environments (TEEs). Currently workloads running on nilCC and Phala can be verifed by the Nillion Blacklight."
+"
     },
     {
       question: "How do I run a verifier node?",
-      answer: "..."
+      answer: "To run a Blacklight node, click the “Set up node” button on this page to get started. At a high level, you launch the node using the provided Docker image, which generates a public key for your node. You must then stake at least 70,000 NIL to this public key for your node to be assigned verification work be able to paricipate in Nillion Blacklight."
+      
     },
     {
       question: "What are the hardware requirements?",
-      answer: "..."
+      answer: "There are no strict minimum hardware requirements. Blacklight verification work is lightweight and can run on a laptop or small server. The main requirement is uptime: your node should stay online and be able to reliably submit verification results to Nillion’s L2. As a guideline, a node should have at least 2 CPU cores, 1 GB of RAM, and 1 GB of available storage."
     },
     {
       question: "How are rewards calculated?",
-      answer: "..."
+      answer: "Blacklight nodes are rewarded for the verification work they perform. The more NIL that is staked against a node, the more work that node will be assigned, therefore the higher chance of greater rewards."
     }
   ];
 
