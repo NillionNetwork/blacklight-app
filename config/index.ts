@@ -132,16 +132,16 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 // Contract addresses for each network
 export const contracts = {
   nilavTestnet: {
-    nilToken: '0xf65b7cCF9f13ef932093bac19Eb5ea77ee70F4A4',
+    nilToken: '0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
-    stakingOperators: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
-    heartbeatManager: '0x3dbE95E20B370C5295E7436e2d887cFda8bcb02c',
+    stakingOperators: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
+    heartbeatManager: '0x99442256CC19C4D295a527Df2789198653Fb0fC7',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
-    stakingOperatorsDeploymentBlock: 700000,
+    stakingOperatorsDeploymentBlock: 2710753,
   },
   nilavMainnet: {
     nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed

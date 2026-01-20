@@ -180,14 +180,14 @@ Contract addresses are defined per network in the `contracts` object:
 ```typescript
 export const contracts = {
   nilavTestnet: {
-    nilToken: '0xf65b7cCF9f13ef932093bac19Eb5ea77ee70F4A4',
+    nilToken: '0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
-    stakingOperators: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
-    heartbeatManager: '0x3dbE95E20B370C5295E7436e2d887cFda8bcb02c',
+    stakingOperators: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
+    heartbeatManager: '0x99442256CC19C4D295a527Df2789198653Fb0fC7',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
-    stakingOperatorsDeploymentBlock: 700000,  // For indexer optimization
+    stakingOperatorsDeploymentBlock: 2710753,  // For indexer optimization
   },
 } as const;
 
@@ -617,13 +617,13 @@ Indexer queries filter by contract address automatically (from `lib/indexer/cont
 ```typescript
 export const STAKING_CONTRACT = {
   chainId: 78651,
-  contractAddress: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
+  contractAddress: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
   contractName: 'StakingOperators',
 };
 
 export const HEARTBEAT_MANAGER_CONTRACT = {
   chainId: 78651,
-  contractAddress: '0x3dbE95E20B370C5295E7436e2d887cFda8bcb02c',
+  contractAddress: '0x99442256CC19C4D295a527Df2789198653Fb0fC7',
   contractName: 'HeartbeatManager',
 };
 ```
@@ -757,7 +757,7 @@ import { activeContracts } from '@/config';
 const address = activeContracts.stakingOperators;
 
 // ❌ Wrong - hardcoded
-const address = '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049';
+const address = '0x108b2Be8911085EEf47ba837cE7feE814ef7D470';
 ```
 
 ### Address Padding in Events
@@ -799,7 +799,7 @@ Set deployment block in config to optimize indexer queries:
 export const contracts = {
   nilavTestnet: {
     stakingOperators: '0x...',
-    stakingOperatorsDeploymentBlock: 700000,  // No events before this
+    stakingOperatorsDeploymentBlock: 2710753,  // No events before this
   },
 };
 ```

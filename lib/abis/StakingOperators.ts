@@ -1,5 +1,5 @@
 // StakingOperators Contract ABI
-// Contract: 0x2913f0A4C1BE4e991CCf76F04C795E5646e02049
+// Contract: 0x108b2Be8911085EEf47ba837cE7feE814ef7D470
 // Network: Blacklight Testnet
 
 export const stakingOperatorsABI = [

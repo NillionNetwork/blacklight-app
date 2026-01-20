@@ -759,14 +759,14 @@ Configured in `contracts.ts`:
 ```typescript
 export const STAKING_CONTRACT = {
   chainId: 78651,
-  contractAddress: '0x2913f0A4C1BE4e991CCf76F04C795E5646e02049',
+  contractAddress: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
   contractName: 'StakingOperators',
 };
 
-export const NILAV_ROUTER_CONTRACT = {
+export const HEARTBEAT_MANAGER_CONTRACT = {
   chainId: 78651,
-  contractAddress: '0x34ED5BCD598619f7Aad6e3d9264C38CEb4Cd1edF',
-  contractName: 'NilAVRouter',
+  contractAddress: '0x99442256CC19C4D295a527Df2789198653Fb0fC7',
+  contractName: 'HeartbeatManager',
 };
 ```
 
