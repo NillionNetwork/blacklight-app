@@ -15,6 +15,9 @@ export {
   getOperatorRegistration,
   getOperatorDeactivation,
   getStakedEvents,
+  getStakingHistory,
+  getWithdrawalHistory,
+  getUnstakingHistory,
   // HeartbeatManager actions (new system)
   getRoundStartedEvents,
   getRoundStartedByKeys,

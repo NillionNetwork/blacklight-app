@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { useSwitchChain } from 'wagmi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import {
@@ -17,6 +18,7 @@ import {
   useStakeOf,
   useWalletBalances,
 } from '@/lib/hooks';
+import { getStakingHistory, formatTimeAgo } from '@/lib/indexer';
 import { toast } from 'sonner';
 
 interface StakingFormProps {
@@ -67,6 +69,7 @@ export function StakingForm({
   const { chainId, caipNetwork } = useAppKitNetwork();
   const { switchChain } = useSwitchChain();
   const { stakeTo } = useStakingOperators();
+  const queryClient = useQueryClient();
 
   const [operatorAddress, setOperatorAddress] = useState(nodeAddress || '');
 
@@ -83,6 +86,11 @@ export function StakingForm({
     isLoading: isLoadingBalances,
     refetchAll: refetchBalances,
   } = useWalletBalances(address as `0x${string}`);
+  const { data: stakingHistory, isLoading: isLoadingStakingHistory, error: stakingHistoryError } = useQuery({
+    queryKey: ['staking-history', operatorAddress],
+    queryFn: () => getStakingHistory(operatorAddress as `0x${string}`, undefined, 10),
+    enabled: !!operatorAddress && operatorAddress.startsWith('0x') && operatorAddress.length === 42,
+  });
 
   // Notify parent about stake data changes
   useEffect(() => {
@@ -198,6 +206,7 @@ export function StakingForm({
           stakeHash: result.stakeHash,
           step: 'complete',
         });
+        queryClient.invalidateQueries({ queryKey: ['staking-history', operatorAddress] });
 
         // Log comprehensive transaction details
         console.log('=== ✓ STAKING COMPLETED SUCCESSFULLY ===');
@@ -251,6 +260,116 @@ export function StakingForm({
     }
   };
 
+  const renderStakingHistory = () => (
+    <div style={{ marginTop: '2rem' }}>
+      <h3
+        style={{
+          fontSize: '1rem',
+          fontWeight: 600,
+          marginBottom: '1rem',
+          opacity: 0.9,
+        }}
+      >
+        Staking History
+      </h3>
+      {isLoadingStakingHistory ? (
+        <div
+          style={{
+            padding: '1rem',
+            textAlign: 'center',
+            opacity: 0.7,
+            fontSize: '0.875rem',
+          }}
+        >
+          Loading staking history...
+        </div>
+      ) : stakingHistoryError ? (
+        <div
+          style={{
+            padding: '1rem',
+            textAlign: 'center',
+            color: '#ff6b6b',
+            fontSize: '0.875rem',
+          }}
+        >
+          Failed to load staking history
+        </div>
+      ) : stakingHistory && stakingHistory.data && stakingHistory.data.length > 0 ? (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+            padding: '1rem',
+            background: 'rgba(255, 255, 255, 0.03)',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          {stakingHistory.data.map((stake, index) => (
+            <div
+              key={stake.tx_hash || index}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.75rem',
+                background: 'rgba(255, 255, 255, 0.02)',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
+                  {formatUnits(BigInt(stake.amount || '0'), activeContracts.nilTokenDecimals)} {tokenSymbol}
+                </div>
+                <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                  {formatTimeAgo(stake.block_timestamp)}
+                  {stake.staker ? ` • from ${stake.staker.slice(0, 6)}...${stake.staker.slice(-4)}` : ''}
+                </div>
+              </div>
+              <a
+                href={`${activeContracts.blockExplorer}/tx/${stake.tx_hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'var(--nillion-primary)',
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  opacity: 0.8,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '0.8';
+                  e.currentTarget.style.textDecoration = 'none';
+                }}
+              >
+                View tx →
+              </a>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div
+          style={{
+            padding: '1rem',
+            textAlign: 'center',
+            opacity: 0.6,
+            fontSize: '0.875rem',
+          }}
+        >
+          No staking events yet
+        </div>
+      )}
+    </div>
+  );
+
   // Not connected - show wallet connection prompt
   if (!isConnected) {
     return (
@@ -261,6 +380,7 @@ export function StakingForm({
           operator.
         </p>
         <ConnectWallet size="large" />
+        {renderStakingHistory()}
       </div>
     );
   }
@@ -294,6 +414,7 @@ export function StakingForm({
         >
           Switch to {activeNetwork.name}
         </Button>
+        {renderStakingHistory()}
       </div>
     );
   }
@@ -751,6 +872,7 @@ export function StakingForm({
           </Modal>
         </>
       )}
+      {renderStakingHistory()}
     </div>
   );
 }

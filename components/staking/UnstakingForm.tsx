@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { useSwitchChain } from 'wagmi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { Button, Input, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useStakeOf, useUnstakeDelay } from '@/lib/hooks/useStakingOperators';
+import { getUnstakingHistory, formatTimeAgo } from '@/lib/indexer';
 import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
@@ -34,9 +36,15 @@ export function UnstakingForm({
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
   const { switchChain } = useSwitchChain();
+  const queryClient = useQueryClient();
   const { requestUnstake } = useStakingOperators();
   const { stake, isLoading: isLoadingStake } = useStakeOf(operatorAddress);
   const { delay: unstakeDelay, isLoading: isLoadingDelay } = useUnstakeDelay();
+  const { data: unstakingHistory, isLoading: isLoadingUnstakingHistory, error: unstakingHistoryError } = useQuery({
+    queryKey: ['unstaking-history', operatorAddress],
+    queryFn: () => getUnstakingHistory(operatorAddress, undefined, 10),
+    enabled: !!operatorAddress,
+  });
 
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -123,6 +131,7 @@ export function UnstakingForm({
 
       setTxStatus({ step: 'complete' });
       setAmount('');
+      queryClient.invalidateQueries({ queryKey: ['unstaking-history', operatorAddress] });
       onUnstakeSuccess?.(operatorAddress, amount);
     } catch (err: any) {
       // Keep the transaction hash if we have it
@@ -134,6 +143,106 @@ export function UnstakingForm({
     }
   };
 
+  const renderUnstakingHistory = () => (
+    <div style={{ marginTop: '2rem' }}>
+      <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', opacity: 0.9 }}>
+        Unstaking History
+      </h3>
+      {isLoadingUnstakingHistory ? (
+        <div style={{
+          padding: '1rem',
+          textAlign: 'center',
+          opacity: 0.7,
+          fontSize: '0.875rem',
+        }}>
+          Loading unstaking history...
+        </div>
+      ) : unstakingHistoryError ? (
+        <div style={{
+          padding: '1rem',
+          textAlign: 'center',
+          color: '#ff6b6b',
+          fontSize: '0.875rem',
+        }}>
+          Failed to load unstaking history
+        </div>
+      ) : unstakingHistory && unstakingHistory.data && unstakingHistory.data.length > 0 ? (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem',
+          padding: '1rem',
+          background: 'rgba(255, 255, 255, 0.03)',
+          borderRadius: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
+          {unstakingHistory.data.map((unstake, index) => {
+            const releaseTimestamp = Number(unstake.releaseTime);
+            const releaseDate = releaseTimestamp > 0 ? new Date(releaseTimestamp * 1000) : null;
+
+            return (
+              <div
+                key={unstake.tx_hash || index}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '0.75rem',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
+                    {formatUnits(BigInt(unstake.amount), activeContracts.nilTokenDecimals)} {tokenSymbol}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                    {formatTimeAgo(unstake.block_timestamp)}
+                    {releaseDate ? ` • Unlocks ${releaseDate.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : ''}
+                  </div>
+                </div>
+                <a
+                  href={`${activeContracts.blockExplorer}/tx/${unstake.tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: 'var(--nillion-primary)',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    opacity: 0.8,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '0.8';
+                    e.currentTarget.style.textDecoration = 'none';
+                  }}
+                >
+                  View tx →
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div style={{
+          padding: '1rem',
+          textAlign: 'center',
+          opacity: 0.6,
+          fontSize: '0.875rem',
+        }}>
+          No unstaking events yet
+        </div>
+      )}
+    </div>
+  );
+
   // Not connected - show wallet connection prompt
   if (!isConnected) {
     return (
@@ -143,6 +252,7 @@ export function UnstakingForm({
           You need to connect your wallet to unstake {tokenSymbol} tokens.
         </p>
         <ConnectWallet size="large" />
+        {renderUnstakingHistory()}
       </div>
     );
   }
@@ -245,6 +355,8 @@ export function UnstakingForm({
           </div>
         )}
       </div>
+
+      {renderUnstakingHistory()}
 
       {/* Transaction Modal */}
       <Modal

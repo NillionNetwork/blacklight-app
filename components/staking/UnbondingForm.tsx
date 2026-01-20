@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { useSwitchChain } from 'wagmi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { Button, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
 import { TransactionTracker } from '@/components/ui/TransactionTracker';
 import { useStakingOperators, useUnbondingInfo, useUnstakeDelay } from '@/lib/hooks/useStakingOperators';
+import { getWithdrawalHistory, formatTimeAgo } from '@/lib/indexer';
 import { activeContracts, activeNetwork } from '@/config';
 import { toast } from 'sonner';
 
@@ -34,9 +36,17 @@ export function UnbondingForm({
   const { address, isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
   const { switchChain } = useSwitchChain();
+  const queryClient = useQueryClient();
   const { withdrawUnstaked } = useStakingOperators();
   const { unbonding, isLoading: isLoadingUnbonding } = useUnbondingInfo(operatorAddress);
   const { delay: unstakeDelay, isLoading: isLoadingDelay } = useUnstakeDelay();
+
+  // Fetch withdrawal history (works even without wallet connection)
+  const { data: withdrawalHistory, isLoading: isLoadingHistory, error: historyError } = useQuery({
+    queryKey: ['withdrawal-history', operatorAddress],
+    queryFn: () => getWithdrawalHistory(operatorAddress, undefined, 10),
+    enabled: !!operatorAddress,
+  });
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [showTxModal, setShowTxModal] = useState(false);
@@ -71,6 +81,9 @@ export function UnbondingForm({
 
   const hasUnbonding = unbonding && unbonding.amount > 0n;
   const canWithdraw = hasUnbonding && timeRemaining === 0;
+
+  // Check if we have ready tokens (can withdraw now)
+  const hasReadyTokens = unbonding && 'readyAmount' in unbonding && (unbonding as any).readyAmount > 0n;
 
   // Format unstake delay for display
   const formatUnstakeDelay = (): string => {
@@ -147,6 +160,10 @@ export function UnbondingForm({
       });
 
       setTxStatus({ step: 'complete' });
+
+      // Invalidate withdrawal history to show the new withdrawal
+      queryClient.invalidateQueries({ queryKey: ['withdrawal-history', operatorAddress] });
+
       onWithdrawSuccess?.(operatorAddress);
     } catch (err: any) {
       // Keep the transaction hash if we have it
@@ -158,7 +175,7 @@ export function UnbondingForm({
     }
   };
 
-  // Not connected - show wallet connection prompt
+  // Not connected - show wallet connection prompt + withdrawal history
   if (!isConnected) {
     return (
       <div>
@@ -167,6 +184,99 @@ export function UnbondingForm({
           You need to connect your wallet to view and withdraw unbonding tokens.
         </p>
         <ConnectWallet size="large" />
+
+        {/* Withdrawal History - Public view without connection */}
+        <div style={{ marginTop: '2rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', opacity: 0.9 }}>
+            Withdrawal History
+          </h3>
+          {isLoadingHistory ? (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              opacity: 0.7,
+              fontSize: '0.875rem',
+            }}>
+              Loading withdrawal history...
+            </div>
+          ) : historyError ? (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              color: '#ff6b6b',
+              fontSize: '0.875rem',
+            }}>
+              Failed to load withdrawal history
+            </div>
+          ) : withdrawalHistory && withdrawalHistory.data && withdrawalHistory.data.length > 0 ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.75rem',
+              padding: '1rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}>
+              {withdrawalHistory.data.map((withdrawal, index) => (
+                <div
+                  key={withdrawal.tx_hash || index}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
+                      {formatUnits(BigInt(withdrawal.amount), activeContracts.nilTokenDecimals)} {tokenSymbol}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                      {formatTimeAgo(withdrawal.block_timestamp)}
+                    </div>
+                  </div>
+                  <a
+                    href={`${activeContracts.blockExplorer}/tx/${withdrawal.tx_hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'var(--nillion-primary)',
+                      textDecoration: 'none',
+                      fontSize: '0.875rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      opacity: 0.8,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.textDecoration = 'underline';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.8';
+                      e.currentTarget.style.textDecoration = 'none';
+                    }}
+                  >
+                    View tx →
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              opacity: 0.6,
+              fontSize: '0.875rem',
+            }}>
+              No withdrawals yet
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -221,6 +331,99 @@ export function UnbondingForm({
             Tokens can be withdrawn here once the unbonding period completes.
           </div>
         </div>
+
+        {/* Withdrawal History - Also show when no unbonding */}
+        <div style={{ marginTop: '2rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', opacity: 0.9 }}>
+            Withdrawal History
+          </h3>
+          {isLoadingHistory ? (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              opacity: 0.7,
+              fontSize: '0.875rem',
+            }}>
+              Loading withdrawal history...
+            </div>
+          ) : historyError ? (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              color: '#ff6b6b',
+              fontSize: '0.875rem',
+            }}>
+              Failed to load withdrawal history
+            </div>
+          ) : withdrawalHistory && withdrawalHistory.data && withdrawalHistory.data.length > 0 ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.75rem',
+              padding: '1rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}>
+              {withdrawalHistory.data.map((withdrawal, index) => (
+                <div
+                  key={withdrawal.tx_hash || index}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
+                      {formatUnits(BigInt(withdrawal.amount), activeContracts.nilTokenDecimals)} {tokenSymbol}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                      {formatTimeAgo(withdrawal.block_timestamp)}
+                    </div>
+                  </div>
+                  <a
+                    href={`${activeContracts.blockExplorer}/tx/${withdrawal.tx_hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'var(--nillion-primary)',
+                      textDecoration: 'none',
+                      fontSize: '0.875rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      opacity: 0.8,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.textDecoration = 'underline';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '0.8';
+                      e.currentTarget.style.textDecoration = 'none';
+                    }}
+                  >
+                    View tx →
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              padding: '1rem',
+              textAlign: 'center',
+              opacity: 0.6,
+              fontSize: '0.875rem',
+            }}>
+              No withdrawals yet
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -267,17 +470,32 @@ export function UnbondingForm({
           Unbonding Tokens
         </h3>
         <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Amount: </span>
-          <span className="unstaking-unbonding-value">
-            {formatUnits(unbonding.amount, activeContracts.nilTokenDecimals)} {tokenSymbol}
+          <span className="unstaking-unbonding-label">
+            {hasReadyTokens ? 'Ready to Withdraw:' : 'Total Amount:'}
+          </span>
+          <span className={`unstaking-unbonding-value ${hasReadyTokens ? 'unstaking-unbonding-value-ready' : ''}`}>
+            {hasReadyTokens
+              ? formatUnits((unbonding as any).readyAmount, activeContracts.nilTokenDecimals)
+              : formatUnits(unbonding.amount, activeContracts.nilTokenDecimals)
+            } {tokenSymbol}
           </span>
         </div>
-        <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Time Remaining: </span>
-          <span className={`unstaking-unbonding-value ${canWithdraw ? 'unstaking-unbonding-value-ready' : ''}`}>
-            {formatTime(timeRemaining)}
-          </span>
-        </div>
+        {hasReadyTokens && (unbonding as any).readyAmount < unbonding.amount && (
+          <div className="unstaking-unbonding-row" style={{ fontSize: '0.875rem', opacity: 0.8 }}>
+            <span className="unstaking-unbonding-label">Still Pending: </span>
+            <span className="unstaking-unbonding-value">
+              {formatUnits(unbonding.amount - (unbonding as any).readyAmount, activeContracts.nilTokenDecimals)} {tokenSymbol}
+            </span>
+          </div>
+        )}
+        {!hasReadyTokens && timeRemaining > 0 && (
+          <div className="unstaking-unbonding-row">
+            <span className="unstaking-unbonding-label">Time Remaining: </span>
+            <span className="unstaking-unbonding-value">
+              {formatTime(timeRemaining)}
+            </span>
+          </div>
+        )}
         {canWithdraw && (
           <div className="unstaking-unbonding-row" style={{ marginTop: '0.5rem' }}>
             <span className="unstaking-unbonding-label">Status: </span>
@@ -302,8 +520,104 @@ export function UnbondingForm({
           ℹ️ Unstaked tokens have a {formatUnstakeDelay()} unbonding period for network security.
         </div>
         <div className="unstaking-info-line">
-          You can withdraw your tokens once the countdown reaches zero.
+          {hasReadyTokens
+            ? 'Click "Withdraw Tokens" to withdraw all ready tokens at once.'
+            : 'You can withdraw your tokens once the countdown reaches zero.'
+          }
         </div>
+      </div>
+
+      {/* Withdrawal History */}
+      <div style={{ marginTop: '2rem' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', opacity: 0.9 }}>
+          Withdrawal History
+        </h3>
+        {isLoadingHistory ? (
+          <div style={{
+            padding: '1rem',
+            textAlign: 'center',
+            opacity: 0.7,
+            fontSize: '0.875rem',
+          }}>
+            Loading withdrawal history...
+          </div>
+        ) : historyError ? (
+          <div style={{
+            padding: '1rem',
+            textAlign: 'center',
+            color: '#ff6b6b',
+            fontSize: '0.875rem',
+          }}>
+            Failed to load withdrawal history
+          </div>
+        ) : withdrawalHistory && withdrawalHistory.data && withdrawalHistory.data.length > 0 ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+            padding: '1rem',
+            background: 'rgba(255, 255, 255, 0.03)',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}>
+            {withdrawalHistory.data.map((withdrawal, index) => (
+              <div
+                key={withdrawal.tx_hash || index}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '0.75rem',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
+                    {formatUnits(BigInt(withdrawal.amount), activeContracts.nilTokenDecimals)} {tokenSymbol}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                    {formatTimeAgo(withdrawal.block_timestamp)}
+                  </div>
+                </div>
+                <a
+                  href={`${activeContracts.blockExplorer}/tx/${withdrawal.tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: 'var(--nillion-primary)',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    opacity: 0.8,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '0.8';
+                    e.currentTarget.style.textDecoration = 'none';
+                  }}
+                >
+                  View tx →
+                </a>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            padding: '1rem',
+            textAlign: 'center',
+            opacity: 0.6,
+            fontSize: '0.875rem',
+          }}>
+            No withdrawals yet
+          </div>
+        )}
       </div>
 
       {/* Transaction Modal */}

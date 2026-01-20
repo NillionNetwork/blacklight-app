@@ -469,23 +469,72 @@ export function useActiveOperators() {
 /**
  * Hook to get unbonding information for an operator
  * @param operatorAddress - Address of the operator
+ *
+ * Note: The contract now supports multiple unbonding tranches.
+ * This hook aggregates them for display:
+ * - amount: sum of all ready tranches (can be withdrawn now)
+ * - releaseTime: earliest release time of pending tranches
  */
 export function useUnbondingInfo(operatorAddress?: `0x${string}`) {
-  const { data: unbondingRaw, isLoading } = useReadContract({
+  // Get all unbonding tranches
+  const { data: tranchesRaw, isLoading: isLoadingTranches } = useReadContract({
     address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
-    functionName: 'unbondings',
+    functionName: 'getUnbondingTranches',
     args: operatorAddress ? [operatorAddress] : undefined,
     chainId: activeNetwork.id,
   });
 
-  // Contract returns array: [staker, amount, releaseTime]
-  const unbonding = unbondingRaw
-    ? {
-        staker: (unbondingRaw as any)[0] as `0x${string}`,
-        amount: (unbondingRaw as any)[1] as bigint,
-        releaseTime: (unbondingRaw as any)[2] as bigint,
-      }
+  // Get the staker address
+  const { data: stakerRaw, isLoading: isLoadingStaker } = useReadContract({
+    address: activeContracts.stakingOperators as `0x${string}`,
+    abi: stakingOperatorsABI,
+    functionName: 'unbondingStaker',
+    args: operatorAddress ? [operatorAddress] : undefined,
+    chainId: activeNetwork.id,
+  });
+
+  const isLoading = isLoadingTranches || isLoadingStaker;
+
+  // Process tranches
+  const unbonding = tranchesRaw && Array.isArray(tranchesRaw) && tranchesRaw.length > 0
+    ? (() => {
+        const now = Math.floor(Date.now() / 1000);
+        const tranches = tranchesRaw as Array<{ amount: bigint; releaseTime: bigint }>;
+
+        // Sum all ready tranches (can be withdrawn now)
+        let readyAmount = 0n;
+        let earliestPendingTime: bigint | null = null;
+
+        for (const tranche of tranches) {
+          const releaseTimestamp = Number(tranche.releaseTime);
+          if (releaseTimestamp <= now) {
+            // This tranche is ready to withdraw
+            readyAmount += tranche.amount;
+          } else {
+            // This tranche is still pending
+            if (earliestPendingTime === null || tranche.releaseTime < earliestPendingTime) {
+              earliestPendingTime = tranche.releaseTime;
+            }
+          }
+        }
+
+        // If we have ready tokens, use releaseTime = 0 (withdrawable now)
+        // Otherwise use the earliest pending time
+        const releaseTime = readyAmount > 0n ? 0n : (earliestPendingTime || 0n);
+
+        // Total amount is all tranches (both ready and pending)
+        const totalAmount = tranches.reduce((sum, t) => sum + t.amount, 0n);
+
+        return {
+          staker: (stakerRaw as `0x${string}`) || ('0x0000000000000000000000000000000000000000' as `0x${string}`),
+          amount: totalAmount,
+          releaseTime,
+          // Additional info for future use
+          readyAmount, // Amount that can be withdrawn now
+          tranches, // All tranches
+        };
+      })()
     : undefined;
 
   return {

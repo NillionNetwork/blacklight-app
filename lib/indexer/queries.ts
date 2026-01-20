@@ -253,6 +253,29 @@ export interface StakedEvent extends BlockchainEvent {
 }
 
 /**
+ * UnstakedWithdrawn event data
+ * Emitted when a user withdraws unstaked tokens after the unbonding period
+ * Event signature: UnstakedWithdrawn(address indexed staker, address indexed operator, uint256 amount)
+ */
+export interface UnstakedWithdrawnEvent extends BlockchainEvent {
+  staker: string; // address - the user withdrawing tokens (topics[2])
+  operator: string; // address - the operator being withdrawn from (topics[3])
+  amount: string; // uint256 - amount withdrawn (decoded from data field)
+}
+
+/**
+ * UnstakeRequested event data
+ * Emitted when a user requests to unstake tokens (starts unbonding period)
+ * Event signature: UnstakeRequested(address indexed staker, address indexed operator, uint256 amount, uint64 releaseTime)
+ */
+export interface UnstakeRequestedEvent extends BlockchainEvent {
+  staker: string; // address - the user unstaking tokens (topics[2])
+  operator: string; // address - the operator being unstaked from (topics[3])
+  amount: string; // uint256 - amount being unstaked (decoded from data field)
+  releaseTime: string; // uint64 - timestamp when tokens can be withdrawn (decoded from data field)
+}
+
+/**
  * HeartbeatEnqueued event
  *
  * WHEN EMITTED: When a new heartbeat is submitted to the system
@@ -911,3 +934,306 @@ export async function getRoundStartedByKeys(
   return result;
 }
 
+/**
+ * Get withdrawal history for an operator
+ * Returns UnstakedWithdrawn events showing when tokens were withdrawn
+ *
+ * @param operatorAddress - The operator address to query withdrawals for
+ * @param fromBlock - Optional: Only look for events from this block onwards
+ * @param limit - Maximum number of results (default: 50)
+ * @returns Promise with withdrawal event data
+ *
+ * @example
+ * // Get last 50 withdrawals for an operator
+ * const withdrawals = await getWithdrawalHistory('0x...');
+ *
+ * @example
+ * // Get last 100 withdrawals from a specific block
+ * const withdrawals = await getWithdrawalHistory('0x...', 1036389, 100);
+ */
+export async function getWithdrawalHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<UnstakedWithdrawnEvent>> {
+  // UnstakedWithdrawn event signature: UnstakedWithdrawn(address indexed staker, address indexed operator, uint256 amount)
+  // In SQL (1-indexed):
+  // topics[1] = event signature
+  // topics[2] = staker (first indexed)
+  // topics[3] = operator (second indexed) <-- Filter by this!
+  // data = amount (non-indexed)
+
+  const eventSignature = getEventSignatureHash(STAKING_EVENTS.UnstakedWithdrawn);
+  const paddedOperator = padAddressTo32Bytes(operatorAddress);
+
+  // Build WHERE clause - NOTE: operator is in topics[3] for UnstakedWithdrawn!
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.stakingOperators.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[3] = '${paddedOperator}'`;
+
+  // Add fromBlock filter if provided (improves performance)
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as staker,
+      topics[3] as operator,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<UnstakedWithdrawnEvent>(query, []);
+
+  // Process the results
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      // Strip padding from addresses (topics are 32 bytes)
+      const cleanStaker = event.staker && typeof event.staker === 'string'
+        ? '0x' + event.staker.replace('0x', '').slice(-40)
+        : '';
+      const cleanOperator = event.operator && typeof event.operator === 'string'
+        ? '0x' + event.operator.replace('0x', '').slice(-40)
+        : operatorAddress.toLowerCase();
+
+      // Decode amount from data field (uint256)
+      let amount = '0';
+      try {
+        if (event.data) {
+          const decoded = decodeAbiParameters(
+            [{ type: 'uint256', name: 'amount' }],
+            event.data as `0x${string}`
+          );
+          amount = decoded[0].toString();
+        }
+      } catch (error) {
+        console.error('[getWithdrawalHistory] Failed to decode amount:', error);
+      }
+
+      return {
+        staker: cleanStaker,
+        operator: cleanOperator,
+        amount,
+        block_num: event.block_num,
+        block_timestamp: event.block_timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Get staking history for an operator
+ * Returns StakedTo events showing when tokens were staked
+ *
+ * @param operatorAddress - The operator address to query staking events for
+ * @param fromBlock - Optional: Only look for events from this block onwards
+ * @param limit - Maximum number of results (default: 50)
+ * @returns Promise with staking event data
+ *
+ * @example
+ * // Get last 50 staking events for an operator
+ * const stakings = await getStakingHistory('0x...');
+ *
+ * @example
+ * // Get last 100 staking events from a specific block
+ * const stakings = await getStakingHistory('0x...', 1036389, 100);
+ */
+export async function getStakingHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<StakedEvent>> {
+  // StakedTo event signature: StakedTo(address indexed staker, address indexed operator, uint256 amount)
+  // In SQL (1-indexed):
+  // topics[1] = event signature
+  // topics[2] = staker (first indexed)
+  // topics[3] = operator (second indexed) <-- Filter by this!
+  // data = amount (non-indexed)
+
+  const eventSignature = getEventSignatureHash(STAKING_EVENTS.StakedTo);
+  const paddedOperator = padAddressTo32Bytes(operatorAddress);
+
+  // Build WHERE clause - NOTE: operator is in topics[3] for StakedTo!
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.stakingOperators.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[3] = '${paddedOperator}'`;
+
+  // Add fromBlock filter if provided (improves performance)
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as staker,
+      topics[3] as operator,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<StakedEvent>(query, []);
+
+  // Process the results
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      // Strip padding from addresses (topics are 32 bytes)
+      const cleanStaker = event.staker && typeof event.staker === 'string'
+        ? '0x' + event.staker.replace('0x', '').slice(-40)
+        : '';
+      const cleanOperator = event.operator && typeof event.operator === 'string'
+        ? '0x' + event.operator.replace('0x', '').slice(-40)
+        : operatorAddress.toLowerCase();
+
+      // Decode amount from data field (uint256)
+      let amount = '0';
+      try {
+        if (event.data) {
+          const decoded = decodeAbiParameters(
+            [{ type: 'uint256', name: 'amount' }],
+            event.data as `0x${string}`
+          );
+          amount = decoded[0].toString();
+        }
+      } catch (error) {
+        console.error('[getStakingHistory] Failed to decode amount:', error);
+      }
+
+      return {
+        staker: cleanStaker,
+        operator: cleanOperator,
+        amount,
+        block_num: event.block_num,
+        block_timestamp: event.block_timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
+  }
+
+  return result;
+}
+
+
+/**
+ * Get unstaking history for an operator
+ * Returns UnstakeRequested events showing when tokens were unstaked (started unbonding)
+ *
+ * @param operatorAddress - The operator address to query unstaking events for
+ * @param fromBlock - Optional: Only look for events from this block onwards
+ * @param limit - Maximum number of results (default: 50)
+ * @returns Promise with unstaking event data
+ *
+ * @example
+ * // Get last 50 unstaking events for an operator
+ * const unstakings = await getUnstakingHistory('0x...');
+ *
+ * @example
+ * // Get last 100 unstaking events from a specific block
+ * const unstakings = await getUnstakingHistory('0x...', 1036389, 100);
+ */
+export async function getUnstakingHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<UnstakeRequestedEvent>> {
+  // UnstakeRequested event signature: UnstakeRequested(address indexed staker, address indexed operator, uint256 amount, uint64 releaseTime)
+  // In SQL (1-indexed):
+  // topics[1] = event signature
+  // topics[2] = staker (first indexed)
+  // topics[3] = operator (second indexed) <-- Filter by this!
+  // data = amount + releaseTime (non-indexed)
+
+  const eventSignature = getEventSignatureHash(STAKING_EVENTS.UnstakeRequested);
+  const paddedOperator = padAddressTo32Bytes(operatorAddress);
+
+  // Build WHERE clause - NOTE: operator is in topics[3] for UnstakeRequested!
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.stakingOperators.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[3] = '${paddedOperator}'`;
+
+  // Add fromBlock filter if provided (improves performance)
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as staker,
+      topics[3] as operator,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<UnstakeRequestedEvent>(query, []);
+
+  // Process the results
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      // Strip padding from addresses (topics are 32 bytes)
+      const cleanStaker = event.staker && typeof event.staker === 'string'
+        ? '0x' + event.staker.replace('0x', '').slice(-40)
+        : '';
+      const cleanOperator = event.operator && typeof event.operator === 'string'
+        ? '0x' + event.operator.replace('0x', '').slice(-40)
+        : operatorAddress.toLowerCase();
+
+      // Decode amount and releaseTime from data field (uint256 + uint64)
+      let amount = '0';
+      let releaseTime = '0';
+      try {
+        if (event.data) {
+          const decoded = decodeAbiParameters(
+            [
+              { type: 'uint256', name: 'amount' },
+              { type: 'uint64', name: 'releaseTime' },
+            ],
+            event.data as `0x${string}`
+          );
+          amount = decoded[0].toString();
+          releaseTime = decoded[1].toString();
+        }
+      } catch (error) {
+        console.error('[getUnstakingHistory] Failed to decode data:', error);
+      }
+
+      return {
+        staker: cleanStaker,
+        operator: cleanOperator,
+        amount,
+        releaseTime,
+        block_num: event.block_num,
+        block_timestamp: event.block_timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
+  }
+
+  return result;
+}

@@ -1,5 +1,5 @@
 // StakingOperators Contract ABI
-// Contract: 0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46: https://explorer-nilav-shzvox09l5.t.conduit.xyz/address/0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46?tab=contract_abi
+// Contract: 0x2913f0A4C1BE4e991CCf76F04C795E5646e02049
 // Network: Blacklight Testnet
 
 export const stakingOperatorsABI = [
@@ -21,24 +21,65 @@ export const stakingOperatorsABI = [
     name: 'AccessControlUnauthorizedAccount',
     type: 'error',
   },
+  { inputs: [], name: 'BatchTooLarge', type: 'error' },
+  { inputs: [], name: 'CannotReactivateWhileJailed', type: 'error' },
   { inputs: [], name: 'DifferentStaker', type: 'error' },
+  { inputs: [], name: 'EnforcedPause', type: 'error' },
+  { inputs: [], name: 'ExpectedPause', type: 'error' },
   { inputs: [], name: 'InsufficientStake', type: 'error' },
-  { inputs: [], name: 'NoStake', type: 'error' },
+  { inputs: [], name: 'InsufficientStakeForActivation', type: 'error' },
+  { inputs: [], name: 'InvalidAddress', type: 'error' },
+  { inputs: [], name: 'InvalidUnstakeDelay', type: 'error' },
   { inputs: [], name: 'NoUnbonding', type: 'error' },
   { inputs: [], name: 'NotActive', type: 'error' },
   { inputs: [], name: 'NotReady', type: 'error' },
+  { inputs: [], name: 'NotSnapshotter', type: 'error' },
   { inputs: [], name: 'NotStaker', type: 'error' },
+  { inputs: [], name: 'OperatorDoesNotExist', type: 'error' },
   { inputs: [], name: 'OperatorJailed', type: 'error' },
-  { inputs: [], name: 'PendingUnbonding', type: 'error' },
   { inputs: [], name: 'ReentrancyGuardReentrantCall', type: 'error' },
   {
     inputs: [{ internalType: 'address', name: 'token', type: 'address' }],
     name: 'SafeERC20FailedOperation',
     type: 'error',
   },
-  { inputs: [], name: 'UnbondingExists', type: 'error' },
+  { inputs: [], name: 'StakeOverflow', type: 'error' },
+  { inputs: [], name: 'TooManyTranches', type: 'error' },
   { inputs: [], name: 'ZeroAddress', type: 'error' },
   { inputs: [], name: 'ZeroAmount', type: 'error' },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'operator',
+        type: 'address',
+      },
+      { indexed: false, internalType: 'bool', name: 'isActive', type: 'bool' },
+    ],
+    name: 'ActiveStatusUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldHeartbeatManager',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newHeartbeatManager',
+        type: 'address',
+      },
+    ],
+    name: 'HeartbeatManagerUpdated',
+    type: 'event',
+  },
   {
     anonymous: false,
     inputs: [
@@ -75,6 +116,20 @@ export const stakingOperatorsABI = [
         name: 'operator',
         type: 'address',
       },
+      { indexed: false, internalType: 'uint64', name: 'until', type: 'uint64' },
+    ],
+    name: 'OperatorDeactivatedByPolicy',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'operator',
+        type: 'address',
+      },
       {
         indexed: false,
         internalType: 'string',
@@ -83,6 +138,38 @@ export const stakingOperatorsABI = [
       },
     ],
     name: 'OperatorRegistered',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'Paused',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldConfig',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newConfig',
+        type: 'address',
+      },
+    ],
+    name: 'ProtocolConfigUpdated',
     type: 'event',
   },
   {
@@ -168,6 +255,25 @@ export const stakingOperatorsABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldSnapshotter',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newSnapshotter',
+        type: 'address',
+      },
+    ],
+    name: 'SnapshotterUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'staker',
@@ -187,6 +293,19 @@ export const stakingOperatorsABI = [
       },
     ],
     name: 'StakedTo',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'Unpaused',
     type: 'event',
   },
   {
@@ -273,8 +392,22 @@ export const stakingOperatorsABI = [
   },
   {
     inputs: [],
+    name: 'MAX_TRANCHES_PER_OPERATOR',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'SLASHER_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'currentSnapshotId',
+    outputs: [{ internalType: 'uint64', name: '', type: 'uint64' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -317,6 +450,23 @@ export const stakingOperatorsABI = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: 'operator', type: 'address' }],
+    name: 'getUnbondingTranches',
+    outputs: [
+      {
+        components: [
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+          { internalType: 'uint64', name: 'releaseTime', type: 'uint64' },
+        ],
+        internalType: 'struct IStakingOperators.Tranche[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'bytes32', name: 'role', type: 'bytes32' },
       { internalType: 'address', name: 'account', type: 'address' },
@@ -333,6 +483,13 @@ export const stakingOperatorsABI = [
     ],
     name: 'hasRole',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'heartbeatManager',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -365,6 +522,48 @@ export const stakingOperatorsABI = [
     name: 'operatorStaker',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'pause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'paused',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'operator', type: 'address' }],
+    name: 'pokeActive',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address[]', name: 'operators', type: 'address[]' }],
+    name: 'pokeActiveMany',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'protocolConfig',
+    outputs: [{ internalType: 'contract IProtocolConfig', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'reactivateOperator',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -405,6 +604,27 @@ export const stakingOperatorsABI = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: 'newHeartbeatManager', type: 'address' }],
+    name: 'setHeartbeatManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'contract IProtocolConfig', name: 'newConfig', type: 'address' }],
+    name: 'setProtocolConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newSnapshotter', type: 'address' }],
+    name: 'setSnapshotter',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'uint256', name: 'newDelay', type: 'uint256' }],
     name: 'setUnstakeDelay',
     outputs: [],
@@ -419,6 +639,30 @@ export const stakingOperatorsABI = [
     name: 'slash',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'snapshot',
+    outputs: [{ internalType: 'uint64', name: 'snapshotId', type: 'uint64' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'snapshotter',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'operator', type: 'address' },
+      { internalType: 'uint64', name: 'snapshotId', type: 'uint64' },
+    ],
+    name: 'stakeAt',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -460,14 +704,17 @@ export const stakingOperatorsABI = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: '', type: 'address' }],
-    name: 'unbondings',
-    outputs: [
-      { internalType: 'address', name: 'staker', type: 'address' },
-      { internalType: 'uint256', name: 'amount', type: 'uint256' },
-      { internalType: 'uint64', name: 'releaseTime', type: 'uint64' },
-    ],
+    inputs: [{ internalType: 'address', name: 'operator', type: 'address' }],
+    name: 'unbondingStaker',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'unpause',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {

@@ -9,6 +9,9 @@ import {
   getRoundStartedEvents as getRoundStartedEventsQuery,
   getRoundStartedByKeys as getRoundStartedByKeysQuery,
   getOperatorVotes as getOperatorVotesQuery,
+  getWithdrawalHistory as getWithdrawalHistoryQuery,
+  getStakingHistory as getStakingHistoryQuery,
+  getUnstakingHistory as getUnstakingHistoryQuery,
 } from './queries';
 
 /**
@@ -144,6 +147,29 @@ export async function getStakedEvents(
   return await getStakedEventsQuery(stakerAddress, fromBlock, limit);
 }
 
+/**
+ * Get staking history for an operator
+ */
+export async function getStakingHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getStakingHistoryQuery(operatorAddress, fromBlock, limit);
+}
+
 // =============================================================================
 // HeartbeatManager Server Actions (New System)
 // =============================================================================
@@ -230,4 +256,58 @@ export async function getRoundStartedByKeys(
   }
 
   return await getRoundStartedByKeysQuery(heartbeatKeys, fromBlock);
+}
+
+/**
+ * Get withdrawal history for an operator
+ * Returns UnstakedWithdrawn events showing when tokens were withdrawn
+ */
+export async function getWithdrawalHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  // Validate address
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  // Validate fromBlock
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  // Validate limit
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getWithdrawalHistoryQuery(operatorAddress, fromBlock, limit);
+}
+
+/**
+ * Get unstaking history for an operator
+ * Returns UnstakeRequested events showing when tokens were unstaked
+ */
+export async function getUnstakingHistory(
+  operatorAddress: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  // Validate address
+  if (!operatorAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid operator address format');
+  }
+
+  // Validate fromBlock
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  // Validate limit
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getUnstakingHistoryQuery(operatorAddress, fromBlock, limit);
 }
