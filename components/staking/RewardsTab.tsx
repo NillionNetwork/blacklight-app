@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { useSwitchChain, useConfig } from 'wagmi';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { Button, Modal } from '@/components/ui';
 import { ConnectWallet } from '@/components/auth';
@@ -24,6 +24,7 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
   const { switchChain } = useSwitchChain();
   const wagmiConfig = useConfig();
   const { claim } = useRewardPolicy();
+  const queryClient = useQueryClient();
 
   const tokenSymbol = activeContracts.nilTokenSymbol;
   const tokenDecimals = activeContracts.nilTokenDecimals;
@@ -69,56 +70,18 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
     enabled: !!stakerAddress,
   });
 
-  const { data: status } = useQuery({
-    queryKey: ['rewards-status', operatorAddress],
+  const { data: accountingFrozen } = useQuery({
+    queryKey: ['rewards-accounting', operatorAddress],
     queryFn: async () => {
       const { readContract } = await import('wagmi/actions');
-      const [spendableBudget, streamRemaining, streamRatePerSecondWad, streamEnd, accountingFrozen] =
-        await Promise.all([
-          readContract(wagmiConfig, {
-            address: activeContracts.rewardPolicy as `0x${string}`,
-            abi: rewardPolicyABI,
-            functionName: 'spendableBudget',
-            args: [],
-            chainId: activeNetwork.id,
-          }),
-          readContract(wagmiConfig, {
-            address: activeContracts.rewardPolicy as `0x${string}`,
-            abi: rewardPolicyABI,
-            functionName: 'streamRemaining',
-            args: [],
-            chainId: activeNetwork.id,
-          }),
-          readContract(wagmiConfig, {
-            address: activeContracts.rewardPolicy as `0x${string}`,
-            abi: rewardPolicyABI,
-            functionName: 'streamRatePerSecondWad',
-            args: [],
-            chainId: activeNetwork.id,
-          }),
-          readContract(wagmiConfig, {
-            address: activeContracts.rewardPolicy as `0x${string}`,
-            abi: rewardPolicyABI,
-            functionName: 'streamEnd',
-            args: [],
-            chainId: activeNetwork.id,
-          }),
-          readContract(wagmiConfig, {
-            address: activeContracts.rewardPolicy as `0x${string}`,
-            abi: rewardPolicyABI,
-            functionName: 'accountingFrozen',
-            args: [],
-            chainId: activeNetwork.id,
-          }),
-        ]);
-
-      return {
-        spendableBudget: spendableBudget as bigint,
-        streamRemaining: streamRemaining as bigint,
-        streamRatePerSecondWad: streamRatePerSecondWad as bigint,
-        streamEnd: streamEnd as bigint,
-        accountingFrozen: accountingFrozen as boolean,
-      };
+      const frozen = await readContract(wagmiConfig, {
+        address: activeContracts.rewardPolicy as `0x${string}`,
+        abi: rewardPolicyABI,
+        functionName: 'accountingFrozen',
+        args: [],
+        chainId: activeNetwork.id,
+      });
+      return frozen as boolean;
     },
     enabled: true,
   });
@@ -153,6 +116,8 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
 
       const result = await claim();
       setTxStatus({ step: 'complete', hash: result.hash });
+      queryClient.invalidateQueries({ queryKey: ['rewards-claimable', stakerAddress] });
+      queryClient.invalidateQueries({ queryKey: ['rewards-claimed', stakerAddress] });
     } catch (err: any) {
       setTxStatus(prev => ({ ...prev, step: 'error' }));
       setError(err?.message || 'Failed to claim');
@@ -209,8 +174,8 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div style={{ fontWeight: 500, color: 'var(--nillion-primary)' }}>
-                − {formatUnits(BigInt(item.amount || '0'), tokenDecimals)} {tokenSymbol}
+              <div style={{ fontWeight: 600, color: 'var(--nillion-primary)' }}>
+                Claimed {formatUnits(BigInt(item.amount || '0'), tokenDecimals)} {tokenSymbol}
               </div>
               <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
                 {formatTimeAgo(item.timestamp)}
@@ -243,6 +208,17 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
     address &&
     address.toLowerCase() !== stakerAddress
   );
+  const hasClaimable = claimable !== undefined && claimable > 0n;
+  const isConnectedStaker = !!address && !!stakerAddress && address.toLowerCase() === stakerAddress;
+  const disableReason = !isConnected
+    ? 'Connect the staker wallet to claim'
+    : stakerMismatch
+    ? 'Connect the staker wallet to claim'
+    : accountingFrozen
+    ? 'Accounting is frozen'
+    : !hasClaimable
+    ? 'No rewards to claim'
+    : '';
 
   return (
     <div>
@@ -277,49 +253,33 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
         )}
       </div>
 
-      <div className="unstaking-unbonding-box" style={{ marginTop: '1rem' }}>
-        <h3 className="unstaking-unbonding-title">Rewards Stream</h3>
-        <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Spendable Budget:</span>
-          <span className="unstaking-unbonding-value">
-            {formatAmount(status?.spendableBudget)} {tokenSymbol}
-          </span>
+      {isConnected ? (
+        <div className="unstaking-unbonding-box" style={{ marginTop: '1rem' }}>
+          <Button
+            variant="primary"
+            size="medium"
+            onClick={handleClaim}
+            disabled={
+              isProcessing ||
+              !hasClaimable ||
+              accountingFrozen ||
+              !isConnectedStaker
+            }
+            style={{ width: '100%' }}
+          >
+            {isProcessing ? 'Claiming...' : 'Claim Rewards'}
+          </Button>
+          {disableReason && (
+            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', opacity: 0.75 }}>
+              {disableReason}
+            </div>
+          )}
         </div>
-        <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Stream Remaining:</span>
-          <span className="unstaking-unbonding-value">
-            {formatAmount(status?.streamRemaining)} {tokenSymbol}
-          </span>
+      ) : (
+        <div style={{ marginTop: '1rem' }}>
+          <ConnectWallet size="large" />
         </div>
-        <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Stream Ends:</span>
-          <span className="unstaking-unbonding-value">
-            {status?.streamEnd ? formatTimeAgo(new Date(Number(status.streamEnd) * 1000).toISOString()) : '—'}
-          </span>
-        </div>
-        <div className="unstaking-unbonding-row">
-          <span className="unstaking-unbonding-label">Accounting:</span>
-          <span className="unstaking-unbonding-value">
-            {status?.accountingFrozen ? 'Frozen' : 'Healthy'}
-          </span>
-        </div>
-        <Button
-          variant="primary"
-          size="medium"
-          onClick={handleClaim}
-          disabled={
-            isProcessing ||
-            !claimable ||
-            claimable === 0n ||
-            status?.accountingFrozen ||
-            !address ||
-            stakerMismatch
-          }
-          style={{ width: '100%', marginTop: '1rem' }}
-        >
-          {isProcessing ? 'Claiming...' : 'Claim Rewards'}
-        </Button>
-      </div>
+      )}
 
       <div style={{ marginTop: '2rem' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', opacity: 0.9 }}>
