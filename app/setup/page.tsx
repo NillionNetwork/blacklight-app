@@ -375,7 +375,7 @@ export default function SetupPage() {
                   <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
                     <strong>Note:</strong> On first run, the node will generate
                     a new wallet and save it to{' '}
-                    <code>./nilav_node/nilav_node.env</code>. Your wallet
+                    <code>./niluv_node/niluv_node.env</code>. Your wallet
                     address will be displayed - copy it for the next field.
                   </p>
 

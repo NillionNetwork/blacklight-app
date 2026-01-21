@@ -136,18 +136,18 @@ export const contracts = {
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
-    stakingOperators: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
-    heartbeatManager: '0x45e558DDDe0e413fE78A7AB2403F33eA939c5470',
-    rewardPolicy: '0x8CDAe68e4D5cC03d144c459DE40C7Cbc36c26908',
+    stakingOperators: '0x53a0Fc8d1917989E97baB9B3c35d8cD0B84074A6',
+    heartbeatManager: '0x4aeF99b18A3B0A69C3CEa75185b4138C4d369050',
+    rewardPolicy: '0xdAFAC1e26098DbeA553C23340509AeF1C44B196c',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
-    stakingOperatorsDeploymentBlock: 2734197,
-    heartbeatManagerDeploymentBlock: 2733393,
-    rewardPolicyDeploymentBlock: 2733395,
-    protocolConfig: '0xF157Dbc634c0ACeeB9999f6eA4C29dDF32f60168',
-    weightedCommitteeSelector: '0x1155308F62654e83391E71cfd847D4172906879F',
-    jailingPolicy: '0x1EaA4102FaE26cDb376a0FC1928AB143aa0D8598',
+    stakingOperatorsDeploymentBlock: 276878,
+    heartbeatManagerDeploymentBlock: 2768782,
+    rewardPolicyDeploymentBlock: 2768782,
+    protocolConfig: '0x38345595fe5149A071C0CBeFbD8eb7e39E3cE428',
+    weightedCommitteeSelector: '0xa38695EE8138C215C6D4a7E3998713947257955c',
+    jailingPolicy: '0x6Dfe5Fd58842efD2eA11A28f33Df4c033Ee8DD77',
   },
   nilavMainnet: {
     nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
@@ -177,7 +177,16 @@ const getDockerRunCommand = () => {
   const stakingAddress = activeContracts.stakingOperators;
   const tokenAddress = activeContracts.nilToken;
 
-  return `docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest --rpc-url ${rpcUrl} --manager-contract-address ${managerAddress} --staking-contract-address ${stakingAddress} --token-contract-address ${tokenAddress}`;
+  return [
+    'docker run -it --rm',
+    '-v ./niluv_node:/app/',
+    '-v ./niluv_node:/tmp/niluv-cache',
+    'ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+    `--rpc-url ${rpcUrl}`,
+    `--manager-contract-address ${managerAddress}`,
+    `--staking-contract-address ${stakingAddress}`,
+    `--token-contract-address ${tokenAddress}`,
+  ].join(' ');
 };
 
 export const platforms = {
@@ -189,7 +198,7 @@ export const platforms = {
     dockerPullCommand:
       'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './nilav_node',
+    nodeStartCommand: './niluv_node',
   },
   linux: {
     name: 'Linux',
@@ -199,7 +208,7 @@ export const platforms = {
     dockerPullCommand:
       'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './nilav_node',
+    nodeStartCommand: './niluv_node',
   },
   windows: {
     name: 'Windows',
@@ -208,7 +217,7 @@ export const platforms = {
     dockerPullCommand:
       'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './nilav_node',
+    nodeStartCommand: './niluv_node',
   },
 } as const;
 
