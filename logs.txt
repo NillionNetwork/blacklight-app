@@ -1,0 +1,415 @@
+
+2026-01-20T23:48:23.950906Z  INFO niluv::wallet:
+╔══════════════════════════════════════════════════════════════╗
+║               🎉 WALLET LOADED SUCCESSFULLY 🎉               ║
+╠═════════════════╦════════════════════════════════════════════╣
+║         Address ║ 0xe9c593863014b67b7c12677aabf3ed6e861b8fad ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     ETH Balance ║ 0.000987674982210946 ETH ✅                ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     TEST Staked ║ 100.000000 TEST ✅                         ║
+╠═════════════════╬════════════════════════════════════════════╣
+║         RPC URL ║ https://rpc-nilav-shzvox09l5.t.conduit.xyz ║
+╠═════════════════╩════════════════════════════════════════════╣
+║                      ✅ Ready to operate                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+2026-01-20T23:48:23.950945Z  INFO niluv_node: Node initialized
+2026-01-20T23:48:23.950948Z  INFO niluv_node: Press Ctrl+C to gracefully shutdown and deactivate
+2026-01-20T23:48:23.950961Z  INFO niluv_node: Starting WebSocket event listener with auto-reconnection
+2026-01-20T23:48:24.099944Z  INFO niluv_node: WebSocket connection established balance=987674982210946
+2026-01-20T23:48:24.100021Z  INFO niluv_node: Checking node registration node_address=0xe9c593863014B67B7c12677AaBF3Ed6E861B8fad
+2026-01-20T23:48:24.139114Z  INFO niluv_node: Registering node with contract
+2026-01-20T23:48:26.085442Z  INFO niluv_node: Node registered successfully tx_hash=0xb487b6274683cd48bcfc2c6aa769ef0a053cf37c99e510dbfc0a5d811e494770
+2026-01-20T23:48:26.085504Z  INFO niluv_node: Checking for pending assignments from before connection
+2026-01-20T23:48:26.166451Z  INFO niluv_node: Found historical assignments, processing backlog count=2
+2026-01-20T23:48:26.207141Z  INFO niluv_node: 📥 HTX received (backlog) htx_id=0x034887236d3674e257373c295f1df61b615cd64457929342044f3101f22e188e
+2026-01-20T23:48:26.207434Z  INFO niluv_node: Detected nilCC HTX htx_id=0x034887236d3674e257373c295f1df61b615cd64457929342044f3101f22e188e
+2026-01-20T23:48:26.249665Z  INFO niluv_node: 📥 HTX received (backlog) htx_id=0x14514fab66b73786db62b6d1a3b33b0fdf2ac1b73ca045819bafde4399dd1ef3
+2026-01-20T23:48:26.249704Z  INFO niluv_node: Backlog processing complete
+2026-01-20T23:48:26.249829Z  INFO niluv_node: Detected nilCC HTX htx_id=0x14514fab66b73786db62b6d1a3b33b0fdf2ac1b73ca045819bafde4399dd1ef3
+2026-01-20T23:48:38.279070Z ERROR niluv_node: Failed to respond to HTX htx_id=0x034887236d3674e257373c295f1df61b615cd64457929342044f3101f22e188e error=failed to estimate gas: No revert data (Could not extract revert data. Raw error: server returned an error response: error code 3: execution reverted, data: "0x4a3574d2")
+2026-01-20T23:48:38.279144Z ERROR niluv_node: Failed to process pending HTX htx_id=0x034887236d3674e257373c295f1df61b615cd64457929342044f3101f22e188e error=failed to estimate gas: No revert data (Could not extract revert data. Raw error: server returned an error response: error code 3: execution reverted, data: "0x4a3574d2")
+2026-01-20T23:48:43.601995Z ERROR niluv_node: Failed to respond to HTX htx_id=0x14514fab66b73786db62b6d1a3b33b0fdf2ac1b73ca045819bafde4399dd1ef3 error=failed to estimate gas: No revert data (Could not extract revert data. Raw error: server returned an error response: error code 3: execution reverted, data: "0x4a3574d2")
+2026-01-20T23:48:43.602019Z ERROR niluv_node: Failed to process pending HTX htx_id=0x14514fab66b73786db62b6d1a3b33b0fdf2ac1b73ca045819bafde4399dd1ef3 error=failed to estimate gas: No revert data (Could not extract revert data. Raw error: server returned an error response: error code 3: execution reverted, data: "0x4a3574d2")
+2026-01-20T23:51:50.058149Z  INFO niluv_node: 📥 HTX received htx_id=0x23b9c3b916debacc1619861d6dfc9ead621bdeddcd37511654ca41b2ec859c10
+2026-01-20T23:51:50.058282Z  INFO niluv_node: Detected nilCC HTX htx_id=0x23b9c3b916debacc1619861d6dfc9ead621bdeddcd37511654ca41b2ec859c10
+2026-01-20T23:51:52.048225Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x4e143289edb7e248a16cc44041eb7a197e01e36d66ddbd20ef507d46b24b0ade
+2026-01-20T23:51:52.127564Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987658669597700 | STAKED: 100.000000 NIL | Verified HTXs: 1
+2026-01-20T23:52:56.009861Z  INFO niluv_node: 📥 HTX received htx_id=0x5c18d114243bd2111627c692e0115a69e8531989cff95fc557779ea9905e8525
+2026-01-20T23:52:56.009956Z  INFO niluv_node: Detected nilCC HTX htx_id=0x5c18d114243bd2111627c692e0115a69e8531989cff95fc557779ea9905e8525
+2026-01-20T23:52:58.072236Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xa4f3e8e67fd494a16882ea3c61b7ef17e37db48f3ed3bea2db1bc09d1a5513af
+2026-01-20T23:52:58.162823Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987649691202473 | STAKED: 100.000000 NIL | Verified HTXs: 2
+2026-01-20T23:56:50.108156Z  INFO niluv_node: 📥 HTX received htx_id=0xfd8c2c8d18bdb4db8d9bde831e14c22ca3be173626ca6e6ae001a0eec52e06c8
+2026-01-20T23:56:50.108307Z  INFO niluv_node: Detected nilCC HTX htx_id=0xfd8c2c8d18bdb4db8d9bde831e14c22ca3be173626ca6e6ae001a0eec52e06c8
+2026-01-20T23:56:52.376887Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xc64db37f71ed3736db3fc5cf77b7ff79b1062ed6f31841df81f382ccc63da963
+2026-01-20T23:56:52.481443Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987640723216582 | STAKED: 100.000000 NIL | Verified HTXs: 3
+2026-01-20T23:57:56.009305Z  INFO niluv_node: 📥 HTX received htx_id=0x4bcc597aa1ff6feb573cd6810b83f6c493ddb4650d05c9721f2aa71df9009ded
+2026-01-20T23:57:56.009400Z  INFO niluv_node: Detected nilCC HTX htx_id=0x4bcc597aa1ff6feb573cd6810b83f6c493ddb4650d05c9721f2aa71df9009ded
+2026-01-20T23:57:58.050024Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x1554cee939427f9451cc2ff899f9a2cc3fd1856c4b60c461d1673298d3ada682
+2026-01-20T23:57:58.141020Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987631223626723 | STAKED: 100.000000 NIL | Verified HTXs: 4
+2026-01-21T00:01:50.024709Z  INFO niluv_node: 📥 HTX received htx_id=0x8e780f1dd8c0965fdd0fad9362be51f2c526a90546e4406b84712be4c9e24fd5
+2026-01-21T00:01:50.024793Z  INFO niluv_node: Detected nilCC HTX htx_id=0x8e780f1dd8c0965fdd0fad9362be51f2c526a90546e4406b84712be4c9e24fd5
+2026-01-21T00:01:52.039123Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x5b08a446ff78054c4929d110afd4ae1b16903a3e1c59a7bcd3c7aac16a9ba925
+2026-01-21T00:01:52.124502Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987621754644205 | STAKED: 100.000000 NIL | Verified HTXs: 5
+2026-01-21T00:02:56.006327Z  INFO niluv_node: 📥 HTX received htx_id=0x0a18696f063e682626c11e79894de27344b927c3aa72b3ad19deed48aa11195e
+2026-01-21T00:02:56.006436Z  INFO niluv_node: Detected nilCC HTX htx_id=0x0a18696f063e682626c11e79894de27344b927c3aa72b3ad19deed48aa11195e
+2026-01-21T00:02:58.043022Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x464c04a9a060ecd32e4cb965a9674c389035883089dcf8457efd7e8531eeb4a3
+2026-01-21T00:02:58.122755Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987612673285547 | STAKED: 100.000000 NIL | Verified HTXs: 6
+2026-01-21T00:06:50.055943Z  INFO niluv_node: 📥 HTX received htx_id=0x76b7ac31716c14e748f26ad3255806262c15c068e158f104bd0ec4bdf923f258
+2026-01-21T00:06:50.056070Z  INFO niluv_node: Detected nilCC HTX htx_id=0x76b7ac31716c14e748f26ad3255806262c15c068e158f104bd0ec4bdf923f258
+2026-01-21T00:06:52.049960Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x86d7902b1a57885c615a7f09e83b54d0ca9e20dacac0bab604a4fe9cd83b3565
+2026-01-21T00:06:52.124946Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987604228736561 | STAKED: 100.000000 NIL | Verified HTXs: 7
+^C2026-01-21T00:07:55.059796Z  INFO niluv_node: Shutdown signal received (SIGINT/Ctrl+C)
+2026-01-21T00:07:55.060007Z  INFO niluv_node: Shutdown signal received during event listening
+2026-01-21T00:07:55.060094Z  INFO niluv_node: Initiating graceful shutdown
+2026-01-21T00:07:55.060102Z  INFO niluv_node: Deactivating node from contract node_address=0xe9c593863014B67B7c12677AaBF3Ed6E861B8fad
+^[[A2026-01-21T00:07:56.164665Z  INFO niluv_node: Node deactivated successfully tx_hash=0x6640ba6c36f05bea03046165fee5312be7efa73e13f1fe61529c85ef89af1a10
+2026-01-21T00:07:56.164903Z  INFO niluv_node: Shutdown complete
+➜  nilav-ui git:(main) ✗ docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest --rpc-url https://rpc-nilav-shzvox09l5.t.conduit.xyz --manager-contract-address 0x99442256CC19C4D295a527Df2789198653Fb0fC7 --staking-contract-address 0x108b2Be8911085EEf47ba837cE7feE814ef7D470 --token-contract-address 0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35
+2026-01-21T00:07:57.560789Z  INFO niluv::config::node: Loaded NodeConfig: rpc_url=https://rpc-nilav-shzvox09l5.t.conduit.xyz, manager_contract_address=0x99442256CC19C4D295a527Df2789198653Fb0fC7 staking_contract_address=0x108b2Be8911085EEf47ba837cE7feE814ef7D470 token_contract_address=0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35
+2026-01-21T00:07:57.664084Z  INFO niluv::config::node: Checking ETH balance for address: 0xe9c593863014b67b7c12677aabf3ed6e861b8fad
+2026-01-21T00:07:57.710006Z  INFO niluv::config::node: Checking staked TEST token balance for address: 0xe9c593863014b67b7c12677aabf3ed6e861b8fad
+2026-01-21T00:07:57.748570Z  INFO niluv::wallet:
+╔══════════════════════════════════════════════════════════════╗
+║               🎉 WALLET LOADED SUCCESSFULLY 🎉               ║
+╠═════════════════╦════════════════════════════════════════════╣
+║         Address ║ 0xe9c593863014b67b7c12677aabf3ed6e861b8fad ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     ETH Balance ║ 0.000987596869179882 ETH ✅                ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     TEST Staked ║ 100.000000 TEST ✅                         ║
+╠═════════════════╬════════════════════════════════════════════╣
+║         RPC URL ║ https://rpc-nilav-shzvox09l5.t.conduit.xyz ║
+╠═════════════════╩════════════════════════════════════════════╣
+║                      ✅ Ready to operate                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+2026-01-21T00:07:57.748601Z  INFO niluv_node: Node initialized
+2026-01-21T00:07:57.748603Z  INFO niluv_node: Press Ctrl+C to gracefully shutdown and deactivate
+2026-01-21T00:07:57.748614Z  INFO niluv_node: Starting WebSocket event listener with auto-reconnection
+2026-01-21T00:07:57.902042Z  INFO niluv_node: WebSocket connection established balance=987596869179882
+2026-01-21T00:07:57.902135Z  INFO niluv_node: Checking node registration node_address=0xe9c593863014B67B7c12677AaBF3Ed6E861B8fad
+2026-01-21T00:07:57.946804Z  INFO niluv_node: Registering node with contract
+2026-01-21T00:08:00.198541Z  INFO niluv_node: Node registered successfully tx_hash=0x674cdc02d84f924f9dfa25e3766b42bdead986835af3d4762c09142f14d5b777
+2026-01-21T00:08:00.198636Z  INFO niluv_node: Checking for pending assignments from before connection
+2026-01-21T00:08:00.322929Z  INFO niluv_node: Found historical assignments, processing backlog count=1
+2026-01-21T00:08:00.360104Z  INFO niluv_node: 📥 HTX received (backlog) htx_id=0x76b7ac31716c14e748f26ad3255806262c15c068e158f104bd0ec4bdf923f258
+2026-01-21T00:08:00.360252Z  INFO niluv_node: Backlog processing complete
+2026-01-21T00:08:00.360341Z  INFO niluv_node: Detected nilCC HTX htx_id=0x76b7ac31716c14e748f26ad3255806262c15c068e158f104bd0ec4bdf923f258
+^C2026-01-21T00:08:02.343983Z  INFO niluv_node: Shutdown signal received (SIGINT/Ctrl+C)
+2026-01-21T00:08:02.344159Z  INFO niluv_node: Shutdown signal received during event listening
+2026-01-21T00:08:02.344211Z  INFO niluv_node: Initiating graceful shutdown
+2026-01-21T00:08:02.344250Z  INFO niluv_node: Deactivating node from contract node_address=0xe9c593863014B67B7c12677AaBF3Ed6E861B8fad
+2026-01-21T00:08:04.126295Z  INFO niluv_node: Node deactivated successfully tx_hash=0xdf00613fe8b2e77dd4b039eb25c3ab9211a1388995e7dbd242639dd55b341d47
+2026-01-21T00:08:04.126820Z  INFO niluv_node: Shutdown complete
+➜  nilav-ui git:(main) ✗ docker run -it --rm -v ./nilav_node:/app/ ghcr.io/nillionnetwork/niluv/niluv_node:latest --rpc-url https://rpc-nilav-shzvox09l5.t.conduit.xyz --manager-contract-address 0x45e558DDDe0e413fE78A7AB2403F33eA939c5470 --staking-contract-address 0x108b2Be8911085EEf47ba837cE7feE814ef7D470 --token-contract-address 0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35
+2026-01-21T00:08:13.277141Z  INFO niluv::config::node: Loaded NodeConfig: rpc_url=https://rpc-nilav-shzvox09l5.t.conduit.xyz, manager_contract_address=0x45e558DDDe0e413fE78A7AB2403F33eA939c5470 staking_contract_address=0x108b2Be8911085EEf47ba837cE7feE814ef7D470 token_contract_address=0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35
+2026-01-21T00:08:13.403559Z  INFO niluv::config::node: Checking ETH balance for address: 0xe9c593863014b67b7c12677aabf3ed6e861b8fad
+2026-01-21T00:08:13.446616Z  INFO niluv::config::node: Checking staked TEST token balance for address: 0xe9c593863014b67b7c12677aabf3ed6e861b8fad
+2026-01-21T00:08:13.489408Z  INFO niluv::wallet:
+╔══════════════════════════════════════════════════════════════╗
+║               🎉 WALLET LOADED SUCCESSFULLY 🎉               ║
+╠═════════════════╦════════════════════════════════════════════╣
+║         Address ║ 0xe9c593863014b67b7c12677aabf3ed6e861b8fad ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     ETH Balance ║ 0.000987582113366671 ETH ✅                ║
+╠═════════════════╬════════════════════════════════════════════╣
+║     TEST Staked ║ 100.000000 TEST ✅                         ║
+╠═════════════════╬════════════════════════════════════════════╣
+║         RPC URL ║ https://rpc-nilav-shzvox09l5.t.conduit.xyz ║
+╠═════════════════╩════════════════════════════════════════════╣
+║                      ✅ Ready to operate                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+2026-01-21T00:08:13.489444Z  INFO niluv_node: Node initialized
+2026-01-21T00:08:13.489447Z  INFO niluv_node: Press Ctrl+C to gracefully shutdown and deactivate
+2026-01-21T00:08:13.489459Z  INFO niluv_node: Starting WebSocket event listener with auto-reconnection
+2026-01-21T00:08:13.657418Z  INFO niluv_node: WebSocket connection established balance=987582113366671
+2026-01-21T00:08:13.657493Z  INFO niluv_node: Checking node registration node_address=0xe9c593863014B67B7c12677AaBF3Ed6E861B8fad
+2026-01-21T00:08:13.693903Z  INFO niluv_node: Registering node with contract
+2026-01-21T00:08:14.097527Z  INFO niluv_node: Node registered successfully tx_hash=0x025ae445351ce4301b4a21781f673021ab93ebe905274e84c677ab03249b0f7d
+2026-01-21T00:08:14.097622Z  INFO niluv_node: Checking for pending assignments from before connection
+2026-01-21T00:08:14.185055Z  INFO niluv_node: No pending assignments found
+2026-01-21T00:15:04.353563Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T00:18:07.234239Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T00:18:08.171350Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T00:26:57.393890Z ERROR alloy_transport_ws::native: WS connection error err=IO error: peer closed connection without sending TLS close_notify: https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eof
+2026-01-21T00:44:38.792005Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T00:45:00.082925Z ERROR alloy_transport_ws::native: WS connection error err=IO error: peer closed connection without sending TLS close_notify: https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eof
+2026-01-21T01:14:54.955329Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:15:07.343217Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:35:02.905510Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:35:04.392932Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:35:23.142705Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:53:02.090802Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T01:53:04.567938Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T02:05:33.266519Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T02:05:35.202254Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T02:09:46.113660Z  INFO niluv_node: 📥 HTX received htx_id=0x068940dbbf434a3056ed30b0ce7a8aa39939d0bc628c7a0eccf10d7462e8594c
+2026-01-21T02:09:46.113784Z  INFO niluv_node: Detected nilCC HTX htx_id=0x068940dbbf434a3056ed30b0ce7a8aa39939d0bc628c7a0eccf10d7462e8594c
+2026-01-21T02:09:46.190764Z  INFO niluv_node: 📥 HTX received htx_id=0xfd89cacc8fe4a1de5ad4963dc74dd9868f102cd233dddf3697b16531a05fe663
+2026-01-21T02:09:46.190797Z  INFO niluv_node: Detected nilCC HTX htx_id=0xfd89cacc8fe4a1de5ad4963dc74dd9868f102cd233dddf3697b16531a05fe663
+2026-01-21T02:10:14.058172Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xb87bf63966fda8ca74dd345f6a0926a456e8bf0ffcc8417d7fffc903aeeb45d8
+2026-01-21T02:10:14.136685Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987565548299670 | STAKED: 100.000000 NIL | Verified HTXs: 1
+2026-01-21T02:10:16.226288Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x82f0bd94f667b42c8e6a9b8abe4d6b1b7e781c0076d1280314b96d70af4fa7b6
+2026-01-21T02:10:16.311827Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987556379489201 | STAKED: 100.000000 NIL | Verified HTXs: 2
+2026-01-21T02:14:46.105750Z  INFO niluv_node: 📥 HTX received htx_id=0x6181c5add7a692214eb3a37d9909116873ceeebcdec5c8e61aca1a35e0635831
+2026-01-21T02:14:46.105786Z  INFO niluv_node: 📥 HTX received htx_id=0x1f9f5e8d286e331124e091e6417aecf1b852e610658302b5114844b92ae69525
+2026-01-21T02:14:46.105853Z  INFO niluv_node: Detected nilCC HTX htx_id=0x1f9f5e8d286e331124e091e6417aecf1b852e610658302b5114844b92ae69525
+2026-01-21T02:14:46.105853Z  INFO niluv_node: Detected nilCC HTX htx_id=0x6181c5add7a692214eb3a37d9909116873ceeebcdec5c8e61aca1a35e0635831
+2026-01-21T02:14:48.121364Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x25e1d6364f733e96f6bf43f81055bf088a261730c217c2e27a1b446c099eb5f8
+2026-01-21T02:14:48.213116Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987546524729267 | STAKED: 95.000000 NIL | Verified HTXs: 3
+2026-01-21T02:14:50.116042Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xfd9312a5566670f0645da2c7b51a42e715efdf0d4352c07b42967ad0cbc0738f
+2026-01-21T02:14:50.195536Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987537387444301 | STAKED: 95.000000 NIL | Verified HTXs: 4
+2026-01-21T02:19:46.198025Z  INFO niluv_node: 📥 HTX received htx_id=0x8612054bc4c38df292deb48f252f1ff738d4e4d55623ff5a7e8f6d838a7d16c9
+2026-01-21T02:19:46.198265Z  INFO niluv_node: Detected nilCC HTX htx_id=0x8612054bc4c38df292deb48f252f1ff738d4e4d55623ff5a7e8f6d838a7d16c9
+2026-01-21T02:19:48.285430Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xf28e76a5b56da058dc7381bf8d438a94f0f19ace3447387911791f55f75fd61f
+2026-01-21T02:19:48.363993Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987527816403416 | STAKED: 95.000000 NIL | Verified HTXs: 5
+2026-01-21T02:24:46.145814Z  INFO niluv_node: 📥 HTX received htx_id=0xeb649c90c5454569226baa58c7ae0091c3455a4ac77f35b543247f57936e167d
+2026-01-21T02:24:46.145930Z  INFO niluv_node: 📥 HTX received htx_id=0xb8dec63a667b1b2d200a5e982e0e01f405adcb40da1e7fc190cf589f3fa82f63
+2026-01-21T02:24:46.145994Z  INFO niluv_node: Detected nilCC HTX htx_id=0xeb649c90c5454569226baa58c7ae0091c3455a4ac77f35b543247f57936e167d
+2026-01-21T02:24:46.146026Z  INFO niluv_node: Detected nilCC HTX htx_id=0xb8dec63a667b1b2d200a5e982e0e01f405adcb40da1e7fc190cf589f3fa82f63
+2026-01-21T02:24:48.083495Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x6a61025ce3e769dacc49e0bc078bf989ed7140042743f810d7079d0b4112d5b7
+2026-01-21T02:24:48.156623Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987518489150639 | STAKED: 95.000000 NIL | Verified HTXs: 6
+2026-01-21T02:24:50.186154Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x10171980e0535f796ce8ca1569fb260346616b9a64181d4b7aa6c925caa59215
+2026-01-21T02:24:50.263224Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987509186355151 | STAKED: 95.000000 NIL | Verified HTXs: 7
+2026-01-21T02:29:46.148727Z  INFO niluv_node: 📥 HTX received htx_id=0xfe63e2d478a1881df90ad92392d5b47a88b2c10236910debf96de6bfe59dff9e
+2026-01-21T02:29:46.148894Z  INFO niluv_node: Detected nilCC HTX htx_id=0xfe63e2d478a1881df90ad92392d5b47a88b2c10236910debf96de6bfe59dff9e
+2026-01-21T02:29:48.135053Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x9a142a398d15d17ee76f7a169d805e16fe4ff5e36f65500e5fed88dc18672c34
+2026-01-21T02:29:48.212869Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987500065862776 | STAKED: 95.000000 NIL | Verified HTXs: 8
+2026-01-21T02:34:46.189935Z  INFO niluv_node: 📥 HTX received htx_id=0xf6c44fe117f149b60c69f011e3ff3fa020f5bbf7cdc87571d24c2922438db3fb
+2026-01-21T02:34:46.189961Z  INFO niluv_node: 📥 HTX received htx_id=0x8a8bf862ad53512359d2a7691007b121313f43ec809a7eed5d6efe07f6a3d0dc
+2026-01-21T02:34:46.189982Z  INFO niluv_node: Detected nilCC HTX htx_id=0x8a8bf862ad53512359d2a7691007b121313f43ec809a7eed5d6efe07f6a3d0dc
+2026-01-21T02:34:46.189982Z  INFO niluv_node: Detected nilCC HTX htx_id=0xf6c44fe117f149b60c69f011e3ff3fa020f5bbf7cdc87571d24c2922438db3fb
+2026-01-21T02:34:48.069911Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x79d2355e1fc1c4ab8ce88fa3d7b2bc983818de38d100db98e4aee1e630cce9e5
+2026-01-21T02:34:48.155801Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987490548046304 | STAKED: 95.000000 NIL | Verified HTXs: 9
+2026-01-21T02:34:50.145813Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x3d021487feaa303ef45bd54e567838569b862aa95521189014912183fa87ae4c
+2026-01-21T02:34:50.220208Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987481030230588 | STAKED: 95.000000 NIL | Verified HTXs: 10
+2026-01-21T02:39:46.078445Z  INFO niluv_node: 📥 HTX received htx_id=0x7bedbb75b69c7a99db6373769a4d94d860c0b3029d342cb27257d555df602a8c
+2026-01-21T02:39:46.078532Z  INFO niluv_node: Detected nilCC HTX htx_id=0x7bedbb75b69c7a99db6373769a4d94d860c0b3029d342cb27257d555df602a8c
+2026-01-21T02:39:48.162649Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x0823be9f1fcd1ecfee99d78ce091ec6803d7c557bca3c01e9c1abe4cc7edc3e8
+2026-01-21T02:39:48.244316Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987471913882494 | STAKED: 5095.000000 NIL | Verified HTXs: 11
+2026-01-21T02:41:23.455908Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T02:41:25.871063Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T02:41:37.225201Z  INFO niluv_node: 📥 HTX received htx_id=0x683f881d5ff659332a0b4b4d4d319e788dc8e71140b0f7b6608bee63f3a7a1ae
+2026-01-21T02:41:37.225276Z  INFO niluv_node: 📥 HTX received htx_id=0xb340d65221b1a483e742eb3fa55fea66f4e7b3ff8722c7ad4c9a8980fb5c487f
+2026-01-21T02:41:37.225307Z  INFO niluv_node: Detected nilCC HTX htx_id=0x683f881d5ff659332a0b4b4d4d319e788dc8e71140b0f7b6608bee63f3a7a1ae
+2026-01-21T02:41:37.225350Z  INFO niluv_node: Detected nilCC HTX htx_id=0xb340d65221b1a483e742eb3fa55fea66f4e7b3ff8722c7ad4c9a8980fb5c487f
+2026-01-21T02:44:54.557979Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x3c5fd07ba500873e61789d633d584450277f8adc6b6bd63b34341bb00441f73d
+2026-01-21T02:44:54.634886Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987462828024546 | STAKED: 5095.000000 NIL | Verified HTXs: 12
+2026-01-21T02:44:56.157984Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x984da5f23b290a0da998eaf8f64867dbf1ec6322a3866865824e604cb7b8595e
+2026-01-21T02:44:56.233954Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987453742170378 | STAKED: 5095.000000 NIL | Verified HTXs: 13
+2026-01-21T02:49:46.064640Z  INFO niluv_node: 📥 HTX received htx_id=0x87d4485b434180abf8af904d0a9b5a4e101986103d3100ce1bdfea40c11301fa
+2026-01-21T02:49:46.064762Z  INFO niluv_node: Detected nilCC HTX htx_id=0x87d4485b434180abf8af904d0a9b5a4e101986103d3100ce1bdfea40c11301fa
+2026-01-21T02:49:48.022663Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xddde249e4d25713c4629f0806546680b4f7eac6ea97e35e61b93ed81ee218f71
+2026-01-21T02:49:48.095528Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987444853678142 | STAKED: 5095.000000 NIL | Verified HTXs: 14
+2026-01-21T02:54:46.091023Z  INFO niluv_node: 📥 HTX received htx_id=0x39fc6bec4896317e7c6e5e24d5337ebc1a97c45735aa1f817f54144cbcb21f44
+2026-01-21T02:54:46.091101Z  INFO niluv_node: 📥 HTX received htx_id=0x8d5673ee410efcbc6b8a1759447a0c89c5b275d26815805485f7995feed7fb06
+2026-01-21T02:54:46.091135Z  INFO niluv_node: Detected nilCC HTX htx_id=0x39fc6bec4896317e7c6e5e24d5337ebc1a97c45735aa1f817f54144cbcb21f44
+2026-01-21T02:54:46.091147Z  INFO niluv_node: Detected nilCC HTX htx_id=0x8d5673ee410efcbc6b8a1759447a0c89c5b275d26815805485f7995feed7fb06
+2026-01-21T02:54:48.225606Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x426a3bdb04b374a07ee29ac3f42b2025190a40d831020d1cea33aa8f1f21f423
+2026-01-21T02:54:48.305110Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987435958287686 | STAKED: 5095.000000 NIL | Verified HTXs: 15
+2026-01-21T02:54:50.075340Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x0afbbe2b82b4bb03b3b11679517b77fb5ff8adfc1136cb3cb57cf6b4ff7ba2cb
+2026-01-21T02:54:50.167047Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987427071515630 | STAKED: 5095.000000 NIL | Verified HTXs: 16
+2026-01-21T02:57:23.353131Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T03:05:55.780013Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T03:06:01.061646Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T03:10:41.214547Z  INFO niluv_node: 📥 HTX received htx_id=0xaa0257560cc4c2e2860b22a12df584327e7234868679b9561d487d140f11f82e
+2026-01-21T03:10:41.214666Z  INFO niluv_node: Detected nilCC HTX htx_id=0xaa0257560cc4c2e2860b22a12df584327e7234868679b9561d487d140f11f82e
+2026-01-21T03:10:44.040908Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x4652fb4eb00c0fef9b58d5ede9572abfd36341584397b2aed8879827954d0903
+2026-01-21T03:10:44.127157Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987418095386033 | STAKED: 5095.000000 NIL | Verified HTXs: 17
+2026-01-21T03:10:46.488536Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T03:14:46.027770Z  INFO niluv_node: 📥 HTX received htx_id=0x11a5370e3a502c771c733bf57a53e9ada2765303d30f16e952a3ac4731fc60d2
+2026-01-21T03:14:46.027907Z  INFO niluv_node: Detected nilCC HTX htx_id=0x11a5370e3a502c771c733bf57a53e9ada2765303d30f16e952a3ac4731fc60d2
+2026-01-21T03:14:46.027958Z  INFO niluv_node: 📥 HTX received htx_id=0x808397239d0d391a002b44d409dc8caa3c2cefc4ccd51becbf52a2ccbd4a2a3b
+2026-01-21T03:14:46.028214Z  INFO niluv_node: Detected nilCC HTX htx_id=0x808397239d0d391a002b44d409dc8caa3c2cefc4ccd51becbf52a2ccbd4a2a3b
+2026-01-21T03:14:48.030519Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x98cb32eda3da3ecd576dce98a15fb6a20b9b241acec63d5a72b7edd8e8a96a0c
+2026-01-21T03:14:48.110620Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987409655879505 | STAKED: 5095.000000 NIL | Verified HTXs: 18
+2026-01-21T03:14:50.094526Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xca440bbf6e605a0f091ffdf614acc70b96d9b7044da156b311eeb0d57f927d07
+2026-01-21T03:14:50.186885Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987401224997425 | STAKED: 5095.000000 NIL | Verified HTXs: 19
+2026-01-21T03:19:46.048738Z  INFO niluv_node: 📥 HTX received htx_id=0x38fe6e884dc201cae8a114996172b12acefb6b9361e3ef33ecc11601308c4aed
+2026-01-21T03:19:46.048874Z  INFO niluv_node: Detected nilCC HTX htx_id=0x38fe6e884dc201cae8a114996172b12acefb6b9361e3ef33ecc11601308c4aed
+2026-01-21T03:19:48.056946Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xbdfc16549254bfb072e023a943e8893c423ea9e6ce52031820d9ac7802fb1082
+2026-01-21T03:19:48.139258Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987392248627272 | STAKED: 5095.000000 NIL | Verified HTXs: 20
+2026-01-21T03:24:45.991832Z  INFO niluv_node: 📥 HTX received htx_id=0x596ee0429af9b29f66f6e0db3848bb0037f59e9af8116011d63c1cf7633ff589
+2026-01-21T03:24:45.991936Z  INFO niluv_node: 📥 HTX received htx_id=0xc2058d4771960938a5976a5f16579394b06775d4078ad1614f8e5e96b9b6f1ff
+2026-01-21T03:24:45.992075Z  INFO niluv_node: Detected nilCC HTX htx_id=0xc2058d4771960938a5976a5f16579394b06775d4078ad1614f8e5e96b9b6f1ff
+2026-01-21T03:24:45.992096Z  INFO niluv_node: Detected nilCC HTX htx_id=0x596ee0429af9b29f66f6e0db3848bb0037f59e9af8116011d63c1cf7633ff589
+2026-01-21T03:24:48.035421Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xcf1ac9d1b490e5f21c418f7383a19a834c401d534abbd7ed4136eb61238adfc1
+2026-01-21T03:24:48.121967Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987383004357216 | STAKED: 5095.000000 NIL | Verified HTXs: 21
+2026-01-21T03:24:50.150235Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xf57b7cda3d6e379d6f912ea073807272f887d51403675a984037b5fb02f5ccf3
+2026-01-21T03:24:50.230726Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987373760090940 | STAKED: 5095.000000 NIL | Verified HTXs: 22
+2026-01-21T03:29:22.919352Z ERROR alloy_transport_ws::native: WS connection error err=IO error: peer closed connection without sending TLS close_notify: https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eof
+2026-01-21T03:29:46.113411Z  INFO niluv_node: 📥 HTX received htx_id=0xd77e2f42581c2288007bbe5e5e3cffcc539c8115d3a52afdae133c4844f5483a
+2026-01-21T03:29:46.113538Z  INFO niluv_node: Detected nilCC HTX htx_id=0xd77e2f42581c2288007bbe5e5e3cffcc539c8115d3a52afdae133c4844f5483a
+2026-01-21T03:29:48.434814Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x76a8d029a133e4bfa64f293ea7f91a4cf91cc16fe6205c493b4ea7db7a7432ac
+2026-01-21T03:29:48.513852Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987364756749496 | STAKED: 5095.000000 NIL | Verified HTXs: 23
+2026-01-21T03:34:46.142351Z  INFO niluv_node: 📥 HTX received htx_id=0x8eaae330a2a4f3b3c9ce38e98089884760c804c486a9bf9dc3099c4181cce41a
+2026-01-21T03:34:46.142483Z  INFO niluv_node: Detected nilCC HTX htx_id=0x8eaae330a2a4f3b3c9ce38e98089884760c804c486a9bf9dc3099c4181cce41a
+2026-01-21T03:34:46.142536Z  INFO niluv_node: 📥 HTX received htx_id=0xd508ec46df06589e7bf9c01a5619a9dd949b8c6dac65c8c1e3aad9ff4552636e
+2026-01-21T03:34:46.142617Z  INFO niluv_node: Detected nilCC HTX htx_id=0xd508ec46df06589e7bf9c01a5619a9dd949b8c6dac65c8c1e3aad9ff4552636e
+2026-01-21T03:34:48.057098Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x327aa6af42d586690b2e326f7984c3e883cd65634f5137fea5ee0f4e00dfb59d
+2026-01-21T03:34:48.139461Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987355647884637 | STAKED: 5095.000000 NIL | Verified HTXs: 24
+2026-01-21T03:34:50.205502Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x928cc401d4e50f136ece401b14b32a69516a09775100895ef134e454fd5228ee
+2026-01-21T03:34:50.295606Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987346547638178 | STAKED: 5095.000000 NIL | Verified HTXs: 25
+2026-01-21T03:39:46.142592Z  INFO niluv_node: 📥 HTX received htx_id=0xc00c67d5cfbf882d9f5f61443d1e15074509c6eaeeb6e067fd36108a5979567e
+2026-01-21T03:39:46.142733Z  INFO niluv_node: Detected nilCC HTX htx_id=0xc00c67d5cfbf882d9f5f61443d1e15074509c6eaeeb6e067fd36108a5979567e
+2026-01-21T03:39:48.543997Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xbe97e3eb57415d87f5ba9991aeaf0d72bc5d866c483de4eb701ba0be710aa754
+2026-01-21T03:39:48.692146Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987337522061758 | STAKED: 5095.000000 NIL | Verified HTXs: 26
+2026-01-21T03:44:46.100664Z  INFO niluv_node: 📥 HTX received htx_id=0x5503ec57f96709cf0fdaa627bd05fbaa9f99eff04d831947bd1fef1663e9e602
+2026-01-21T03:44:46.100743Z  INFO niluv_node: 📥 HTX received htx_id=0x21035a6b7efbe9b8151f57fdf40fe2ea5990cbdcaf913e3c478c2c63347e8d61
+2026-01-21T03:44:46.100781Z  INFO niluv_node: Detected nilCC HTX htx_id=0x5503ec57f96709cf0fdaa627bd05fbaa9f99eff04d831947bd1fef1663e9e602
+2026-01-21T03:44:46.100789Z  INFO niluv_node: Detected nilCC HTX htx_id=0x21035a6b7efbe9b8151f57fdf40fe2ea5990cbdcaf913e3c478c2c63347e8d61
+2026-01-21T03:44:48.049147Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x2130b10cf95335f69f556751e8054ad91404c1bb122424bad4317eed8cd3ce32
+2026-01-21T03:44:48.132805Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987328204198242 | STAKED: 5095.000000 NIL | Verified HTXs: 27
+2026-01-21T03:44:50.160604Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x174403ab76d9336c498d893df413d9aed05039add6a43f8eba97faa46594232d
+2026-01-21T03:44:50.258382Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987318894949346 | STAKED: 5095.000000 NIL | Verified HTXs: 28
+2026-01-21T03:49:46.050514Z  INFO niluv_node: 📥 HTX received htx_id=0x4a5173e841df6a5a67a144617c1f86ac146a17147328c2082b46047c3685cb3c
+2026-01-21T03:49:46.050648Z  INFO niluv_node: Detected nilCC HTX htx_id=0x4a5173e841df6a5a67a144617c1f86ac146a17147328c2082b46047c3685cb3c
+2026-01-21T03:49:48.217992Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xa0b93c422cb93d20ae7ea147b858dabaf781eed0b7f05dd6d4e610668526c34f
+2026-01-21T03:49:48.300022Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987310107003759 | STAKED: 5095.000000 NIL | Verified HTXs: 29
+2026-01-21T04:24:08.218212Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T04:24:09.492272Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T04:35:31.537574Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T04:35:32.729181Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:10:36.009246Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:10:36.172672Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:19:46.241920Z  INFO niluv_node: 📥 HTX received htx_id=0xea7f3f4dd667bcf4578dd4217401c992db6b24a280ff611a4672035c1d174bd7
+2026-01-21T05:19:46.242004Z  INFO niluv_node: Detected nilCC HTX htx_id=0xea7f3f4dd667bcf4578dd4217401c992db6b24a280ff611a4672035c1d174bd7
+2026-01-21T05:19:46.242002Z  INFO niluv_node: 📥 HTX received htx_id=0x6635c0827b90267f334488fa4fdefc54f12673c2a7a3bf4248fb8305f469db12
+2026-01-21T05:19:46.242046Z  INFO niluv_node: Detected nilCC HTX htx_id=0x6635c0827b90267f334488fa4fdefc54f12673c2a7a3bf4248fb8305f469db12
+2026-01-21T05:19:48.401514Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x731a4598baa02bd8d78663a7910104ccda7bc9d7a2d9d27ab2b8bb12ea9674f8
+2026-01-21T05:19:48.478362Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987300824359847 | STAKED: 5095.000000 NIL | Verified HTXs: 30
+2026-01-21T05:19:50.357536Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xf0f9bc764d5758837a2cf4bb0eea4801cabf45d2614c8730b5d09a325b48c62c
+2026-01-21T05:19:50.479648Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987291541715935 | STAKED: 5095.000000 NIL | Verified HTXs: 31
+2026-01-21T05:29:46.337950Z  INFO niluv_node: 📥 HTX received htx_id=0xbbdb49e40a7ada71966ee32e89503919e931cab372a0b7101aa1aa9f93847867
+2026-01-21T05:29:46.338308Z  INFO niluv_node: Detected nilCC HTX htx_id=0xbbdb49e40a7ada71966ee32e89503919e931cab372a0b7101aa1aa9f93847867
+2026-01-21T05:29:46.338060Z  INFO niluv_node: 📥 HTX received htx_id=0x7371539d8ce831cea361830475f1e0d6e0f5a72b02cb5c2397aa079023786f2d
+2026-01-21T05:29:46.338475Z  INFO niluv_node: Detected nilCC HTX htx_id=0x7371539d8ce831cea361830475f1e0d6e0f5a72b02cb5c2397aa079023786f2d
+2026-01-21T05:30:06.960523Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:30:25.293808Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:30:40.624747Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:30:54.720169Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x7477e6354f0b3f5b3e2e351e0c6179341280708dec29d26b6d47f2722f3906e7
+2026-01-21T05:30:54.795887Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987282721074034 | STAKED: 5095.000000 NIL | Verified HTXs: 32
+2026-01-21T05:31:03.887912Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xd88daafe93569748849b7e224e510f956843f50eb0e80899f2f4cf616b20327a
+2026-01-21T05:31:06.940328Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987273205087277 | STAKED: 5095.000000 NIL | Verified HTXs: 33
+2026-01-21T05:31:36.950953Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:34:19.175851Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:34:38.862796Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:35:12.219090Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:36:21.145102Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:39:46.142509Z  INFO niluv_node: 📥 HTX received htx_id=0xd527afbcdb17ce1b93023640e94915268220825363816788356c74dcd6085c90
+2026-01-21T05:39:46.142591Z  INFO niluv_node: 📥 HTX received htx_id=0x4ad5d0c1f42ef5d4e50ecede3dfe06bf200319c0b943c5afa0a5dedd505243d6
+2026-01-21T05:39:46.142629Z  INFO niluv_node: Detected nilCC HTX htx_id=0xd527afbcdb17ce1b93023640e94915268220825363816788356c74dcd6085c90
+2026-01-21T05:39:46.142663Z  INFO niluv_node: Detected nilCC HTX htx_id=0x4ad5d0c1f42ef5d4e50ecede3dfe06bf200319c0b943c5afa0a5dedd505243d6
+2026-01-21T05:39:48.177946Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xac7f50f64227f3ee5d5dd0bf8f385aa8941ee0962b8dc051b4627a9efed7eba6
+2026-01-21T05:39:48.269609Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987264112064069 | STAKED: 5095.000000 NIL | Verified HTXs: 34
+2026-01-21T05:39:50.105926Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xb81a8840177e469500fc13c629b38efd0902c6ed6810bdbe9198819e94dd5242
+2026-01-21T05:39:50.182898Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987254909565908 | STAKED: 5095.000000 NIL | Verified HTXs: 35
+2026-01-21T05:49:46.098866Z  INFO niluv_node: 📥 HTX received htx_id=0xd6f02b5989e38eba25ec4ad0c9f6f0f1470b8fa2f952f59f36859bf139887780
+2026-01-21T05:49:46.099049Z  INFO niluv_node: Detected nilCC HTX htx_id=0xd6f02b5989e38eba25ec4ad0c9f6f0f1470b8fa2f952f59f36859bf139887780
+2026-01-21T05:49:46.167421Z  INFO niluv_node: 📥 HTX received htx_id=0x95e2f913f31cd0086a6765a0a7ac83351d46d6e94ab75328ac3e17d00c95ef20
+2026-01-21T05:49:46.167448Z  INFO niluv_node: Detected nilCC HTX htx_id=0x95e2f913f31cd0086a6765a0a7ac83351d46d6e94ab75328ac3e17d00c95ef20
+2026-01-21T05:49:48.110340Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x834b740769f714f63ff9d54d2c756025b3363cd82439e02ae46e70bb3340bcf2
+2026-01-21T05:49:48.192934Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987245261296580 | STAKED: 5095.000000 NIL | Verified HTXs: 36
+2026-01-21T05:49:50.159535Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x2a2acc77c164d821bc7731270ed30085b94392ecbed7fb1c9990b77325f508e9
+2026-01-21T05:49:50.232757Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987235782008846 | STAKED: 5095.000000 NIL | Verified HTXs: 37
+2026-01-21T05:57:40.457407Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:58:02.681309Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T05:59:46.032796Z  INFO niluv_node: 📥 HTX received htx_id=0x4e8eaabc1eb0128c6244771c169b5bca0486b20171305d6c2cfa7bdf17e67581
+2026-01-21T05:59:46.032881Z  INFO niluv_node: Detected nilCC HTX htx_id=0x4e8eaabc1eb0128c6244771c169b5bca0486b20171305d6c2cfa7bdf17e67581
+2026-01-21T05:59:46.032877Z  INFO niluv_node: 📥 HTX received htx_id=0x5d8bcccb38ec9807bd4b640c13e9a7a8a5f805baaa469f8a59e17f418ff03a85
+2026-01-21T05:59:46.033018Z  INFO niluv_node: Detected nilCC HTX htx_id=0x5d8bcccb38ec9807bd4b640c13e9a7a8a5f805baaa469f8a59e17f418ff03a85
+2026-01-21T05:59:48.180578Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x6b7063d7b997d5bcb011dca9424526fb0e3aa7275bfbad657be49dbf32f383ee
+2026-01-21T05:59:48.264545Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987226971259610 | STAKED: 5095.000000 NIL | Verified HTXs: 38
+2026-01-21T05:59:50.126503Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x2e79daaada944df38dd2a3203f9e034dab5ace8130227184f239ffec43f3e0b9
+2026-01-21T05:59:50.208568Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987218160514154 | STAKED: 5095.000000 NIL | Verified HTXs: 39
+2026-01-21T06:09:46.120124Z  INFO niluv_node: 📥 HTX received htx_id=0xd7f3a5315ed6bfe69533cd24f3ca100ffb9accdbbc74eb437b0d0e658f01c056
+2026-01-21T06:09:46.120256Z  INFO niluv_node: 📥 HTX received htx_id=0x0aa72c02b787a6b1c15ef77f42bcf41cc917cf4c9510775d571af4f30079fb87
+2026-01-21T06:09:46.120285Z  INFO niluv_node: Detected nilCC HTX htx_id=0xd7f3a5315ed6bfe69533cd24f3ca100ffb9accdbbc74eb437b0d0e658f01c056
+2026-01-21T06:09:46.120314Z  INFO niluv_node: Detected nilCC HTX htx_id=0x0aa72c02b787a6b1c15ef77f42bcf41cc917cf4c9510775d571af4f30079fb87
+2026-01-21T06:09:48.193843Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xd03c8579d45eba7dff7ba5d054eecac675a0b056756f9820a941425d6fac8a20
+2026-01-21T06:09:48.275445Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987209373684737 | STAKED: 5095.000000 NIL | Verified HTXs: 40
+2026-01-21T06:09:50.082464Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x6613069a55cb700efb621b5693fcec0da7338d73256ec9f46819d57287eb6d5a
+2026-01-21T06:09:50.161363Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987200595469940 | STAKED: 5095.000000 NIL | Verified HTXs: 41
+2026-01-21T06:11:18.489215Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T06:11:20.214350Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T06:14:43.867299Z ERROR alloy_transport_ws::native: WS connection error err=IO error: peer closed connection without sending TLS close_notify: https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eof
+2026-01-21T06:31:21.291616Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T06:34:01.504713Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T06:34:04.017291Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T07:50:45.451132Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T07:50:53.020675Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:18:07.305016Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:18:09.822655Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:19:19.960802Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:36:14.321405Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:51:42.018920Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:51:49.638245Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T08:57:32.529753Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T09:13:46.319709Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:29:42.695035Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:29:45.380190Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:30:39.350444Z ERROR alloy_transport_ws::native: Received close frame with data frame=Some(CloseFrame { code: Protocol, reason: Utf8Bytes(b"Protocol violation") })
+2026-01-21T10:30:39.351368Z ERROR alloy_transport_ws::native: Received close frame with data frame=Some(CloseFrame { code: Protocol, reason: Utf8Bytes(b"Protocol violation") })
+2026-01-21T10:49:33.592773Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:49:33.592938Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:55:54.557488Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T10:55:54.557656Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:10:16.748558Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:10:17.856574Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:12:27.950226Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:12:30.689937Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:40:12.346534Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:40:14.009936Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:41:33.568693Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T11:41:34.589453Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:13:46.619257Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:13:46.619325Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:14:56.882753Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:14:56.882882Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:32:04.492891Z ERROR alloy_transport_ws::native: WS connection error err=IO error: peer closed connection without sending TLS close_notify: https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eof
+2026-01-21T12:48:36.936690Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:49:47.067184Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T12:49:47.191987Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:06:32.906431Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:06:32.906521Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:23:35.041469Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:23:35.041519Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:54:55.881475Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:54:55.881531Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:57:06.157975Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T13:57:06.158077Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:06:37.701890Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:06:37.701913Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:25:13.552066Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:25:13.552097Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:27:20.582663Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:44:20.852020Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:44:21.250234Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:50:04.459727Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:50:04.758265Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:53:06.946968Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:53:07.158255Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:57:40.921368Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T14:57:40.921399Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T15:09:37.212965Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T15:09:37.213105Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T15:22:56.471237Z ERROR alloy_transport_ws::native: WS server missed a pong
+2026-01-21T15:39:46.213572Z  INFO niluv_node: 📥 HTX received htx_id=0x6cde796d463c25747a1e9b61cdb036a1de6b9561832c93bb1f33d9408b9bed13
+2026-01-21T15:39:46.213707Z  INFO niluv_node: Detected nilCC HTX htx_id=0x6cde796d463c25747a1e9b61cdb036a1de6b9561832c93bb1f33d9408b9bed13
+2026-01-21T15:39:46.282933Z  INFO niluv_node: 📥 HTX received htx_id=0x64bf7d81a33ef993ef2e98b843a24db01682e4c562240e99b4d78e8765047b5d
+2026-01-21T15:39:46.282971Z  INFO niluv_node: Detected nilCC HTX htx_id=0x64bf7d81a33ef993ef2e98b843a24db01682e4c562240e99b4d78e8765047b5d
+2026-01-21T15:39:48.482526Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x6f7c07d44d1cb1623013047c6a70b4136c169c52fce0bcaa4bf4cd6561d3e18d
+2026-01-21T15:39:48.559851Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987187804168817 | STAKED: 5095.000000 NIL | Verified HTXs: 42
+2026-01-21T15:39:50.141054Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xbe0f368845691d132849d63978adc998e83deeda6f2a75264bae8fcd7a326269
+2026-01-21T15:39:50.217733Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987175133013175 | STAKED: 5095.000000 NIL | Verified HTXs: 43
+2026-01-21T15:44:46.219774Z  INFO niluv_node: 📥 HTX received htx_id=0xde523260f5582d32b3f5646f5df607c88ed04adeba55104ffd3ce3dd6388ced2
+2026-01-21T15:44:46.219850Z  INFO niluv_node: Detected nilCC HTX htx_id=0xde523260f5582d32b3f5646f5df607c88ed04adeba55104ffd3ce3dd6388ced2
+2026-01-21T15:44:46.288766Z  INFO niluv_node: 📥 HTX received htx_id=0x7d01a12ee726bfad653b3cb11b9ba67aa59fe5d9c9ae92c2944182ae767cb61d
+2026-01-21T15:44:46.288820Z  INFO niluv_node: Detected nilCC HTX htx_id=0x7d01a12ee726bfad653b3cb11b9ba67aa59fe5d9c9ae92c2944182ae767cb61d
+2026-01-21T15:44:48.176067Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0xbc90af05047737a5b90f29959d73893e72f0412d29ce3eb5d6548eb9bb65edb3
+2026-01-21T15:44:48.250081Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987162850826391 | STAKED: 5095.000000 NIL | Verified HTXs: 44
+2026-01-21T15:44:50.142155Z  INFO niluv_node: ✅ VALID HTX verification submitted tx_hash=0x724b97de126df8568718f119c2dafe28eeb05df89c3e39ad1a31a10d168e0a12
+2026-01-21T15:44:50.239571Z  INFO niluv_node: 📊 STATUS | ETH: 0.000987150577261787 | STAKED: 5095.000000 NIL | Verified HTXs: 45

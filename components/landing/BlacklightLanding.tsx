@@ -1,6 +1,12 @@
 'use client';
 
-import { ArrowRight, Shield, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import {
+  ArrowRight,
+  Shield,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+} from 'lucide-react';
 import { useState, useEffect, useRef, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -85,29 +91,65 @@ export function BlacklightLanding() {
 
   const faqs: Array<{ question: string; answer: ReactNode }> = [
     {
-      question: "What is the Nillion Blacklight?",
-      answer: "Nillion Blacklight is a decentralized network of nodes that continuously verifies workloads running inside Trusted Execution Environments (TEEs). Although TEEs provide integrity and privacy, which can be verified via attestations, not many users know what to look for. Nillion Blacklight is an always-on verification layer that continuously monitors TEE workloads and verifies their uptime, privacy, and integrity."
+      question: 'What is the Nillion Blacklight?',
+      answer:
+        'Nillion Blacklight is a decentralized network of nodes that continuously verifies workloads running inside Trusted Execution Environments (TEEs). Although TEEs provide integrity and privacy, which can be verified via attestations, not many users know what to look for. Nillion Blacklight is an always-on verification layer that continuously monitors TEE workloads and verifies their uptime, privacy, and integrity.',
     },
     {
-      question: "What Trusted Execution Environments (TEEs) does Nillion Blacklight support?",
-      answer: <>Currently, Nillion Blacklight verifies workloads running on <a href="https://nilcc.nillion.com" style={{ color: 'var(--nillion-primary)', fontStyle: 'italic', textDecoration: 'underline' }} target="_blank" rel="noreferrer">nilCC</a> and <a href="https://phala.network" style={{ color: 'var(--nillion-primary)', fontStyle: 'italic', textDecoration: 'underline' }} target="_blank" rel="noreferrer">Phala</a>. We are working on expanding Nillion Blacklight to different TEEs.</>
+      question:
+        'What Trusted Execution Environments (TEEs) does Nillion Blacklight support?',
+      answer: (
+        <>
+          Currently, Nillion Blacklight verifies workloads running on{' '}
+          <a
+            href="https://nilcc.nillion.com"
+            style={{
+              color: 'var(--nillion-primary)',
+              fontStyle: 'italic',
+              textDecoration: 'underline',
+            }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            nilCC
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://phala.network"
+            style={{
+              color: 'var(--nillion-primary)',
+              fontStyle: 'italic',
+              textDecoration: 'underline',
+            }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Phala
+          </a>
+          . We are working on expanding Nillion Blacklight to different TEEs.
+        </>
+      ),
     },
     {
-      question: "How do I run a verifier node?",
-      answer: "To run a Blacklight node, click the “Set up node” button on this page to get started. At a high level, you launch the node using the provided Docker image, which generates a public key for your node. You must then stake at least 70,000 NIL to this public key for your node to be assigned verification work and be able to participate in Nillion Blacklight."
+      question: 'How do I run a verifier node?',
+      answer:
+        'To run a Blacklight node, click the “Set up node” button on this page to get started. At a high level, you launch the node using the provided Docker image, which generates a public key for your node. You must then stake at least 70,000 NIL to this public key for your node to be assigned verification work and be able to participate in Nillion Blacklight.',
     },
     {
-      question: "What do Nillion Blacklight nodes check?",
-      answer: "At a high level, once a developer submits a workload in Blacklight, the node operator (e.g., Nillion, Phala) starts sending heartbeat transactions (HTX) in a custom interval (e.g., one every hour) to the Nillion L2. The L2 selects nodes based on their stake, which can then verify the HTX. The HTX contains a URL to the attestation, builder information, as well as other information required to check the attestation (e.g., Docker Compose hash, etc). Once multiple nodes have verified the HTX and they agree on the result, the L2 issues rewards."
+      question: 'What do Nillion Blacklight nodes check?',
+      answer:
+        'At a high level, once a developer submits a workload in Blacklight, the node operator (e.g., Nillion, Phala) starts sending heartbeat transactions (HTX) in a custom interval (e.g., one every hour) to the Nillion L2. The L2 selects nodes based on their stake, which can then verify the HTX. The HTX contains a URL to the attestation, builder information, as well as other information required to check the attestation (e.g., Docker Compose hash, etc). Once multiple nodes have verified the HTX and they agree on the result, the L2 issues rewards.',
     },
     {
-      question: "How are rewards calculated?",
-      answer: "Blacklight nodes are rewarded for the verification work they perform. The more NIL that is staked against a node, the more work that node will be assigned, therefore the higher chance of greater rewards."
+      question: 'How are rewards calculated?',
+      answer:
+        'Blacklight nodes are rewarded for the verification work they perform. The more NIL that is staked against a node, the more work that node will be assigned, therefore the higher chance of greater rewards.',
     },
     {
-      question: "What are the hardware requirements?",
-      answer: "There are no strict minimum hardware requirements. Blacklight verification work is lightweight and can run on a laptop or small server. The main requirement is uptime: your node should stay online and be able to reliably submit verification results to Nillion’s L2. As a guideline, a node should have at least 2 CPU cores, 1 GB of RAM, and 1 GB of available storage."
-    }
+      question: 'What are the hardware requirements?',
+      answer:
+        'There are no strict minimum hardware requirements. Blacklight verification work is lightweight and can run on a laptop or small server. The main requirement is uptime: your node should stay online and be able to reliably submit verification results to Nillion’s L2. As a guideline, a node should have at least 2 CPU cores, 1 GB of RAM, and 1 GB of available storage.',
+    },
   ];
 
   const toggleFaq = (index: number) => {
@@ -148,7 +190,7 @@ export function BlacklightLanding() {
         ) : (
           <img
             src="/images/earth/earth-landing.png"
-            alt="Blacklight Network"
+            alt="Nillion Blacklight"
             className="fixed inset-0 w-full h-full object-cover"
             style={{
               zIndex: 5,
@@ -318,9 +360,9 @@ export function BlacklightLanding() {
                   className="text-sm sm:text-base md:text-lg leading-relaxed max-w-4xl pr-2 sm:pr-0"
                   style={{ color: '#F2F2FF' }}
                 >
-                  The Nillion Blacklight network is a decentralised collection of
-                  verifier nodes that continuously verify TEEs across multiple
-                  operators.
+                  The Nillion Blacklight network is a decentralised collection
+                  of verifier nodes that continuously verify TEEs across
+                  multiple operators.
                 </p>
 
                 {/* CTAs - Functional navigation */}
@@ -411,20 +453,20 @@ export function BlacklightLanding() {
           >
             <div className="relative w-full overflow-hidden">
               <div
-                  className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center"
-                  style={{
-                    animationIterationCount: 'infinite',
-                    width: 'max-content',
-                    display: 'flex',
-                    animationName: 'scroll'
-                  }}
-                >
+                className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center"
+                style={{
+                  animationIterationCount: 'infinite',
+                  width: 'max-content',
+                  display: 'flex',
+                  animationName: 'scroll',
+                }}
+              >
                 {/* Duplicate sets for seamless infinite loop */}
                 {[...Array(4)].map((_, setIndex) => (
                   <div
                     key={setIndex}
                     className="flex gap-8 sm:gap-12 md:gap-16 items-center"
-                    style={{transform: 'translateX(0)'}}
+                    style={{ transform: 'translateX(0)' }}
                   >
                     {/* PHALA Logo */}
                     <div className="flex-shrink-0 flex items-center justify-center h-12 sm:h-14 md:h-16 px-4 sm:px-6 md:px-8 opacity-80 hover:opacity-100 transition-opacity">
@@ -523,7 +565,9 @@ export function BlacklightLanding() {
                   </div>
                 ))}
               </div>
-              <style dangerouslySetInnerHTML={{ __html: `
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
                 @keyframes scroll {
                   0% { transform: translateX(0); }
                   100% { transform: translateX(-1380px); }
@@ -531,7 +575,9 @@ export function BlacklightLanding() {
                 .animate-scroll {
                   animation: scroll 16s linear infinite !important;
                 }
-              `}} />
+              `,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -542,7 +588,7 @@ export function BlacklightLanding() {
         style={{
           backgroundColor: '#0D1235',
           opacity: 0.9,
-          borderTop: '1px solid rgba(242, 242, 255, 0.2)'
+          borderTop: '1px solid rgba(242, 242, 255, 0.2)',
         }}
       >
         {/* Running a node section - Carousel */}
@@ -601,22 +647,21 @@ export function BlacklightLanding() {
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start lg:items-center">
               {/* Left side - Active Step + Controls */}
               <div className="space-y-8 order-1 lg:order-1 -mt-4 lg:-mt-2">
+                {/* Title at the top */}
+                <h2
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6"
+                  style={{ color: '#FFFFFF' }}
+                >
+                  Running a Blacklight Verifier Node
+                </h2>
 
-              {/* Title at the top */}
-              <h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6"
-                style={{ color: '#FFFFFF' }}
-              >
-                Running a Blacklight Verifier Node
-              </h2>
-
-              {/* Intro Text */}
-              <p
-                className="text-lg md:text-xl leading-relaxed mb-6 lg:mb-8"
-                style={{ color: '#F2F2FF' }}
-              >
-                Set up your node in 5 minutes and begin earning rewards.
-              </p>
+                {/* Intro Text */}
+                <p
+                  className="text-lg md:text-xl leading-relaxed mb-6 lg:mb-8"
+                  style={{ color: '#F2F2FF' }}
+                >
+                  Set up your node in 5 minutes and begin earning rewards.
+                </p>
 
                 {/* Stage Indicator and Title Group */}
                 <div className="space-y-1">
@@ -776,7 +821,7 @@ export function BlacklightLanding() {
         style={{
           backgroundColor: '#000022',
           opacity: 0.9,
-          borderTop: '1px solid rgba(242, 242, 255, 0.2)'
+          borderTop: '1px solid rgba(242, 242, 255, 0.2)',
         }}
       >
         {/* Section 3 - Verifying Many TEE Operators */}
@@ -980,7 +1025,7 @@ export function BlacklightLanding() {
         className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center"
         style={{
           backgroundColor: '#0D1235',
-          borderTop: '1px solid rgba(242, 242, 255, 0.2)'
+          borderTop: '1px solid rgba(242, 242, 255, 0.2)',
         }}
       >
         {/* FAQ Section */}
@@ -1000,14 +1045,17 @@ export function BlacklightLanding() {
                   className="rounded-none overflow-hidden"
                   style={{
                     backgroundColor: 'rgba(65, 89, 246, 0.05)',
-                    border: '1px solid rgba(242, 242, 255, 0.1)'
+                    border: '1px solid rgba(242, 242, 255, 0.1)',
                   }}
                 >
                   <button
                     onClick={() => toggleFaq(index)}
                     className="w-full px-6 py-5 flex items-center justify-between text-left transition-all hover:bg-opacity-10"
                     style={{
-                      backgroundColor: openFaqIndex === index ? 'rgba(65, 89, 246, 0.1)' : 'transparent'
+                      backgroundColor:
+                        openFaqIndex === index
+                          ? 'rgba(65, 89, 246, 0.1)'
+                          : 'transparent',
                     }}
                   >
                     <span
@@ -1020,7 +1068,10 @@ export function BlacklightLanding() {
                       className="flex-shrink-0 transition-transform duration-300"
                       style={{
                         color: '#4159F6',
-                        transform: openFaqIndex === index ? 'rotate(180deg)' : 'rotate(0deg)'
+                        transform:
+                          openFaqIndex === index
+                            ? 'rotate(180deg)'
+                            : 'rotate(0deg)',
                       }}
                       size={24}
                     />
@@ -1028,7 +1079,7 @@ export function BlacklightLanding() {
                   <div
                     className="overflow-hidden transition-all duration-300 ease-in-out"
                     style={{
-                      maxHeight: openFaqIndex === index ? '500px' : '0px'
+                      maxHeight: openFaqIndex === index ? '500px' : '0px',
                     }}
                   >
                     <div
@@ -1049,7 +1100,7 @@ export function BlacklightLanding() {
         className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center pointer-events-none"
         style={{
           backgroundColor: '#000022',
-          borderTop: '1px solid rgba(242, 242, 255, 0.2)'
+          borderTop: '1px solid rgba(242, 242, 255, 0.2)',
         }}
       >
         {/* Navigation Cards Section */}

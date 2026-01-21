@@ -1,13 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 import { Providers } from './providers';
 import { LayoutWrapper } from '@/components/layout';
-import "./globals.css";
-import "./landing-page.css";
+import './globals.css';
+import './landing-page.css';
 
 export const metadata: Metadata = {
-  title: "Blacklight Network",
-  description: "The universal verification layer for TEE workloads",
+  title: 'Nillion Blacklight',
+  description: 'The universal verification layer for TEE workloads',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    other: [{ rel: 'mask-icon', url: '/safari-pinned-tab.svg', color: '#000000' }],
+  },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -22,9 +32,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <LayoutWrapper>
-            {children}
-          </LayoutWrapper>
+          <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
         <Toaster
           position="bottom-right"
