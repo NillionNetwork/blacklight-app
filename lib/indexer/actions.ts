@@ -12,6 +12,8 @@ import {
   getWithdrawalHistory as getWithdrawalHistoryQuery,
   getStakingHistory as getStakingHistoryQuery,
   getUnstakingHistory as getUnstakingHistoryQuery,
+  getRewardAccruedHistory as getRewardAccruedHistoryQuery,
+  getRewardClaimHistory as getRewardClaimHistoryQuery,
 } from './queries';
 
 /**
@@ -310,4 +312,50 @@ export async function getUnstakingHistory(
   }
 
   return await getUnstakingHistoryQuery(operatorAddress, fromBlock, limit);
+}
+
+/**
+ * Get reward accrual history for a recipient
+ */
+export async function getRewardAccruedHistory(
+  recipient: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!recipient.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid recipient address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getRewardAccruedHistoryQuery(recipient, fromBlock, limit);
+}
+
+/**
+ * Get reward claim history for a recipient
+ */
+export async function getRewardClaimHistory(
+  recipient: string,
+  fromBlock?: number,
+  limit?: number
+) {
+  if (!recipient.match(/^0x[a-fA-F0-9]{40}$/)) {
+    throw new Error('Invalid recipient address format');
+  }
+
+  if (fromBlock !== undefined && (fromBlock < 0 || !Number.isInteger(fromBlock))) {
+    throw new Error('Invalid fromBlock value');
+  }
+
+  if (limit !== undefined && (limit < 1 || limit > 1000 || !Number.isInteger(limit))) {
+    throw new Error('Invalid limit value (must be between 1 and 1000)');
+  }
+
+  return await getRewardClaimHistoryQuery(recipient, fromBlock, limit);
 }

@@ -1,5 +1,5 @@
 import { queryIndexer, IndexerResponse } from './client';
-import { STAKING_EVENTS, NILAV_ROUTER_EVENTS, HEARTBEAT_MANAGER_EVENTS } from './events';
+import { STAKING_EVENTS, NILAV_ROUTER_EVENTS, HEARTBEAT_MANAGER_EVENTS, REWARD_POLICY_EVENTS } from './events';
 import { getEventSignatureHash, padAddressTo32Bytes, buildHeartbeatEventQuery } from './helpers';
 import { indexer, activeContracts } from '@/config';
 import { decodeAbiParameters } from 'viem';
@@ -274,6 +274,28 @@ export interface UnstakeRequestedEvent extends BlockchainEvent {
   amount: string; // uint256 - amount being unstaked (decoded from data field)
   releaseTime: string; // uint64 - timestamp when tokens can be withdrawn (decoded from data field)
 }
+
+  /**
+   * RewardsAccrued event data
+   * Emitted when rewards are allocated to recipients by the RewardPolicy
+   * Event signature: RewardsAccrued(bytes32 indexed heartbeatKey, uint8 round, address indexed recipient, uint256 amount)
+   */
+  export interface RewardsAccruedEvent extends BlockchainEvent {
+    heartbeatKey: string;
+    round: number;
+    recipient: string;
+    amount: string;
+  }
+
+  /**
+   * RewardClaimed event data
+   * Emitted when a recipient claims rewards
+   * Event signature: RewardClaimed(address indexed recipient, uint256 amount)
+   */
+  export interface RewardClaimedEvent extends BlockchainEvent {
+    recipient: string;
+    amount: string;
+  }
 
 /**
  * HeartbeatEnqueued event
@@ -1228,6 +1250,158 @@ export async function getUnstakingHistory(
         operator: cleanOperator,
         amount,
         releaseTime,
+        block_num: event.block_num,
+        block_timestamp: event.block_timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Get reward accrual history for a recipient
+ * Returns RewardsAccrued events filtered by recipient
+ */
+export async function getRewardAccruedHistory(
+  recipient: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<RewardsAccruedEvent>> {
+  if (!activeContracts.rewardPolicy) {
+    throw new Error('RewardPolicy contract not configured');
+  }
+  const eventSignature = getEventSignatureHash(REWARD_POLICY_EVENTS.RewardsAccrued);
+  const paddedRecipient = padAddressTo32Bytes(recipient);
+
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.rewardPolicy?.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[3] = '${paddedRecipient}'`;
+
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as heartbeatKey,
+      topics[3] as recipient,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<RewardsAccruedEvent>(query, []);
+
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      const cleanRecipient = event.recipient && typeof event.recipient === 'string'
+        ? '0x' + event.recipient.replace('0x', '').slice(-40)
+        : '';
+
+      let amount = '0';
+      let round = 0;
+      try {
+        if (event.data) {
+          const decoded = decodeAbiParameters(
+            [
+              { type: 'uint8', name: 'round' },
+              { type: 'uint256', name: 'amount' },
+            ],
+            event.data as `0x${string}`
+          );
+          round = Number(decoded[0]);
+          amount = decoded[1].toString();
+        }
+      } catch (error) {
+        console.error('[getRewardAccruedHistory] Failed to decode data:', error);
+      }
+
+      return {
+        heartbeatKey: event.heartbeatKey,
+        round,
+        recipient: cleanRecipient,
+        amount,
+        block_num: event.block_num,
+        block_timestamp: event.block_timestamp,
+        tx_hash: event.tx_hash,
+      };
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Get reward claim history for a recipient
+ * Returns RewardClaimed events filtered by recipient
+ */
+export async function getRewardClaimHistory(
+  recipient: string,
+  fromBlock?: number,
+  limit: number = 50
+): Promise<IndexerResponse<RewardClaimedEvent>> {
+  if (!activeContracts.rewardPolicy) {
+    throw new Error('RewardPolicy contract not configured');
+  }
+  const eventSignature = getEventSignatureHash(REWARD_POLICY_EVENTS.RewardClaimed);
+  const paddedRecipient = padAddressTo32Bytes(recipient);
+
+  let whereClause = `
+      chain = ${indexer.chainId}
+      AND address = '${activeContracts.rewardPolicy?.toLowerCase()}'
+      AND topics[1] = '${eventSignature}'
+      AND topics[2] = '${paddedRecipient}'`;
+
+  if (fromBlock !== undefined) {
+    whereClause += `\n      AND block_num >= ${fromBlock}`;
+  }
+
+  const query = `
+    SELECT
+      topics[2] as recipient,
+      data,
+      block_num,
+      block_timestamp,
+      tx_hash
+    FROM logs
+    WHERE${whereClause}
+    ORDER BY block_num DESC
+    LIMIT ${limit}
+  `;
+
+  const result = await queryIndexer<RewardClaimedEvent>(query, []);
+
+  if (result.data && result.data.length > 0) {
+    result.data = result.data.map((event: any) => {
+      const cleanRecipient = event.recipient && typeof event.recipient === 'string'
+        ? '0x' + event.recipient.replace('0x', '').slice(-40)
+        : '';
+
+      let amount = '0';
+      try {
+        if (event.data) {
+          const decoded = decodeAbiParameters(
+            [{ type: 'uint256', name: 'amount' }],
+            event.data as `0x${string}`
+          );
+          amount = decoded[0].toString();
+        }
+      } catch (error) {
+        console.error('[getRewardClaimHistory] Failed to decode data:', error);
+      }
+
+      return {
+        recipient: cleanRecipient,
+        amount,
         block_num: event.block_num,
         block_timestamp: event.block_timestamp,
         tx_hash: event.tx_hash,

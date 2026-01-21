@@ -21,6 +21,7 @@ import {
   StakingForm,
   UnstakingForm,
   UnbondingForm,
+  RewardsTab,
 } from '@/components/staking';
 import { FundNodeForm } from '@/components/transfer';
 import { ActivityFeed } from '@/components/activity';
@@ -297,6 +298,14 @@ export default function NodeDetailPage() {
           </button>
           <button
             className={`node-staking-tab ${
+              activeTab === 'rewards' ? 'active' : ''
+            }`}
+            onClick={() => handleTabChange('rewards')}
+          >
+            Rewards
+          </button>
+          <button
+            className={`node-staking-tab ${
               activeTab === 'fund' ? 'active' : ''
             }`}
             onClick={() => handleTabChange('fund')}
@@ -343,6 +352,10 @@ export default function NodeDetailPage() {
                 console.error('Withdraw error:', error);
               }}
             />
+          )}
+
+          {activeTab === 'rewards' && (
+            <RewardsTab operatorAddress={nodeAddress} />
           )}
 
           {activeTab === 'fund' && (

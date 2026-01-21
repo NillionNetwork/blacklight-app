@@ -18,6 +18,8 @@ export {
   getStakingHistory,
   getWithdrawalHistory,
   getUnstakingHistory,
+  getRewardAccruedHistory,
+  getRewardClaimHistory,
   // HeartbeatManager actions (new system)
   getRoundStartedEvents,
   getRoundStartedByKeys,

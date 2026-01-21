@@ -53,6 +53,17 @@ export const STAKING_EVENTS = {
 } as const;
 
 // =============================================================================
+// RewardPolicy Events
+// =============================================================================
+
+export const REWARD_POLICY_EVENTS = {
+  RewardsAccrued: 'RewardsAccrued(bytes32 indexed heartbeatKey, uint8 round, address indexed recipient, uint256 amount)',
+  RewardClaimed: 'RewardClaimed(address indexed recipient, uint256 amount)',
+  BudgetUsed: 'BudgetUsed(bytes32 indexed heartbeatKey, uint8 round, uint256 budget, uint256 distributed)',
+  StreamUpdated: 'StreamUpdated(uint256 streamRemaining, uint256 ratePerSecondWad, uint64 streamEnd)',
+} as const;
+
+// =============================================================================
 // All Events (for convenience)
 // =============================================================================
 

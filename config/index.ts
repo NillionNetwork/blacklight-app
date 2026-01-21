@@ -137,11 +137,17 @@ export const contracts = {
     nilTokenDecimals: 6,
     nilTokenStakeMin: 10,
     stakingOperators: '0x108b2Be8911085EEf47ba837cE7feE814ef7D470',
-    heartbeatManager: '0x99442256CC19C4D295a527Df2789198653Fb0fC7',
+    heartbeatManager: '0x45e558DDDe0e413fE78A7AB2403F33eA939c5470',
+    rewardPolicy: '0x8CDAe68e4D5cC03d144c459DE40C7Cbc36c26908',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
-    stakingOperatorsDeploymentBlock: 2710753,
+    stakingOperatorsDeploymentBlock: 2734197,
+    heartbeatManagerDeploymentBlock: 2733393,
+    rewardPolicyDeploymentBlock: 2733395,
+    protocolConfig: '0xF157Dbc634c0ACeeB9999f6eA4C29dDF32f60168',
+    weightedCommitteeSelector: '0x1155308F62654e83391E71cfd847D4172906879F',
+    jailingPolicy: '0x1EaA4102FaE26cDb376a0FC1928AB143aa0D8598',
   },
   nilavMainnet: {
     nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
@@ -150,8 +156,10 @@ export const contracts = {
     nilTokenStakeMin: 10,
     stakingOperators: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     heartbeatManager: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    rewardPolicy: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
     blockExplorer: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
     stakingOperatorsDeploymentBlock: 0, // TODO: Update with actual deployment block
+    rewardPolicyDeploymentBlock: 0, // TODO: Update with actual deployment block
   },
 } as const;
 
