@@ -13,14 +13,19 @@ export function Footer() {
 
           {/* Right side - Links */}
           <div className="app-footer-links">
-            <Link href="/terms" className="app-footer-link">
+            <a
+              href="https://nillion.notion.site/Terms-Conditions-and-Important-Disclaimers-2ef1827799b48072907ae34092fca42f"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="app-footer-link"
+            >
               Terms of Service
-            </Link>
+            </a>
             <Link href="/privacy" className="app-footer-link">
               Privacy Policy
             </Link>
             <a
-              href="https://github.com/NillionNetwork/blacklight-contracts"
+              href="https://github.com/NillionNetwork/blacklight-app"
               target="_blank"
               rel="noopener noreferrer"
               className="app-footer-link"
@@ -28,12 +33,12 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://nillion.com/news/"
+              href="https://discord.com/invite/nillionnetwork"
               target="_blank"
               rel="noopener noreferrer"
               className="app-footer-link"
             >
-              Blog
+              Discord
             </a>
           </div>
         </div>

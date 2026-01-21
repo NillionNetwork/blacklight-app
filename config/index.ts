@@ -219,7 +219,7 @@ export const platforms = {
 export const helpLinks = {
   nilavHelp:
     'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
-  discord: 'https://discord.gg/nillion',
+  discord: 'https://discord.com/invite/nillionnetwork',
 } as const;
 
 // ==============================================
