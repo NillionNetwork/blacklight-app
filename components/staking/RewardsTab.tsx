@@ -238,7 +238,11 @@ export function RewardsTab({ operatorAddress }: RewardsTabProps) {
     );
   };
 
-  const stakerMismatch = stakerAddress && address?.toLowerCase() !== stakerAddress;
+  const stakerMismatch = !!(
+    stakerAddress &&
+    address &&
+    address.toLowerCase() !== stakerAddress
+  );
 
   return (
     <div>

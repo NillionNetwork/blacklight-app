@@ -36,7 +36,7 @@ export default function NodeDetailPage() {
   const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const [activeTab, setActiveTab] = useState<
-    'activity' | 'stake' | 'unstake' | 'withdraw' | 'fund'
+    'activity' | 'stake' | 'unstake' | 'withdraw' | 'rewards' | 'fund'
   >('activity');
 
   // Initialize tab from URL
@@ -47,6 +47,7 @@ export default function NodeDetailPage() {
       tabParam === 'stake' ||
       tabParam === 'unstake' ||
       tabParam === 'withdraw' ||
+      tabParam === 'rewards' ||
       tabParam === 'fund'
     ) {
       setActiveTab(tabParam);
@@ -55,7 +56,7 @@ export default function NodeDetailPage() {
 
   // Update URL when tab changes
   const handleTabChange = (
-    tab: 'activity' | 'stake' | 'unstake' | 'withdraw' | 'fund'
+    tab: 'activity' | 'stake' | 'unstake' | 'withdraw' | 'rewards' | 'fund'
   ) => {
     setActiveTab(tab);
     router.push(`/nodes/${nodeAddress}?tab=${tab}`, { scroll: false });
