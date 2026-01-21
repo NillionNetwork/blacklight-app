@@ -1,6 +1,6 @@
-# nilUV UI - Nillion Universal Verifier Node Manager
+# Blacklight UI
 
-Web app that helps users for set up and manage nilUV nodes
+Web app that helps users for set up and manage nilUV nodes and interact with Blacklight contracts.
 
 ## 🚀 Quick Start
 
@@ -100,12 +100,14 @@ export default function NodesPage() {
 ```
 
 **Pattern:**
+
 - Check `isConnected` at the top of your page component
 - Return early with `<ConnectWallet />` component if not connected
 - User stays at the URL (no redirects)
 - Can show partial content to non-authenticated users
 
 **Why authenticated views over route groups?**
+
 - Simpler - no `(authenticated)` folder structure needed
 - More flexible - each page controls its own auth requirements
 - Better UX - users see what's at the URL before connecting wallet
@@ -126,6 +128,7 @@ Query blockchain events using Server Actions (secure, no SQL injection).
 **Complete docs:** **[lib/indexer/README.md](./lib/indexer/README.md)**
 
 **Quick example:**
+
 ```typescript
 import { getHTXAssignments } from '@/lib/indexer';
 
