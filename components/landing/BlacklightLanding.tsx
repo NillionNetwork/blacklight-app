@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowRight, Shield, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { NetworkGlobe, networkExampleData } from '../globe/globe.js';
@@ -83,22 +83,30 @@ export function BlacklightLanding() {
     }
   };
 
-  const faqs = [
+  const faqs: Array<{ question: string; answer: ReactNode }> = [
     {
-      question: "What is the Blacklight Network?",
-      answer: "..."
+      question: "What is the Nillion Blacklight?",
+      answer: "Nillion Blacklight is a decentralized network of nodes that continuously verifies workloads running inside Trusted Execution Environments (TEEs). Although TEEs provide integrity and privacy, which can be verified via attestations, not many users know what to look for. Nillion Blacklight is an always-on verification layer that continuously monitors TEE workloads and verifies their uptime, privacy, and integrity."
+    },
+    {
+      question: "What Trusted Execution Environments (TEEs) does Nillion Blacklight support?",
+      answer: <>Currently, Nillion Blacklight verifies workloads running on <a href="https://nilcc.nillion.com" style={{ color: 'var(--nillion-primary)', fontStyle: 'italic', textDecoration: 'underline' }} target="_blank" rel="noreferrer">nilCC</a> and <a href="https://phala.network" style={{ color: 'var(--nillion-primary)', fontStyle: 'italic', textDecoration: 'underline' }} target="_blank" rel="noreferrer">Phala</a>. We are working on expanding Nillion Blacklight to different TEEs.</>
     },
     {
       question: "How do I run a verifier node?",
-      answer: "..."
+      answer: "To run a Blacklight node, click the “Set up node” button on this page to get started. At a high level, you launch the node using the provided Docker image, which generates a public key for your node. You must then stake at least 70,000 NIL to this public key for your node to be assigned verification work and be able to participate in Nillion Blacklight."
     },
     {
-      question: "What are the hardware requirements?",
-      answer: "..."
+      question: "What do Nillion Blacklight nodes check?",
+      answer: "At a high level, once a developer submits a workload in Blacklight, the node operator (e.g., Nillion, Phala) starts sending heartbeat transactions (HTX) in a custom interval (e.g., one every hour) to the Nillion L2. The L2 selects nodes based on their stake, which can then verify the HTX. The HTX contains a URL to the attestation, builder information, as well as other information required to check the attestation (e.g., Docker Compose hash, etc). Once multiple nodes have verified the HTX and they agree on the result, the L2 issues rewards."
     },
     {
       question: "How are rewards calculated?",
-      answer: "..."
+      answer: "Blacklight nodes are rewarded for the verification work they perform. The more NIL that is staked against a node, the more work that node will be assigned, therefore the higher chance of greater rewards."
+    },
+    {
+      question: "What are the hardware requirements?",
+      answer: "There are no strict minimum hardware requirements. Blacklight verification work is lightweight and can run on a laptop or small server. The main requirement is uptime: your node should stay online and be able to reliably submit verification results to Nillion’s L2. As a guideline, a node should have at least 2 CPU cores, 1 GB of RAM, and 1 GB of available storage."
     }
   ];
 
@@ -402,10 +410,10 @@ export function BlacklightLanding() {
             }}
           >
             <div className="relative w-full overflow-hidden">
-              <div 
+              <div
                   className="flex animate-scroll gap-8 sm:gap-12 md:gap-16 items-center"
-                  style={{ 
-                    animationIterationCount: 'infinite', 
+                  style={{
+                    animationIterationCount: 'infinite',
                     width: 'max-content',
                     display: 'flex',
                     animationName: 'scroll'
@@ -556,12 +564,12 @@ export function BlacklightLanding() {
                   width: '100%',
                   height: '100%',
                   // Modified background to fade in at the top and fade out at the bottom
-                  background: `linear-gradient(to bottom, 
+                  background: `linear-gradient(to bottom,
                     rgba(65, 89, 246, 0) 0%,
                     rgba(65, 89, 246, 0.3) 10%,
-                    rgba(0, 0, 255, 0.22) 25%, 
-                    rgba(65, 89, 246, 0.12) 50%, 
-                    rgba(0, 0, 255, 0.04) 75%, 
+                    rgba(0, 0, 255, 0.22) 25%,
+                    rgba(65, 89, 246, 0.12) 50%,
+                    rgba(0, 0, 255, 0.04) 75%,
                     rgba(65, 89, 246, 0.01) 90%,
                     rgba(65, 89, 246, 0) 100%
                   )`,
@@ -593,7 +601,7 @@ export function BlacklightLanding() {
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start lg:items-center">
               {/* Left side - Active Step + Controls */}
               <div className="space-y-8 order-1 lg:order-1 -mt-4 lg:-mt-2">
-              
+
               {/* Title at the top */}
               <h2
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6"
@@ -609,7 +617,7 @@ export function BlacklightLanding() {
               >
                 Set up your node in 5 minutes and begin earning rewards.
               </p>
-              
+
                 {/* Stage Indicator and Title Group */}
                 <div className="space-y-1">
                   {/* Stage Indicator */}
