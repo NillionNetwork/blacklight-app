@@ -142,7 +142,7 @@ export const contracts = {
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
-    stakingOperatorsDeploymentBlock: 276878,
+    stakingOperatorsDeploymentBlock: 2768782,
     heartbeatManagerDeploymentBlock: 2768782,
     rewardPolicyDeploymentBlock: 2768782,
     protocolConfig: '0x38345595fe5149A071C0CBeFbD8eb7e39E3cE428',
