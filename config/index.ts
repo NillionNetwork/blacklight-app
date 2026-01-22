@@ -136,18 +136,18 @@ export const contracts = {
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
     nilTokenStakeMin: 70,
-    stakingOperators: '0x53a0Fc8d1917989E97baB9B3c35d8cD0B84074A6',
-    heartbeatManager: '0x4aeF99b18A3B0A69C3CEa75185b4138C4d369050',
-    rewardPolicy: '0xdAFAC1e26098DbeA553C23340509AeF1C44B196c',
+    stakingOperators: '0x595A112FA10ED66Bc518b28781035BA50C9f2216',
+    heartbeatManager: '0x8d683fb2CC794E085E8366c4f28f8CC991107576',
+    rewardPolicy: '0xfD935474DCc8428eda1867E906E1005C5e717108',
     blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
     stakingOperatorsDeploymentBlock: 2768782,
     heartbeatManagerDeploymentBlock: 2768782,
     rewardPolicyDeploymentBlock: 2768782,
-    protocolConfig: '0x38345595fe5149A071C0CBeFbD8eb7e39E3cE428',
-    weightedCommitteeSelector: '0xa38695EE8138C215C6D4a7E3998713947257955c',
-    jailingPolicy: '0x6Dfe5Fd58842efD2eA11A28f33Df4c033Ee8DD77',
+    protocolConfig: '0xdd514DCF59767b4AaEf24CB5cbED81aD133660f0',
+    weightedCommitteeSelector: '0x8aeC716fC0B8F998c0c897834409Be16d4302e34',
+    jailingPolicy: '0x4a76Cb88D6FFb85cBe0ad28e7FFB3D51678e440d',
   },
   nilavMainnet: {
     nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
