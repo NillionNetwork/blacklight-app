@@ -135,7 +135,7 @@ export const contracts = {
     nilToken: '0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals: 6,
-    nilTokenStakeMin: 10,
+    nilTokenStakeMin: 70,
     stakingOperators: '0x53a0Fc8d1917989E97baB9B3c35d8cD0B84074A6',
     heartbeatManager: '0x4aeF99b18A3B0A69C3CEa75185b4138C4d369050',
     rewardPolicy: '0xdAFAC1e26098DbeA553C23340509AeF1C44B196c',
