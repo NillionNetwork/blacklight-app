@@ -11,7 +11,12 @@ import {
 import { parseEther, formatEther } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import { Button, TransactionTracker, Modal } from '@/components/ui';
-import { activeNetwork, activeContracts, activeFundMinEth } from '@/config';
+import {
+  activeNetwork,
+  activeContracts,
+  activeFundMinEth,
+  activeGasReserveEth,
+} from '@/config';
 import { useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
 
@@ -115,8 +120,8 @@ export function FundNodeForm({
       return;
     }
 
-    // Leave ~0.001 ETH for gas (rough estimate)
-    const gasReserve = 0.001;
+    // Leave some ETH for gas (configurable per network)
+    const gasReserve = activeGasReserveEth;
     const maxAmount = ethBalance > gasReserve ? ethBalance - gasReserve : 0;
 
     if (maxAmount <= 0) {
@@ -151,7 +156,7 @@ export function FundNodeForm({
     }
 
     // Check if user has enough balance
-    const gasReserve = 0.001; // Reserve for gas
+    const gasReserve = activeGasReserveEth; // Reserve for gas
     const requiredBalance = amount + gasReserve;
 
     if (ethBalance < requiredBalance) {

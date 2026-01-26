@@ -47,6 +47,10 @@ const fundMinEth = {
   nilavTestnet: 0.0001,
   nilavMainnet: 0.0001,
 } as const satisfies Record<NetworkKey, number>;
+const gasReserveEth = {
+  nilavTestnet: 0.0001,
+  nilavMainnet: 0.0001,
+} as const satisfies Record<NetworkKey, number>;
 
 // ==============================================
 // NETWORK DEFINITIONS
@@ -278,6 +282,7 @@ export const helpLinks = {
 // Default network (for backwards compatibility)
 export const defaultNetwork = activeNetwork;
 export const activeFundMinEth = fundMinEth[NETWORK_KEY];
+export const activeGasReserveEth = gasReserveEth[NETWORK_KEY];
 
 // Get contract addresses for a specific network ID
 // Useful for components that receive chainId from wagmi hooks

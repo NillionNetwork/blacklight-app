@@ -44,5 +44,6 @@ next-env.d.ts
 
 nilav_node/
 niluv_node/
+blacklight_node/
 
 HANDOVER.md
