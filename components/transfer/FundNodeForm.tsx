@@ -11,7 +11,7 @@ import {
 import { parseEther, formatEther } from 'viem';
 import { ConnectWallet } from '@/components/auth';
 import { Button, TransactionTracker, Modal } from '@/components/ui';
-import { activeNetwork, activeContracts } from '@/config';
+import { activeNetwork, activeContracts, activeFundMinEth } from '@/config';
 import { useWalletBalances } from '@/lib/hooks';
 import { toast } from 'sonner';
 
@@ -49,8 +49,8 @@ export function FundNodeForm({
   nodeAddress: nodeAddressProp,
   onSuccess,
   onError,
-  minAmount = 0.001,
-  presetAmounts = [0.001, 0.005, 0.01],
+  minAmount = activeFundMinEth,
+  presetAmounts = [activeFundMinEth, 0.0005, 0.001],
   onBalanceDataChange,
 }: FundNodeFormProps) {
   const { isConnected, address } = useAppKitAccount();
