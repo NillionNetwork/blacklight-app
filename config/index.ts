@@ -34,6 +34,15 @@ if (!NETWORK_KEYS.includes(NETWORK_KEY)) {
 
 // Shared token constants
 const nilTokenDecimals = 6;
+const dockerImageBase =
+  'ghcr.io/nillionnetwork/blacklight-node/blacklight_node';
+const dockerImageVersions = {
+  nilavTestnet: '0.9.0',
+  nilavMainnet: '0.9.0',
+} as const satisfies Record<NetworkKey, string>;
+const dockerDataDir = './blacklight_node';
+const dockerCacheDir = './blacklight_node';
+const dockerCacheMountPath = '/tmp/blacklight-cache';
 
 // ==============================================
 // NETWORK DEFINITIONS
@@ -202,12 +211,13 @@ const getDockerRunCommand = () => {
   const managerAddress = activeContracts.heartbeatManager;
   const stakingAddress = activeContracts.stakingOperators;
   const tokenAddress = activeContracts.nilToken;
+  const imageVersion = dockerImageVersions[NETWORK_KEY];
 
   return [
     'docker run -it --rm',
-    '-v ./niluv_node:/app/',
-    '-v ./niluv_node:/tmp/niluv-cache',
-    'ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+    `-v ${dockerDataDir}:/app/`,
+    `-v ${dockerCacheDir}:${dockerCacheMountPath}`,
+    `${dockerImageBase}:${imageVersion}`,
     `--rpc-url ${rpcUrl}`,
     `--manager-contract-address ${managerAddress}`,
     `--staking-contract-address ${stakingAddress}`,
@@ -222,9 +232,9 @@ export const platforms = {
     dockerInstallCommand: 'brew install --cask docker',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './niluv_node',
+    nodeStartCommand: './blacklight_node',
   },
   linux: {
     name: 'Linux',
@@ -232,18 +242,18 @@ export const platforms = {
     dockerInstallCommand:
       'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './niluv_node',
+    nodeStartCommand: './blacklight_node',
   },
   windows: {
     name: 'Windows',
     displayName: 'Windows',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
     dockerPullCommand:
-      'docker pull ghcr.io/nillionnetwork/niluv/niluv_node:latest',
+      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
-    nodeStartCommand: './niluv_node',
+    nodeStartCommand: './blacklight_node',
   },
 } as const;
 
