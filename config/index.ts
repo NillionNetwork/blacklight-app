@@ -1,7 +1,7 @@
 // Application Configuration
 // This file contains all network, platform, and contract configuration
 
-import { defineChain } from 'viem';
+import { defineChain, type Chain } from 'viem';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { cookieStorage, createStorage } from '@wagmi/core';
 
@@ -20,24 +20,28 @@ if (!projectId) {
 
 // Active network selection from environment
 // Defaults to nilavTestnet if not specified
-const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK || 'nilavTestnet') as
-  | 'nilavTestnet'
-  | 'nilavMainnet';
+const NETWORK_KEYS = ['nilavTestnet', 'nilavMainnet'] as const;
+export type NetworkKey = (typeof NETWORK_KEYS)[number];
 
-if (!['nilavTestnet', 'nilavMainnet'].includes(NETWORK_KEY)) {
+const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK ||
+  'nilavTestnet') as NetworkKey;
+
+if (!NETWORK_KEYS.includes(NETWORK_KEY)) {
   throw new Error(
     `Invalid NEXT_PUBLIC_NETWORK: ${NETWORK_KEY}. Must be 'nilavTestnet' or 'nilavMainnet'`
   );
 }
 
+// Shared token constants
+const nilTokenDecimals = 6;
+
 // ==============================================
 // NETWORK DEFINITIONS
 // ==============================================
 
-// Define Blacklight Testnet
 export const nilavTestnet = defineChain({
   id: 78651,
-  name: 'Blacklight Testnet',
+  name: 'Nillion Network Sepolia Testnet',
   nativeCurrency: {
     name: 'Ethereum',
     symbol: 'ETH',
@@ -45,19 +49,19 @@ export const nilavTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc-nilav-shzvox09l5.t.conduit.xyz'],
-      webSocket: ['wss://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+      http: ['https://rpc.testnet.nillion.network'],
+      webSocket: ['wss://rpc.testnet.nillion.network'],
     },
     public: {
-      http: ['https://rpc-nilav-shzvox09l5.t.conduit.xyz'],
-      webSocket: ['wss://rpc-nilav-shzvox09l5.t.conduit.xyz'],
+      http: ['https://rpc.testnet.nillion.network'],
+      webSocket: ['wss://rpc.testnet.nillion.network'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Blacklight Explorer',
-      url: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
-      apiUrl: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz/api',
+      name: 'Nillion Explorer',
+      url: 'https://explorer.testnet.nillion.network',
+      apiUrl: 'https://explorer.testnet.nillion.network/api',
     },
   },
   contracts: {
@@ -70,10 +74,9 @@ export const nilavTestnet = defineChain({
   testnet: true,
 });
 
-// Define Blacklight Mainnet
 export const nilavMainnet = defineChain({
-  id: 0, // TODO: Update when mainnet chain ID is known
-  name: 'Blacklight Mainnet',
+  id: 98875,
+  name: 'Nillion Network',
   nativeCurrency: {
     name: 'Ethereum',
     symbol: 'ETH',
@@ -81,19 +84,19 @@ export const nilavMainnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc-nilav-mainnet.example.com'], // TODO: Update with actual RPC URL
-      webSocket: ['wss://rpc-nilav-mainnet.example.com'], // TODO: Update with actual WebSocket URL
+      http: ['https://rpc.nillion.network'],
+      webSocket: ['wss://rpc.nillion.network'],
     },
     public: {
-      http: ['https://rpc-nilav-mainnet.example.com'],
-      webSocket: ['wss://rpc-nilav-mainnet.example.com'],
+      http: ['https://rpc.nillion.network'],
+      webSocket: ['wss://rpc.nillion.network'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Blacklight Explorer',
-      url: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
-      apiUrl: 'https://explorer-nilav-mainnet.example.com/api',
+      name: 'Nillion Explorer',
+      url: 'https://explorer.nillion.network',
+      apiUrl: 'https://explorer.nillion.network/api',
     },
   },
   contracts: {},
@@ -104,7 +107,12 @@ export const nilavMainnet = defineChain({
 export const networkMap = {
   nilavTestnet,
   nilavMainnet,
-} as const;
+} as const satisfies Record<NetworkKey, Chain>;
+
+const chainIdToNetworkKey: Record<number, NetworkKey> = {
+  [nilavTestnet.id]: 'nilavTestnet',
+  [nilavMainnet.id]: 'nilavMainnet',
+};
 
 // Active network based on environment variable
 export const activeNetwork = networkMap[NETWORK_KEY];
@@ -129,39 +137,57 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 // CONTRACT ADDRESSES
 // ==============================================
 
+type ContractEntry = {
+  nilToken: string;
+  nilTokenSymbol: string;
+  nilTokenDecimals: number;
+  nilTokenStakeMin: number;
+  stakingOperators: string;
+  heartbeatManager: string;
+  rewardPolicy: string;
+  blockExplorer: string;
+  stakingOperatorsDeploymentBlock: number;
+  rewardPolicyDeploymentBlock: number;
+  protocolConfig: string;
+  weightedCommitteeSelector: string;
+  jailingPolicy: string;
+};
+
 // Contract addresses for each network
 export const contracts = {
   nilavTestnet: {
     nilToken: '0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35',
     nilTokenSymbol: 'NIL',
-    nilTokenDecimals: 6,
+    nilTokenDecimals,
     nilTokenStakeMin: 70,
     stakingOperators: '0x595A112FA10ED66Bc518b28781035BA50C9f2216',
     heartbeatManager: '0x8d683fb2CC794E085E8366c4f28f8CC991107576',
     rewardPolicy: '0xfD935474DCc8428eda1867E906E1005C5e717108',
-    blockExplorer: 'https://explorer-nilav-shzvox09l5.t.conduit.xyz',
+    blockExplorer: nilavTestnet.blockExplorers.default.url,
     // StakingOperators contract deployment block
     // This allows event queries to start from deployment instead of querying all history
     stakingOperatorsDeploymentBlock: 2768782,
-    heartbeatManagerDeploymentBlock: 2768782,
     rewardPolicyDeploymentBlock: 2768782,
     protocolConfig: '0xdd514DCF59767b4AaEf24CB5cbED81aD133660f0',
     weightedCommitteeSelector: '0x8aeC716fC0B8F998c0c897834409Be16d4302e34',
     jailingPolicy: '0x4a76Cb88D6FFb85cBe0ad28e7FFB3D51678e440d',
   },
   nilavMainnet: {
-    nilToken: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
+    nilToken: '0x32DEAe728473cb948B4D8661ac0f2755133D4173',
     nilTokenSymbol: 'NIL',
-    nilTokenDecimals: 6,
+    nilTokenDecimals,
     nilTokenStakeMin: 10,
-    stakingOperators: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
-    heartbeatManager: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
-    rewardPolicy: '0x0000000000000000000000000000000000000000', // TODO: Update when deployed
-    blockExplorer: 'https://explorer-nilav-mainnet.example.com', // TODO: Update with actual explorer URL
-    stakingOperatorsDeploymentBlock: 0, // TODO: Update with actual deployment block
-    rewardPolicyDeploymentBlock: 0, // TODO: Update with actual deployment block
+    stakingOperators: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
+    heartbeatManager: '0x0Ee49a8f50293Fa5d05Ba6d1FC136e7F79b2eA4f',
+    rewardPolicy: '0x78E0FEBF3B8936f961729328a25dBA88d4Fea86B',
+    blockExplorer: nilavMainnet.blockExplorers.default.url,
+    stakingOperatorsDeploymentBlock: 1767042,
+    rewardPolicyDeploymentBlock: 1767044,
+    protocolConfig: '0x9204d2F933FC7A84b20952F72CA6Cfa5D4ce6520',
+    weightedCommitteeSelector: '0x63167beD28912cDe2C7b8bC5B6BB1F8B41B22f46',
+    jailingPolicy: '0x9a75E816941F692C23166eE9d61328544fb99490',
   },
-} as const;
+} as const satisfies Record<NetworkKey, ContractEntry>;
 
 // Active contracts based on environment variable
 export const activeContracts = contracts[NETWORK_KEY];
@@ -241,11 +267,9 @@ export const defaultNetwork = activeNetwork;
 // Get contract addresses for a specific network ID
 // Useful for components that receive chainId from wagmi hooks
 export const getContractAddresses = (networkId: number) => {
-  if (networkId === nilavTestnet.id) {
-    return contracts.nilavTestnet;
-  }
-  if (networkId === nilavMainnet.id) {
-    return contracts.nilavMainnet;
+  const key = chainIdToNetworkKey[networkId];
+  if (key) {
+    return contracts[key];
   }
   throw new Error(
     `Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`
@@ -268,5 +292,4 @@ export const indexer = {
 // ==============================================
 
 export type Platform = keyof typeof platforms;
-export type NetworkKey = keyof typeof networkMap;
 export type ContractConfig = typeof activeContracts;
