@@ -183,17 +183,14 @@ export default function SetupPage() {
                   ) : (
                     <div>
                       <div
+                        className="setup-command-row"
                         style={{
-                          display: 'flex',
-                          gap: '0.75rem',
                           marginBottom: '1rem',
-                          alignItems: 'stretch',
                         }}
                       >
                         <div
                           className="command-block"
                           style={{
-                            flex: 1,
                             background: 'rgba(0, 0, 0, 0.5)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             borderRadius: '0.75rem',
@@ -202,13 +199,13 @@ export default function SetupPage() {
                             fontSize: '0.875rem',
                             color: 'var(--nillion-primary-lighter)',
                             overflowX: 'auto',
-                            whiteSpace: 'nowrap',
                             minWidth: 0,
                           }}
                         >
                           {platforms[platform].dockerInstallCommand}
                         </div>
                         <button
+                          className="setup-inline-copy-button"
                           onClick={() =>
                             handleCopy(
                               platforms[platform].dockerInstallCommand!
@@ -221,7 +218,6 @@ export default function SetupPage() {
                             borderRadius: '0.375rem',
                             color: 'rgba(255, 255, 255, 0.6)',
                             cursor: 'pointer',
-                            whiteSpace: 'nowrap',
                             flexShrink: 0,
                           }}
                         >
@@ -282,17 +278,14 @@ export default function SetupPage() {
                   </div>
                   <label className="setup-label">Pull Docker Image</label>
                   <div
+                    className="setup-command-row"
                     style={{
-                      display: 'flex',
-                      gap: '0.75rem',
                       marginBottom: '1.5rem',
-                      alignItems: 'stretch',
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '0.75rem',
@@ -301,13 +294,13 @@ export default function SetupPage() {
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
                         overflowX: 'auto',
-                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
                       {platforms[platform].dockerPullCommand}
                     </div>
                     <button
+                      className="setup-inline-copy-button"
                       onClick={() =>
                         handleCopy(platforms[platform].dockerPullCommand)
                       }
@@ -318,7 +311,6 @@ export default function SetupPage() {
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
-                        whiteSpace: 'nowrap',
                         flexShrink: 0,
                       }}
                     >
@@ -328,17 +320,14 @@ export default function SetupPage() {
 
                   <label className="setup-label">Run Node Setup</label>
                   <div
+                    className="setup-command-row"
                     style={{
-                      display: 'flex',
-                      gap: '0.75rem',
                       marginBottom: '1rem',
-                      alignItems: 'stretch',
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '0.75rem',
@@ -347,13 +336,13 @@ export default function SetupPage() {
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
                         overflowX: 'auto',
-                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
                       {platforms[platform].dockerRunCommand}
                     </div>
                     <button
+                      className="setup-inline-copy-button"
                       onClick={() =>
                         handleCopy(platforms[platform].dockerRunCommand)
                       }
@@ -364,7 +353,6 @@ export default function SetupPage() {
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
-                        whiteSpace: 'nowrap',
                         flexShrink: 0,
                       }}
                     >
@@ -509,17 +497,14 @@ export default function SetupPage() {
                   </div>
                   <label className="setup-label">Run this command</label>
                   <div
+                    className="setup-command-row"
                     style={{
-                      display: 'flex',
-                      gap: '0.75rem',
                       marginBottom: '1rem',
-                      alignItems: 'stretch',
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        flex: 1,
                         background: 'rgba(0, 0, 0, 0.5)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '0.75rem',
@@ -528,13 +513,13 @@ export default function SetupPage() {
                         fontSize: '0.875rem',
                         color: 'var(--nillion-primary-lighter)',
                         overflowX: 'auto',
-                        whiteSpace: 'nowrap',
                         minWidth: 0,
                       }}
                     >
                       {platforms[platform].dockerRunCommand}
                     </div>
                     <button
+                      className="setup-inline-copy-button"
                       onClick={() => {
                         handleCopy(platforms[platform].dockerRunCommand);
                       }}
@@ -545,7 +530,6 @@ export default function SetupPage() {
                         borderRadius: '0.375rem',
                         color: 'rgba(255, 255, 255, 0.6)',
                         cursor: 'pointer',
-                        whiteSpace: 'nowrap',
                         flexShrink: 0,
                       }}
                     >
