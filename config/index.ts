@@ -14,7 +14,7 @@ export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
 if (!projectId) {
   throw new Error(
-    'NEXT_PUBLIC_PROJECT_ID is not defined in environment variables'
+    'NEXT_PUBLIC_PROJECT_ID is not defined in environment variables',
   );
 }
 
@@ -28,7 +28,7 @@ const NETWORK_KEY = (process.env.NEXT_PUBLIC_NETWORK ||
 
 if (!NETWORK_KEYS.includes(NETWORK_KEY)) {
   throw new Error(
-    `Invalid NEXT_PUBLIC_NETWORK: ${NETWORK_KEY}. Must be 'nilavTestnet' or 'nilavMainnet'`
+    `Invalid NEXT_PUBLIC_NETWORK: ${NETWORK_KEY}. Must be 'nilavTestnet' or 'nilavMainnet'`,
   );
 }
 
@@ -193,7 +193,7 @@ export const contracts = {
     nilToken: '0x32DEAe728473cb948B4D8661ac0f2755133D4173',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals,
-    nilTokenStakeMin: 10,
+    nilTokenStakeMin: 70000,
     stakingOperators: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
     heartbeatManager: '0x0Ee49a8f50293Fa5d05Ba6d1FC136e7F79b2eA4f',
     rewardPolicy: '0x78E0FEBF3B8936f961729328a25dBA88d4Fea86B',
@@ -239,8 +239,7 @@ export const platforms = {
     displayName: 'macOS',
     dockerInstallCommand: 'brew install --cask docker',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand:
-      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
+    dockerPullCommand: `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
     nodeStartCommand: './blacklight_node',
   },
@@ -249,8 +248,7 @@ export const platforms = {
     displayName: 'Linux',
     dockerInstallCommand:
       'curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh',
-    dockerPullCommand:
-      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
+    dockerPullCommand: `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
     nodeStartCommand: './blacklight_node',
   },
@@ -258,8 +256,7 @@ export const platforms = {
     name: 'Windows',
     displayName: 'Windows',
     dockerInstallUrl: 'https://www.docker.com/products/docker-desktop',
-    dockerPullCommand:
-      `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
+    dockerPullCommand: `docker pull ${dockerImageBase}:${dockerImageVersions[NETWORK_KEY]}`,
     dockerRunCommand: getDockerRunCommand(),
     nodeStartCommand: './blacklight_node',
   },
@@ -292,7 +289,7 @@ export const getContractAddresses = (networkId: number) => {
     return contracts[key];
   }
   throw new Error(
-    `Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`
+    `Unsupported network ID: ${networkId}. Supported: ${nilavTestnet.id}, ${nilavMainnet.id}`,
   );
 };
 
