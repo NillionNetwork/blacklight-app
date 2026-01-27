@@ -44,8 +44,8 @@ const dockerDataDir = './blacklight_node';
 const dockerCacheDir = './blacklight_node';
 const dockerCacheMountPath = '/tmp/blacklight-cache';
 const fundMinEth = {
-  nilavTestnet: 0.001,
-  nilavMainnet: 0.001,
+  nilavTestnet: 0.0001,
+  nilavMainnet: 0.0001,
 } as const satisfies Record<NetworkKey, number>;
 const gasReserveEth = {
   nilavTestnet: 0.0001,

@@ -55,7 +55,7 @@ export function FundNodeForm({
   onSuccess,
   onError,
   minAmount = activeFundMinEth,
-  presetAmounts = [activeFundMinEth, 0.005, 0.01],
+  presetAmounts = [activeFundMinEth, 0.0005, 0.001],
   onBalanceDataChange,
 }: FundNodeFormProps) {
   const { isConnected, address } = useAppKitAccount();
