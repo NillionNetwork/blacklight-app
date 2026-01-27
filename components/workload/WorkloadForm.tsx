@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import type { WorkloadProvider } from '@/types/workload';
-import { APP_CONFIG } from '@/config/app';
 import { Button } from '@/components/ui/Button';
 
 interface WorkloadFormProps {
@@ -64,7 +63,7 @@ export function WorkloadForm({
     attestationEndpoint?: { success: boolean; error?: string };
   } | null>(null);
 
-  const heartbeatInterval = APP_CONFIG.DEFAULT_HEARTBEAT_INTERVAL;
+  const heartbeatInterval = Number(process.env.NEXT_PUBLIC_DEFAULT_HEARTBEAT_INTERVAL) || 60;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
