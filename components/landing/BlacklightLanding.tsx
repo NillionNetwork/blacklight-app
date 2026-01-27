@@ -56,6 +56,53 @@ export function BlacklightLanding() {
     };
   }, [mounted]);
 
+  // Handle hash navigation to FAQ section
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleHashScroll = () => {
+      if (window.location.hash === '#faq') {
+        // Wait for the page to be fully rendered and all sections to be in the DOM
+        const scrollToFaq = () => {
+          const faqElement = document.getElementById('faq');
+          if (faqElement) {
+            // Disable snap scrolling temporarily for smooth scroll
+            const container = document.getElementById('scroll-container');
+            if (container) {
+              container.style.scrollSnapType = 'none';
+            }
+            
+            faqElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Re-enable snap scrolling after scroll completes
+            setTimeout(() => {
+              if (container) {
+                container.style.scrollSnapType = '';
+              }
+            }, 1000);
+          }
+        };
+
+        // Try immediately, then retry after a short delay to ensure DOM is ready
+        scrollToFaq();
+        setTimeout(scrollToFaq, 200);
+        setTimeout(scrollToFaq, 500);
+      }
+    };
+
+    // Check on mount and after a delay to handle client-side navigation
+    handleHashScroll();
+    const timeoutId = setTimeout(handleHashScroll, 300);
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashScroll);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('hashchange', handleHashScroll);
+    };
+  }, [mounted]);
+
   const steps = [
     {
       title: 'Install and run your node',
@@ -1022,6 +1069,7 @@ export function BlacklightLanding() {
       </section>
 
       <section
+        id="faq"
         className="relative min-h-screen w-full snap-start snap-always flex-shrink-0 flex flex-col justify-center"
         style={{
           backgroundColor: '#0D1235',
@@ -1118,7 +1166,7 @@ export function BlacklightLanding() {
                   }
                 }}
               >
-                <div className="blacklight-nav-card-title">Node Dashboard</div>
+                <div className="blacklight-nav-card-title">Blacklight Node Dashboard</div>
                 <p className="blacklight-nav-card-description">
                   View and manage your staked operators and monitor their
                   performance.
@@ -1135,9 +1183,9 @@ export function BlacklightLanding() {
                   }
                 }}
               >
-                <div className="blacklight-nav-card-title">Set Up Node</div>
+                <div className="blacklight-nav-card-title">Set Up Blacklight Node</div>
                 <p className="blacklight-nav-card-description">
-                  Configure a new verification node and start earning rewards.
+                  Configure a new Blacklight node and start earning rewards.
                 </p>
               </Link>
 

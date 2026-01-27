@@ -114,7 +114,7 @@ export default function NodeDetailPage() {
     <div className="node-detail-container">
       {/* Header */}
       <div className="node-detail-header">
-        <h1>Node Details</h1>
+        <h1>Blacklight Node Details</h1>
       </div>
 
       {/* Node Overview Dashboard */}

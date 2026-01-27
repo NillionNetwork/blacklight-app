@@ -46,7 +46,7 @@ export default function NodesPage() {
         }}
       >
         <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
-          Node Dashboard
+          Blacklight Node Dashboard
         </h1>
         <p
           style={{
@@ -129,7 +129,7 @@ export default function NodesPage() {
       style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem' }}
     >
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ marginBottom: '0.5rem' }}>Node Dashboard</h1>
+        <h1 style={{ marginBottom: '0.5rem' }}>Blacklight Node Dashboard</h1>
         <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
           {sortedOperators.length}{' '}
           {sortedOperators.length === 1 ? 'node' : 'nodes'}
