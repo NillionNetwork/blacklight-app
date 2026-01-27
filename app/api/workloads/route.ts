@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     } = body;
     
     // Heartbeat interval comes from env var, not user input
-    const heartbeatInterval = Number(process.env.NEXT_PUBLIC_DEFAULT_HEARTBEAT_INTERVAL) || 60;
+    const heartbeatInterval = Number(process.env.DEFAULT_HEARTBEAT_INTERVAL) || 60;
 
     // Only Phala is supported for now
     if (provider !== "phala") {

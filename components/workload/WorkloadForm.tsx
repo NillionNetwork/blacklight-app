@@ -63,7 +63,8 @@ export function WorkloadForm({
     attestationEndpoint?: { success: boolean; error?: string };
   } | null>(null);
 
-  const heartbeatInterval = Number(process.env.NEXT_PUBLIC_DEFAULT_HEARTBEAT_INTERVAL) || 60;
+  // Heartbeat interval is set server-side, this is just for the form interface
+  const heartbeatInterval = initialValues?.heartbeatInterval || 60;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
