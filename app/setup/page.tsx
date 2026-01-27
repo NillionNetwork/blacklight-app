@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { Button } from '@/components/ui';
 import { StakingForm } from '@/components/staking';
@@ -22,29 +23,29 @@ const SETUP_STEPS = [
   {
     id: 'install-docker',
     title: ['Install', 'Docker'],
-    description: 'Docker is required to run the Nillion verifier node',
+    description: 'Docker is required to run a Blacklight verifier node',
   },
   {
     id: 'setup-run-node',
-    title: ['Setup & Run', 'Node'],
+    title: ['Setup & Run', 'node'],
     description:
-      "Pull the Docker image, run it to generate your node wallet, and enter the node's wallet address",
+      "Pull the Docker image, run it to generate your Blacklight node wallet, and enter the node's wallet address",
   },
   {
     id: 'stake-to-node',
     title: ['Stake to', 'your node'],
     description:
-      'Stake TEST tokens to your node so it can be assigned verification work',
+      'Stake NIL tokens to your Blacklight node so it can be assigned verification work',
   },
   {
     id: 'fund-node',
-    title: ['Fund Node', 'with ETH'],
-    description: 'Fund your node with ETH for gas transactions',
+    title: ['Fund node', 'with ETH'],
+    description: 'Fund your Blacklight node with ETH for gas transactions',
   },
   {
     id: 'start-node',
-    title: ['Start', 'Node'],
-    description: 'Run the node binary to register and start your verifier node',
+    title: ['Start node'],
+    description: 'Run the Blacklight node binary to register and start your verifier node',
   },
 ] as const;
 
@@ -143,6 +144,19 @@ export default function SetupPage() {
                       </button>
                     ))}
                   </div>
+                  <p className="setup-note" style={{ marginTop: '1.5rem' }}>
+                    <strong>Important:</strong> Your Blacklight node must be online 24/7 to handle verification tasks. We recommend running it on a VPS.{' '}
+                    <Link
+                      href="/#faq"
+                      style={{
+                        color: 'var(--nillion-primary)',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      See FAQs for suggested minimum requirements
+                    </Link>
+                    .
+                  </p>
                 </div>
               )}
 
@@ -245,7 +259,7 @@ export default function SetupPage() {
                   )}
 
                   <p className="setup-note">
-                    <strong>Note:</strong> Docker is required to run the Nillion
+                    <strong>Note:</strong> Docker is required to run a Blacklight
                     verifier node. After installation, you may need to restart
                     your terminal.
                   </p>
@@ -318,7 +332,7 @@ export default function SetupPage() {
                     </button>
                   </div>
 
-                  <label className="setup-label">Run Node Setup</label>
+                  <label className="setup-label">Run Blacklight Node Setup</label>
                   <div
                     className="setup-command-row"
                     style={{
@@ -363,11 +377,11 @@ export default function SetupPage() {
                   <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
                     <strong>Note:</strong> On first run, the node will generate
                     a new wallet and save it to{' '}
-                    <code>./blacklight_node/blacklight_node.env</code>. Your wallet
+                    <code>./blacklight-node/blacklight_node.env</code>. Your wallet
                     address will be displayed - copy it for the next field.
                   </p>
 
-                  <label className="setup-label">Enter Node Address</label>
+                  <label className="setup-label">Enter Blacklight Node Address</label>
                   <input
                     type="text"
                     value={publicKey}
@@ -376,11 +390,11 @@ export default function SetupPage() {
                     className="setup-input"
                   />
 
-                  <p className="setup-note">
-                    <strong>Note:</strong> This corresponds to the wallet that
-                    your node generated. You'll stake to this node address in
-                    the next step.
-                  </p>
+                  {/*<p className="setup-note">*/}
+                  {/*  <strong>Note:</strong> This corresponds to the wallet that*/}
+                  {/*  your node generated. You'll stake to this node address in*/}
+                  {/*  the next step.*/}
+                  {/*</p>*/}
 
                   <div className="setup-button-group">
                     <Button
@@ -538,9 +552,10 @@ export default function SetupPage() {
                   </div>
 
                   <p className="setup-note">
-                    After running this command, you should see "Node registered
-                    successfully" in your terminal. This means your node is
-                    successfully running and ready to receive verification work.
+                    After running this command, you should see "✅ Ready to operate"
+                    followed by "Node registered
+                    successfully" in your terminal. This means your Blacklight node is
+                    successfully running correctly.
                   </p>
 
                   <div className="setup-button-group">

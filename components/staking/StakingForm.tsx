@@ -364,7 +364,7 @@ export function StakingForm({
             fontSize: '0.875rem',
           }}
         >
-          No staking events yet
+          Staking events can take up to a minute to appear here
         </div>
       )}
     </div>
@@ -536,7 +536,7 @@ export function StakingForm({
           <div className="staking-form-container">
             {/* Node Address */}
             <label className="setup-label staking-label">
-              {nodeAddress ? 'Node Address' : 'Node Address'}
+              {nodeAddress ? 'Blacklight Node Address' : 'Blacklight Node Address'}
             </label>
             {nodeAddress ? (
               <div className="staking-address-box">

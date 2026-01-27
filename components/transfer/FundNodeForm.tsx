@@ -55,7 +55,7 @@ export function FundNodeForm({
   onSuccess,
   onError,
   minAmount = activeFundMinEth,
-  presetAmounts = [activeFundMinEth, 0.0005, 0.001],
+  presetAmounts = [activeFundMinEth, 0.005, 0.01],
   onBalanceDataChange,
 }: FundNodeFormProps) {
   const { isConnected, address } = useAppKitAccount();
@@ -369,7 +369,11 @@ export function FundNodeForm({
       </div>
 
       {/* Main Funding Form */}
+
       <div className="staking-form-container">
+        <label className="setup-label staking-label">
+          {nodeAddress ? 'Blacklight Node Address' : 'Blacklight Node Address'}
+        </label>
         {nodeAddress ? (
           <div
             className="staking-address-box"

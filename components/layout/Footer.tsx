@@ -21,7 +21,10 @@ export function Footer() {
             >
               Terms of Service
             </a>
-            <Link href="/privacy" className="app-footer-link">
+            <Link href="https://nillion.notion.site/Terms-Conditions-and-Important-Disclaimers-2ef1827799b48072907ae34092fca42f#2f51827799b4808e95bdc5f239a97246"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="app-footer-link">
               Privacy Policy
             </Link>
             <a

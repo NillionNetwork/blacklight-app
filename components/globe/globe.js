@@ -1039,19 +1039,19 @@ export const networkExampleData = [
   {
     startArray: { name: "nilCC", N: 42.3555, E: -71.0565 },
     endArray: [
-      { name: "nilUV", N: 53.3498, E: 6.2603 },
-      { name: "nilUV", N: 50.1143, E: 8.6841 },
-      { name: "nilUV", N: 50.1109, E: 8.6821 },
-      { name: "nilUV", N: -34.6037, E: -58.3815 },
-      { name: "nilUV", N: 43.8041, E: -120.5542, },
+      { name: "Blacklight Node", N: 53.3498, E: 6.2603 },
+      { name: "Blacklight Node", N: 50.1143, E: 8.6841 },
+      { name: "Blacklight Node", N: 50.1109, E: 8.6821 },
+      { name: "Blacklight Node", N: -34.6037, E: -58.3815 },
+      { name: "Blacklight Node", N: 43.8041, E: -120.5542, },
     ]
   },
   {
     startArray: { name: "nilCC", N: 42.3555, E: -71.0565, },
-    endArray: [{ name: "nilUV", N: 53.3498, E: 6.2603 }]
+    endArray: [{ name: "Blacklight Node", N: 53.3498, E: 6.2603 }]
   },
   {
     startArray: { name: "nilCC", N: 1.2902, E: 103.8519, },
-    endArray: [{ name: "nilUV", N: -31.9535, E: 115.8570 }]
+    endArray: [{ name: "Blacklight Node", N: -31.9535, E: 115.8570 }]
   }
 ];
