@@ -61,7 +61,7 @@ export function StakingForm({
   onSuccess,
   onError,
   minStake = activeContracts.nilTokenStakeMin,
-  presetAmounts = [activeContracts.nilTokenStakeMin, 1000, 5000],
+  presetAmounts = [activeContracts.nilTokenStakeMin],
   showContinueButton = false,
   onStakeDataChange,
 }: StakingFormProps) {
