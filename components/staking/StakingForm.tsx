@@ -41,7 +41,7 @@ interface StakingFormProps {
   /**
    * Preset amounts to show as quick-select buttons
    */
-  presetAmounts?: number[];
+  presetAmounts?: readonly number[];
   /**
    * Whether to show continue button (for when there's already a stake)
    * This is for internal use - parent should handle rendering continue button
@@ -61,7 +61,7 @@ export function StakingForm({
   onSuccess,
   onError,
   minStake = activeContracts.nilTokenStakeMin,
-  presetAmounts = [activeContracts.nilTokenStakeMin, 1000, 5000],
+  presetAmounts = activeContracts.nilTokenStakePresets,
   showContinueButton = false,
   onStakeDataChange,
 }: StakingFormProps) {
@@ -114,6 +114,14 @@ export function StakingForm({
 
   const isCorrectNetwork = chainId === activeNetwork.id;
   const tokenSymbol = activeContracts.nilTokenSymbol;
+  const minimumStakeNeeded = Math.max(0, minStake - currentStake);
+  const hasMetMinimumStake = minimumStakeNeeded === 0;
+  const stakeAmountValue = Number.parseFloat(stakeAmount);
+  const isStakeAmountValid =
+    !!stakeAmount &&
+    !Number.isNaN(stakeAmountValue) &&
+    stakeAmountValue > 0 &&
+    (hasMetMinimumStake || stakeAmountValue >= minimumStakeNeeded);
 
   const handlePreset = (amount: number) => {
     setStakeAmount(amount.toString());
@@ -149,9 +157,14 @@ export function StakingForm({
     }
 
     const amount = Number.parseFloat(stakeAmount);
-    if (!stakeAmount || amount < minStake) {
+    if (!stakeAmount || Number.isNaN(amount) || amount <= 0) {
+      toast.error('Enter an amount greater than 0');
+      return;
+    }
+
+    if (!hasMetMinimumStake && amount < minimumStakeNeeded) {
       toast.error(
-        `Minimum stake is ${minStake.toLocaleString()} ${tokenSymbol}`
+        `You need to stake at least ${minimumStakeNeeded.toLocaleString()} ${tokenSymbol} to reach the minimum of ${minStake.toLocaleString()} ${tokenSymbol}`
       );
       return;
     }
@@ -586,7 +599,9 @@ export function StakingForm({
             <label className="setup-label staking-label">
               Amount to Stake
               <span className="staking-label-hint">
-                (min {minStake.toLocaleString()})
+                {hasMetMinimumStake
+                  ? '(minimum met)'
+                  : `(min ${minimumStakeNeeded.toLocaleString()} to reach ${minStake.toLocaleString()})`}
               </span>
             </label>
             <input
@@ -594,7 +609,7 @@ export function StakingForm({
               value={stakeAmount}
               onChange={(e) => setStakeAmount(e.target.value)}
               placeholder="0"
-              min={minStake}
+              min={hasMetMinimumStake ? 0 : minimumStakeNeeded}
               className="setup-input"
               style={{
                 fontSize: '1.25rem',
@@ -632,8 +647,7 @@ export function StakingForm({
             size="large"
             disabled={
               !operatorAddress ||
-              !stakeAmount ||
-              Number.parseFloat(stakeAmount) < minStake ||
+              !isStakeAmountValid ||
               isStaking ||
               ethBalanceFormatted === 0 ||
               tokenBalanceFormatted === 0
@@ -652,7 +666,7 @@ export function StakingForm({
                 ? 'Step 2/2: Confirming Stake...'
                 : 'Processing...'
               : `Stake ${
-                  stakeAmount && Number.parseFloat(stakeAmount) >= minStake
+                  isStakeAmountValid
                     ? Number.parseFloat(stakeAmount).toLocaleString() +
                       ' ' +
                       tokenSymbol

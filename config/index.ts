@@ -51,6 +51,26 @@ const gasReserveEth = {
   nilavTestnet: 0.0001,
   nilavMainnet: 0.0001,
 } as const satisfies Record<NetworkKey, number>;
+const nilTokenStakeMin = {
+  nilavTestnet: 70,
+  nilavMainnet: 70000,
+} as const satisfies Record<NetworkKey, number>;
+const nilTokenStakePresets = {
+  nilavTestnet: [nilTokenStakeMin.nilavTestnet, 1000, 5000],
+  nilavMainnet: [nilTokenStakeMin.nilavMainnet, 100000, 200000],
+} as const satisfies Record<NetworkKey, readonly number[]>;
+
+const assertMinInPresets = (
+  network: NetworkKey,
+  min: number,
+  presets: readonly number[],
+) => {
+  if (!presets.includes(min)) {
+    throw new Error(
+      `nilTokenStakePresets for ${network} must include nilTokenStakeMin (${min})`,
+    );
+  }
+};
 
 // ==============================================
 // NETWORK DEFINITIONS
@@ -159,6 +179,7 @@ type ContractEntry = {
   nilTokenSymbol: string;
   nilTokenDecimals: number;
   nilTokenStakeMin: number;
+  nilTokenStakePresets: readonly number[];
   stakingOperators: string;
   heartbeatManager: string;
   rewardPolicy: string;
@@ -176,7 +197,8 @@ export const contracts = {
     nilToken: '0x69AD6D3E17C99A3f66b5Ae410a5D1D4E14C7da35',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals,
-    nilTokenStakeMin: 70,
+    nilTokenStakePresets: nilTokenStakePresets.nilavTestnet,
+    nilTokenStakeMin: nilTokenStakeMin.nilavTestnet,
     stakingOperators: '0x595A112FA10ED66Bc518b28781035BA50C9f2216',
     heartbeatManager: '0x8d683fb2CC794E085E8366c4f28f8CC991107576',
     rewardPolicy: '0xfD935474DCc8428eda1867E906E1005C5e717108',
@@ -193,7 +215,8 @@ export const contracts = {
     nilToken: '0x32DEAe728473cb948B4D8661ac0f2755133D4173',
     nilTokenSymbol: 'NIL',
     nilTokenDecimals,
-    nilTokenStakeMin: 70000,
+    nilTokenStakePresets: nilTokenStakePresets.nilavMainnet,
+    nilTokenStakeMin: nilTokenStakeMin.nilavMainnet,
     stakingOperators: '0x89c1312Cedb0B0F67e4913D2076bd4a860652B69',
     heartbeatManager: '0x0Ee49a8f50293Fa5d05Ba6d1FC136e7F79b2eA4f',
     rewardPolicy: '0x78E0FEBF3B8936f961729328a25dBA88d4Fea86B',
@@ -208,6 +231,13 @@ export const contracts = {
 
 // Active contracts based on environment variable
 export const activeContracts = contracts[NETWORK_KEY];
+
+// Validate stake config consistency at startup
+assertMinInPresets(
+  NETWORK_KEY,
+  activeContracts.nilTokenStakeMin,
+  activeContracts.nilTokenStakePresets,
+);
 
 // ==============================================
 // PLATFORM CONFIGURATION
