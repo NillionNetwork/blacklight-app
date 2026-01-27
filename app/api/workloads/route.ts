@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { extractPhalaHtx } from "@/lib/phala";
-import { APP_CONFIG } from "@/config/app";
 import type { WorkloadProvider, PhalaWorkloadConfig } from "@/types/workload";
 
 export async function GET(request: NextRequest) {
@@ -28,8 +27,8 @@ export async function POST(request: NextRequest) {
       config,
     } = body;
     
-    // Heartbeat interval comes from config, not user input
-    const heartbeatInterval = APP_CONFIG.DEFAULT_HEARTBEAT_INTERVAL;
+    // Heartbeat interval comes from env var, not user input
+    const heartbeatInterval = Number(process.env.DEFAULT_HEARTBEAT_INTERVAL) || 60;
 
     // Only Phala is supported for now
     if (provider !== "phala") {
