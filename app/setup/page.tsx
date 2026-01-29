@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Info, TriangleAlert } from 'lucide-react';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { Button } from '@/components/ui';
 import { StakingForm } from '@/components/staking';
@@ -125,6 +126,32 @@ export default function SetupPage() {
                     <div className="setup-step-line" />
                     STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
+                  <p className="setup-note" style={{ marginTop: '0.75rem' }}>
+                    <Info
+                      size={16}
+                      style={{
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                        marginRight: '0.35rem',
+                        color: 'var(--nillion-primary)',
+                        flexShrink: 0,
+                      }}
+                      aria-hidden
+                    />
+                    <strong>Before you start:</strong> Get funds for your node, prerequisites {' '}
+                    <a
+                      href="https://docs.nillion.com/blacklight/run-node/prerequisites"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: 'var(--nillion-primary)',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                       here
+                    </a>
+                    .
+                  </p>
                   <label className="setup-label">Select Platform</label>
                   <div className="setup-platform-grid">
                     {(
@@ -145,7 +172,21 @@ export default function SetupPage() {
                     ))}
                   </div>
                   <p className="setup-note" style={{ marginTop: '1.5rem' }}>
-                    <strong>Important:</strong> Your Blacklight node must be online 24/7 to handle verification tasks. We recommend running it on a VPS.{' '}
+                    <strong>
+                      <TriangleAlert
+                        size={16}
+                        style={{
+                          display: 'inline-block',
+                          verticalAlign: 'middle',
+                          marginRight: '0.35rem',
+                          color: 'var(--nillion-primary)',
+                          flexShrink: 0,
+                        }}
+                        aria-hidden
+                      />
+                      Important:
+                    </strong>{' '}
+                    Your Blacklight node must be online 24/7 to handle verification tasks. We recommend running it on a VPS.{' '}
                     <Link
                       href="/#faq"
                       style={{

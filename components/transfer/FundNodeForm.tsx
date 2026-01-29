@@ -447,14 +447,14 @@ export function FundNodeForm({
               {amount} ETH
             </Button>
           ))}
-          <Button
-            variant="outline"
-            size="small"
-            onClick={handleMax}
-            className="staking-max-button"
-          >
-            Max
-          </Button>
+          {/*<Button*/}
+          {/*  variant="outline"*/}
+          {/*  size="small"*/}
+          {/*  onClick={handleMax}*/}
+          {/*  className="staking-max-button"*/}
+          {/*>*/}
+          {/*  Max*/}
+          {/*</Button>*/}
         </div>
 
         {/* Insufficient Balance Warning */}
