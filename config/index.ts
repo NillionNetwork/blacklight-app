@@ -253,6 +253,7 @@ const getDockerRunCommand = () => {
 
   return [
     'docker run -it --rm',
+    '--name blacklight-node',
     `-v ${dockerDataDir}:/app/`,
     `-v ${dockerCacheDir}:${dockerCacheMountPath}`,
     `${dockerImageBase}:${imageVersion}`,
