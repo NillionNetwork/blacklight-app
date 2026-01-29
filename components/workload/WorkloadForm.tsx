@@ -169,6 +169,21 @@ export function WorkloadForm({
       {/* Phala-specific fields */}
       {provider === 'phala' && (
         <>
+          <p className="setup-note" style={{ marginBottom: '1rem' }}>
+            For Phala workload requirements and setup, see the {' '}
+            <a
+              href="https://docs.nillion.com/blacklight/tools/register-apps?platform=phala"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: 'var(--nillion-primary)',
+                textDecoration: 'underline',
+              }}
+            >
+              Docs
+            </a>
+            .
+          </p>
           <div style={{ marginBottom: '0.5rem' }}>
             <label htmlFor="name" className="setup-label" style={{ marginBottom: '0.375rem' }}>
               Name *
@@ -203,7 +218,7 @@ export function WorkloadForm({
             />
             <p className="setup-help-text" style={{ marginTop: '0.25rem' }}>
               The CVM URL will be used to extract HTX data from /info and
-              /attestation endpoints
+              /attestation endpoints.
             </p>
           </div>
 
@@ -339,14 +354,14 @@ export function WorkloadForm({
           }}
         >
           <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>
-            To setup your nilCC workloads with Blacklight, please visit{' '}
+            To setup your nilCC workloads for Blacklight verification, check out the{' '}
             <a
-              href="https://nilcc.nillion.com/"
+              href="https://docs.nillion.com/blacklight/tools/register-apps?platform=nilcc"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#8a89ff', textDecoration: 'underline' }}
             >
-              nilcc.nillion.com
+              Docs
             </a>
             .
           </p>
