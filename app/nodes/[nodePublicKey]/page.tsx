@@ -36,7 +36,7 @@ export default function NodeDetailPage() {
   const tokenSymbol = activeContracts.nilTokenSymbol;
 
   const [activeTab, setActiveTab] = useState<
-    'activity' | 'stake' | 'unstake' | 'withdraw' | 'rewards' | 'fund'
+    'activity' | 'stake' | 'unstake' | 'withdraw' | 'withdraw-eth' | 'rewards' | 'fund'
   >('activity');
 
   // Initialize tab from URL
@@ -47,6 +47,7 @@ export default function NodeDetailPage() {
       tabParam === 'stake' ||
       tabParam === 'unstake' ||
       tabParam === 'withdraw' ||
+      tabParam === 'withdraw-eth' ||
       tabParam === 'rewards' ||
       tabParam === 'fund'
     ) {
@@ -56,7 +57,7 @@ export default function NodeDetailPage() {
 
   // Update URL when tab changes
   const handleTabChange = (
-    tab: 'activity' | 'stake' | 'unstake' | 'withdraw' | 'rewards' | 'fund'
+    tab: 'activity' | 'stake' | 'unstake' | 'withdraw' | 'withdraw-eth' | 'rewards' | 'fund'
   ) => {
     setActiveTab(tab);
     router.push(`/nodes/${nodeAddress}?tab=${tab}`, { scroll: false });
@@ -295,7 +296,23 @@ export default function NodeDetailPage() {
             }`}
             onClick={() => handleTabChange('withdraw')}
           >
-            Withdraw
+            Withdraw Stake
+          </button>
+          <button
+            className={`node-staking-tab ${
+              activeTab === 'fund' ? 'active' : ''
+            }`}
+            onClick={() => handleTabChange('fund')}
+          >
+            Fund Node (ETH)
+          </button>
+          <button
+            className={`node-staking-tab ${
+              activeTab === 'withdraw-eth' ? 'active' : ''
+            }`}
+            onClick={() => handleTabChange('withdraw-eth')}
+          >
+            Withdraw ETH
           </button>
           <button
             className={`node-staking-tab ${
@@ -304,14 +321,6 @@ export default function NodeDetailPage() {
             onClick={() => handleTabChange('rewards')}
           >
             Rewards
-          </button>
-          <button
-            className={`node-staking-tab ${
-              activeTab === 'fund' ? 'active' : ''
-            }`}
-            onClick={() => handleTabChange('fund')}
-          >
-            Fund Node
           </button>
         </div>
 
@@ -353,6 +362,18 @@ export default function NodeDetailPage() {
                 console.error('Withdraw error:', error);
               }}
             />
+          )}
+
+          {activeTab === 'withdraw-eth' && (
+            <div className="node-staking-content-inner">
+              <p>
+                To withdraw ETH from your Blacklight node, you'll need to use the
+                wallet that was created when the node was first run. We recommend
+                importing that wallet's into a browser wallet (e.g. MetaMask) and
+                sending the funds to any address you choose, such as your original
+                staking wallet.
+              </p>
+            </div>
           )}
 
           {activeTab === 'rewards' && (
