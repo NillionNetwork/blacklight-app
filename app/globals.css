@@ -1286,6 +1286,18 @@ button.nillion-button-outline.setup-button-compact {
   background: rgba(138, 137, 255, 0.02);
 }
 
+.node-staking-content-inner {
+  max-width: 52rem;
+  margin: 0 auto;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+}
+
+.node-staking-content-inner p {
+  margin: 0;
+}
+
 .node-status-indicator {
   display: inline-flex;
   align-items: center;
