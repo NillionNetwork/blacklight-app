@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Info, TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { Button } from '@/components/ui';
 import { StakingForm } from '@/components/staking';
@@ -127,17 +127,6 @@ export default function SetupPage() {
                     STEP {currentStep} OF {TOTAL_STEPS}
                   </div>
                   <p className="setup-note" style={{ marginTop: '0.75rem' }}>
-                    <Info
-                      size={16}
-                      style={{
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                        marginRight: '0.35rem',
-                        color: 'var(--nillion-primary)',
-                        flexShrink: 0,
-                      }}
-                      aria-hidden
-                    />
                     <strong>Before you start:</strong> Get funds for your node, prerequisites {' '}
                     <a
                       href="https://docs.nillion.com/blacklight/run-node/prerequisites"
@@ -416,10 +405,13 @@ export default function SetupPage() {
                   </div>
 
                   <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
-                    <strong>Note:</strong> On first run, the node will generate
-                    a new wallet and save it to{' '}
-                    <code>./blacklight-node/blacklight_node.env</code>. Your wallet
-                    address will be displayed - copy it for the next field.
+                    <strong>Note:</strong> Your node will generate
+                    a new wallet and save the keys to{' '}
+                    <code>./blacklight-node/blacklight_node.env</code>. Ensure you keep a copy, it contains the keys for your Blacklight node.
+
+                  </p>
+                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
+                  Your wallet address will be displayed - copy it for the next field.
                   </p>
 
                   <label className="setup-label">Enter Blacklight Node Address</label>
