@@ -1963,6 +1963,112 @@ button.nillion-button-outline.setup-button-compact {
   color: rgba(138, 137, 255, 0.8);
 }
 
+/* Workload Provider Grid (visual provider selection) */
+.workload-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+/* Override nillion.css button[type="button"] so provider cards stay dark */
+.workload-provider-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0.75rem;
+  background: rgba(8, 8, 40, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+  min-height: 5rem;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.workload-provider-card:focus-visible {
+  outline: 2px solid var(--nillion-primary);
+  outline-offset: 2px;
+}
+
+.workload-provider-card:not(.workload-provider-card--disabled):hover {
+  background: rgba(8, 8, 40, 0.85) !important;
+  border-color: rgba(138, 137, 255, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(138, 137, 255, 0.25);
+  transform: translateY(-2px);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.workload-provider-card--selected {
+  background: rgba(8, 8, 40, 0.85) !important;
+  border-color: var(--nillion-primary) !important;
+  box-shadow: 0 0 0 2px rgba(138, 137, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.workload-provider-card--selected:hover {
+  background: rgba(8, 8, 40, 0.85) !important;
+  box-shadow: 0 0 0 2px rgba(138, 137, 255, 0.45), 0 2px 8px rgba(0, 0, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.workload-provider-card--disabled {
+  cursor: not-allowed;
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.workload-provider-card--disabled .workload-provider-card__logo {
+  filter: grayscale(1);
+}
+
+.workload-provider-card--disabled .workload-provider-card__label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.workload-provider-card--disabled:hover .workload-provider-card__coming-soon {
+  opacity: 1;
+}
+
+.workload-provider-card__logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.workload-provider-card__logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.workload-provider-card__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.workload-provider-card__coming-soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
 /* Landing Page Navigation Cards */
 .landing-nav-card {
   transition: all 0.3s;

@@ -26,22 +26,15 @@ interface WorkloadFormProps {
 const providers: {
   value: WorkloadProvider;
   label: string;
+  logo: string;
   disabled?: boolean;
 }[] = [
-  { value: 'nillion', label: 'Nillion (nilCC)' },
-  { value: 'phala', label: 'Phala' },
-  { value: 'azure', label: 'Azure (Coming Soon)', disabled: true },
-  {
-    value: 'google-cloud',
-    label: 'Google Cloud (Coming Soon)',
-    disabled: true,
-  },
-  { value: 'aws', label: 'AWS (Coming Soon)', disabled: true },
-  {
-    value: 'secret-network',
-    label: 'Secret Network (Coming Soon)',
-    disabled: true,
-  },
+  { value: 'nillion', label: 'nilCC', logo: '/logos/nillion.svg', disabled: false },
+  { value: 'phala', label: 'Phala', logo: '/logos/phala.png', disabled: false },
+  { value: 'secret-network', label: 'Secret Network', logo: '/logos/secret-network.png', disabled: true },
+  { value: 'azure', label: 'Azure', logo: '/logos/azure.png', disabled: true },
+  { value: 'google-cloud', label: 'Google Cloud', logo: '/logos/google-cloud.png', disabled: true },
+  { value: 'aws', label: 'AWS', logo: '/logos/aws.png', disabled: true },
 ];
 
 export function WorkloadForm({
@@ -51,8 +44,8 @@ export function WorkloadForm({
   initialValues,
   isEditing = false,
 }: WorkloadFormProps) {
-  const [provider, setProvider] = useState<WorkloadProvider>(
-    initialValues?.provider || 'nillion'
+  const [provider, setProvider] = useState<WorkloadProvider | null>(
+    initialValues?.provider ?? null
   );
   const [name, setName] = useState(initialValues?.name || '');
   const [cvmUrl, setCvmUrl] = useState(initialValues?.config?.cvmUrl || '');
@@ -68,6 +61,7 @@ export function WorkloadForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!provider) return;
 
     if (provider === 'phala') {
       // Validate Phala endpoints before submitting
@@ -120,70 +114,72 @@ export function WorkloadForm({
   return (
     <form onSubmit={handleSubmit}>
       {/* Provider Selection */}
-      <div style={{ marginBottom: '0.5rem' }}>
-        <label htmlFor="provider" className="setup-label" style={{ marginBottom: '0.375rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <label className="setup-label" style={{ marginBottom: '0.75rem', display: 'block' }}>
           TEE Provider
         </label>
-        <div className="provider-select-wrapper">
-          <select
-            id="provider"
-            value={provider}
-            onChange={(e) => setProvider(e.target.value as WorkloadProvider)}
-            className="setup-input"
-            style={{ fontSize: '0.875rem' }}
-            required
-            disabled={isEditing}
-          >
-            {providers.map((p) => (
-              <option
+        <div
+          className="workload-provider-grid"
+          role="group"
+          aria-label="Select TEE provider"
+        >
+          {providers.map((p) => {
+            const isEnabled = !p.disabled && !isEditing;
+            const isSelected = provider !== null && provider === p.value;
+            return (
+              <button
                 key={p.value}
-                value={p.value}
-                disabled={p.disabled}
-                style={{
-                  background: '#12125a',
-                  color: p.disabled ? 'rgba(255, 255, 255, 0.4)' : 'white',
-                }}
+                type="button"
+                disabled={!isEnabled}
+                onClick={() => isEnabled && setProvider(p.value)}
+                className={`workload-provider-card ${!isEnabled ? 'workload-provider-card--disabled' : ''} ${isSelected ? 'workload-provider-card--selected' : ''}`}
+                aria-pressed={isSelected}
+                aria-label={p.disabled ? `${p.label} (Coming soon)` : p.label}
               >
-                {p.label}
-              </option>
-            ))}
-          </select>
-          {/* Dropdown Arrow */}
-          <div className="provider-select-arrow">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
+                <span className="workload-provider-card__logo-wrap">
+                  <img
+                    src={p.logo}
+                    alt=""
+                    className="workload-provider-card__logo"
+                    width={48}
+                    height={48}
+                  />
+                </span>
+                <span className="workload-provider-card__label">{p.label}</span>
+                {p.disabled && (
+                  <span className="workload-provider-card__coming-soon">Coming Soon</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Phala-specific fields */}
       {provider === 'phala' && (
         <>
-          <p className="setup-note" style={{ marginBottom: '1rem' }}>
-            For Phala workload requirements and setup, see the {' '}
-            <a
-              href="https://docs.nillion.com/blacklight/tools/register-apps?platform=phala"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: 'var(--nillion-primary)',
-                textDecoration: 'underline',
-              }}
-            >
-              Docs
-            </a>
-            .
-          </p>
+          <div
+            style={{
+              background: 'rgba(138, 137, 255, 0.1)',
+              border: '1px solid rgba(138, 137, 255, 0.3)',
+              borderRadius: '0.375rem',
+              padding: '0.5rem 0.625rem',
+              marginBottom: '1rem',
+            }}
+          >
+            <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>
+              For Phala workload requirements and setup, see the{' '}
+              <a
+                href="https://docs.nillion.com/blacklight/tools/register-apps?platform=phala"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#8a89ff', textDecoration: 'underline' }}
+              >
+                Docs
+              </a>
+              .
+            </p>
+          </div>
           <div style={{ marginBottom: '0.5rem' }}>
             <label htmlFor="name" className="setup-label" style={{ marginBottom: '0.375rem' }}>
               Name *
@@ -369,7 +365,7 @@ export function WorkloadForm({
       )}
 
       {/* Coming soon for other providers */}
-      {provider !== 'phala' && provider !== 'nillion' && (
+      {provider != null && provider !== 'phala' && provider !== 'nillion' && (
         <div
           style={{
             background: 'rgba(138, 137, 255, 0.1)',
