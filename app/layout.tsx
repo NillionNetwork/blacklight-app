@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/next';
 import { Providers } from './providers';
 import { LayoutWrapper } from '@/components/layout';
 import './globals.css';
@@ -45,6 +46,7 @@ export default function RootLayout({
             },
           }}
         />
+        <Analytics />
       </body>
     </html>
   );
