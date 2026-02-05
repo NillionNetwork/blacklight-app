@@ -418,7 +418,11 @@ export default function SetupPage() {
                   <input
                     type="text"
                     value={publicKey}
-                    onChange={(e) => setPublicKey(e.target.value)}
+                    onChange={(e) => {
+                      // Trim whitespace immediately on paste/input
+                      const trimmedValue = e.target.value.trim();
+                      setPublicKey(trimmedValue);
+                    }}
                     placeholder="0x..."
                     className="setup-input"
                   />
@@ -440,7 +444,19 @@ export default function SetupPage() {
                       variant="primary"
                       size="large"
                       disabled={!publicKey || publicKey.length < 12}
-                      onClick={() => setCurrentStep(STEPS.STAKE_TO_NODE)}
+                      onClick={() => {
+                        // Validate address format on Continue
+                        const trimmedAddress = publicKey.trim();
+                        if (!trimmedAddress.startsWith('0x') || trimmedAddress.length !== 42) {
+                          toast.error('Invalid node address format');
+                          return;
+                        }
+                        // Update state with trimmed address if needed
+                        if (trimmedAddress !== publicKey) {
+                          setPublicKey(trimmedAddress);
+                        }
+                        setCurrentStep(STEPS.STAKE_TO_NODE);
+                      }}
                       className="setup-button-compact"
                     >
                       Continue
