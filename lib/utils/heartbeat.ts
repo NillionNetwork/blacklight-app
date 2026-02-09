@@ -19,7 +19,7 @@ export function getVerdictLabel(verdict: number): string {
   switch (verdict) {
     case 1: return 'Valid';
     case 2: return 'Invalid';
-    case 3: return 'Inconclusive';
+    case 3: return 'N/A';
     default: return 'Unknown';
   }
 }
