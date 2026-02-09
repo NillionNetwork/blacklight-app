@@ -497,9 +497,12 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                 if (verdict === 1) { // Valid
                   verdictColor = 'rgba(76, 175, 80, 1)';
                   bgColor = 'rgba(76, 175, 80, 0.1)';
-                } else if (verdict === 2 || verdict === 3) { // Invalid or Error (both display as Invalid)
+                } else if (verdict === 2) { // Invalid
                   verdictColor = 'rgba(244, 67, 54, 1)';
                   bgColor = 'rgba(244, 67, 54, 0.1)';
+                } else if (verdict === 3) { // Inconclusive
+                  verdictColor = 'rgba(184, 134, 11, 1)'; // Dark yellow
+                  bgColor = 'rgba(184, 134, 11, 0.1)';
                 } else {
                   verdictColor = 'rgba(158, 158, 158, 1)';
                   bgColor = 'rgba(158, 158, 158, 0.1)';
