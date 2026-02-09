@@ -19,7 +19,7 @@ export function getVerdictLabel(verdict: number): string {
   switch (verdict) {
     case 1: return 'Valid';
     case 2: return 'Invalid';
-    case 3: return 'Invalid'; // Error verdict displayed as Invalid
+    case 3: return 'Inconclusive';
     default: return 'Unknown';
   }
 }
@@ -34,7 +34,7 @@ export function getVerdictIcon(verdict: number): string {
   switch (verdict) {
     case 1: return '✓';
     case 2: return '✗';
-    case 3: return '✗'; // Error verdict uses same icon as Invalid
+    case 3: return '?';
     default: return '?';
   }
 }
