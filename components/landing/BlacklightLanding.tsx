@@ -11,6 +11,8 @@ import { useState, useEffect, useRef, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { NetworkGlobe, networkExampleData } from '../globe/globe.js';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { AccountButton, ConnectWallet } from '@/components/auth';
 
 export function BlacklightLanding() {
   const router = useRouter();
@@ -21,6 +23,8 @@ export function BlacklightLanding() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const activeIndexRef = useRef(0);
+
+  const { address, isConnected } = useAppKitAccount();
 
   useEffect(() => {
     setMounted(true);
@@ -344,25 +348,61 @@ export function BlacklightLanding() {
           </div>
         </div>
 
-        {/* Logo in top left. */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-12 z-10 pointer-events-none">
-          <Link
-            href="https://nillion.com"
-            ref={(el) => {
-              if (el) {
-                el.style.setProperty('pointer-events', 'auto', 'important');
-              }
+        {/* Top bar: Logo left, wallet/actions right */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '1.5rem',
+            left: '2rem',
+            right: '1.5rem',
+            zIndex: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pointerEvents: 'none',
+          }}
+        >
+          <div style={{ pointerEvents: 'auto', flexShrink: 0 }}>
+            <Link href="https://nillion.com">
+              <img
+                src="/images/nillion-logo.png"
+                alt="Nillion"
+                className="h-5 sm:h-6 md:h-8 lg:h-10 w-auto"
+                onError={(e) => {
+                  /* Image failed to load */
+                }}
+              />
+            </Link>
+          </div>
+
+          <div
+            style={{
+              pointerEvents: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.5rem',
+              flexShrink: 0,
             }}
           >
-            <img
-              src="/images/nillion-logo.png"
-              alt="Nillion"
-              className="h-5 sm:h-6 md:h-8 lg:h-10 w-auto"
-              onError={(e) => {
-                /* Image failed to load */
-              }}
-            />
-          </Link>
+            {isConnected && (
+              <Link
+                href="/nodes"
+                style={{
+                  color: 'inherit',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                }}
+              >
+                View Dashboard
+              </Link>
+            )}
+
+            {isConnected ? (
+              <AccountButton size="small" variant="outline" />
+            ) : (
+              <ConnectWallet size="small" variant="outline" />
+            )}
+          </div>
         </div>
 
         {/* Main content */}
@@ -450,6 +490,7 @@ export function BlacklightLanding() {
                     </span>
                     <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1 flex-shrink-0 inline-block" />
                   </button>
+
                   <button
                     onClick={() => router.push('/workloads')}
                     className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-none backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto select-none"

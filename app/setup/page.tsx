@@ -411,10 +411,10 @@ export default function SetupPage() {
 
                   </p>
                   <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
-                  Your wallet address will be displayed - copy it for the next field.
+                  Your Blacklight node public key (address) will be displayed in your terminal - paste it below.
                   </p>
 
-                  <label className="setup-label">Enter Blacklight Node Address</label>
+                  <label className="setup-label">Enter Blacklight Node Public Key</label>
                   <input
                     type="text"
                     value={publicKey}
