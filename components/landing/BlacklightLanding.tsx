@@ -352,9 +352,9 @@ export function BlacklightLanding() {
         <div
           style={{
             position: 'absolute',
-            top: '1rem',
-            left: '1rem',
-            right: '1rem',
+            top: '1.5rem',
+            left: '2rem',
+            right: '1.5rem',
             zIndex: 20,
             display: 'flex',
             alignItems: 'center',
@@ -362,7 +362,7 @@ export function BlacklightLanding() {
             pointerEvents: 'none',
           }}
         >
-          <div style={{ pointerEvents: 'auto' }}>
+          <div style={{ pointerEvents: 'auto', flexShrink: 0 }}>
             <Link href="https://nillion.com">
               <img
                 src="/images/nillion-logo.png"
@@ -381,6 +381,7 @@ export function BlacklightLanding() {
               display: 'flex',
               alignItems: 'center',
               gap: '1.5rem',
+              flexShrink: 0,
             }}
           >
             {isConnected && (
