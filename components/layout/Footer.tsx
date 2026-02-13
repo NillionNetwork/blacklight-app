@@ -14,14 +14,14 @@ export function Footer() {
           {/* Right side - Links */}
           <div className="app-footer-links">
             <a
-              href="https://nillion.notion.site/Terms-Conditions-and-Important-Disclaimers-2ef1827799b48072907ae34092fca42f"
+              href="https://nillion.notion.site/blacklight-terms-conditions"
               target="_blank"
               rel="noopener noreferrer"
               className="app-footer-link"
             >
               Terms of Service
             </a>
-            <Link href="https://nillion.notion.site/Terms-Conditions-and-Important-Disclaimers-2ef1827799b48072907ae34092fca42f#2f51827799b4808e95bdc5f239a97246"
+            <Link href="https://nillion.notion.site/blacklight-terms-conditions#2f51827799b4808e95bdc5f239a97246"
               target="_blank"
               rel="noopener noreferrer"
               className="app-footer-link">
