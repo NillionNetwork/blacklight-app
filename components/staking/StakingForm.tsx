@@ -526,6 +526,7 @@ export function StakingForm({
             type="token"
             tokenSymbol={tokenSymbol}
             helpLink={helpLinks.nilavHelp}
+            hasExistingStake={currentStake > 0}
           />
         )}
 
