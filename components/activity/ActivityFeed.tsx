@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Info } from 'lucide-react';
 import {
   getOperatorRegistration,
   getOperatorDeactivation,
@@ -18,6 +20,85 @@ import {
 import { Spinner } from '@/components/ui';
 import { activeContracts } from '@/config';
 import { toast } from 'sonner';
+
+function HeaderWithTooltip({
+  label,
+  tooltip,
+}: {
+  label: string;
+  tooltip: string;
+}) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLSpanElement>(null);
+
+  const handleMouseEnter = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + 4,
+        left: rect.left + rect.width / 2,
+      });
+    }
+    setShowTooltip(true);
+  };
+
+  const tooltipEl =
+    typeof document !== 'undefined' && showTooltip ? (
+      createPortal(
+        <span
+          role="tooltip"
+          style={{
+            position: 'fixed',
+            left: coords.left,
+            top: coords.top,
+            transform: 'translateX(-50%)',
+            padding: '0.5rem 0.75rem',
+            background: '#0d0d0d',
+            color: '#fff',
+            fontSize: '0.6875rem',
+            fontWeight: 400,
+            lineHeight: 1.35,
+            borderRadius: '6px',
+            whiteSpace: 'normal',
+            width: '290px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+            zIndex: 2147483647,
+            pointerEvents: 'none',
+          }}
+        >
+          {tooltip}
+        </span>,
+        document.body
+      )
+    ) : null;
+
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.35rem',
+      }}
+    >
+      {label}
+      <span
+        ref={triggerRef}
+        style={{ position: 'relative', display: 'inline-flex' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        <Info
+          size={14}
+          style={{ opacity: 0.7, flexShrink: 0, cursor: 'help' }}
+          aria-label={tooltip}
+        />
+      </span>
+      {tooltipEl}
+    </span>
+  );
+}
 
 interface ActivityFeedProps {
   nodeAddress: string;
@@ -378,7 +459,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
           background: 'rgba(255, 255, 255, 0.02)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           borderRadius: '0.75rem',
-          overflow: 'hidden',
+          overflow: 'visible',
         }}
       >
         <table
@@ -419,7 +500,10 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                Round
+                <HeaderWithTooltip
+                  label="Round"
+                  tooltip="The round number for this particular verification. If consensus is not reached in a given round, another round is required"
+                />
               </th>
               <th
                 style={{
@@ -432,7 +516,10 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                Committee
+                <HeaderWithTooltip
+                  label="Committee"
+                  tooltip="The number of nodes assigned to the verification - the default for round #1 is 25 members"
+                />
               </th>
               <th
                 style={{
@@ -445,7 +532,10 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                My Verdict
+                <HeaderWithTooltip
+                  label="My Verdict"
+                  tooltip="The outcome of the verification sent by your node"
+                />
               </th>
               <th
                 style={{
@@ -458,7 +548,10 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                Assigned
+                <HeaderWithTooltip
+                  label="Assigned"
+                  tooltip="The time the verification was assigned to your node"
+                />
               </th>
               <th
                 style={{
