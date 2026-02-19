@@ -502,7 +502,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
               >
                 <HeaderWithTooltip
                   label="Round"
-                  tooltip="The number of rounds required to reach consensus for this verification"
+                  tooltip="The round number for this particular verification. If consensus is not reached in a given round, another round is required"
                 />
               </th>
               <th
@@ -518,7 +518,7 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
               >
                 <HeaderWithTooltip
                   label="Committee"
-                  tooltip="The number of nodes assigned to the verification - default is a committee of 25 nodes"
+                  tooltip="The number of nodes assigned to the verification - the default for round #1 is 25 members"
                 />
               </th>
               <th
@@ -548,7 +548,10 @@ export function ActivityFeed({ nodeAddress }: ActivityFeedProps) {
                   letterSpacing: '0.05em',
                 }}
               >
-                Assigned
+                <HeaderWithTooltip
+                  label="Assigned"
+                  tooltip="The time the verification was assigned to your node"
+                />
               </th>
               <th
                 style={{
