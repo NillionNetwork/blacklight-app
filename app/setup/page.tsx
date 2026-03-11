@@ -50,9 +50,7 @@ const SETUP_STEPS = [
   },
 ] as const;
 
-const TOTAL_STEPS = SETUP_STEPS.length;
-
-// Step IDs for easy reference
+// Step IDs for easy reference (1–6; testnet adds step 0 "Get funds" as step 1)
 const STEPS = {
   SELECT_PLATFORM: 1,
   INSTALL_DOCKER: 2,
@@ -62,18 +60,31 @@ const STEPS = {
   START_NODE: 6,
 } as const;
 
+const GET_FUNDS_STEP_CONFIG = {
+  title: ['Get funds', 'for your node'],
+  description:
+    "Get the required testnet NIL and ETH on Nillion's L2 to fund your node.",
+} as const;
+
 export default function SetupPage() {
   const router = useRouter();
   const { isConnected } = useAppKitAccount();
 
-  const [currentStep, setCurrentStep] = useState<number>(STEPS.SELECT_PLATFORM);
+  const isTestnet = process.env.NEXT_PUBLIC_NETWORK !== 'nilavMainnet';
+  const totalSteps = isTestnet ? 7 : 6;
+  const stepNum = (s: number) => (isTestnet ? s + 1 : s);
+
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [platform, setPlatform] = useState<Platform>(null);
   const [publicKey, setPublicKey] = useState('');
   const [hasExistingStake, setHasExistingStake] = useState(false);
   const [hasExistingBalance, setHasExistingBalance] = useState(false);
 
-  // Get current step configuration
-  const currentStepConfig = SETUP_STEPS[currentStep - 1];
+  // Get current step configuration (title/description for left panel)
+  const currentStepConfig =
+    isTestnet && currentStep === 1
+      ? GET_FUNDS_STEP_CONFIG
+      : SETUP_STEPS[isTestnet ? currentStep - 2 : currentStep - 1];
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -84,11 +95,11 @@ export default function SetupPage() {
     operatorAddress: string,
     amount: string
   ) => {
-    setCurrentStep(STEPS.FUND_NODE);
+    setCurrentStep(stepNum(STEPS.FUND_NODE));
   };
 
   const handleFundingSuccess = async (nodeAddress: string, amount: string) => {
-    setCurrentStep(STEPS.START_NODE);
+    setCurrentStep(stepNum(STEPS.START_NODE));
   };
 
   // Show multi-step setup with prototype design
@@ -96,7 +107,7 @@ export default function SetupPage() {
     <div className="setup-page">
       <div
         className={`setup-page-gradient ${
-          currentStep <= STEPS.SETUP_RUN_NODE
+          currentStep <= stepNum(STEPS.SETUP_RUN_NODE)
             ? 'setup-page-gradient-top-right'
             : 'setup-page-gradient-bottom-left'
         }`}
@@ -119,28 +130,61 @@ export default function SetupPage() {
 
             {/* Right: Floating glass card with form */}
             <div className="setup-right">
-              {/* Step 1: Select Platform */}
-              {currentStep === STEPS.SELECT_PLATFORM && (
+              {/* Step 1 (testnet only): Get funds for your node */}
+              {isTestnet && currentStep === 1 && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP 1 OF {totalSteps}
                   </div>
-                  <p className="setup-note" style={{ marginTop: '0.75rem' }}>
-                    <strong>Before you start:</strong> Get funds for your node, prerequisites {' '}
-                    <a
-                      href="https://docs.nillion.com/blacklight/run-node/prerequisites"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: 'var(--nillion-primary)',
-                        textDecoration: 'underline',
-                      }}
-                    >
-                       here
-                    </a>
-                    .
+                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
+                    You can get the required testnet NIL and ETH on Nillion&apos;s L2 at the faucet linked below. <strong>Make sure to use the same wallet.</strong>
                   </p>
+                  <Button
+                    variant="outline"
+                    size="large"
+                    className="setup-button-full"
+                    onClick={() => window.open('https://faucet.testnet.nillion.network/?chain=L2', '_blank')}
+                  >
+                    Open Nillion L2 Faucet
+                  </Button>
+                  <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                      variant="outline"
+                      size="large"
+                      onClick={() => setCurrentStep(2)}
+                      className="setup-button-compact"
+                    >
+                      I&apos;ve got the funds
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2 (testnet) / Step 1 (mainnet): Select Platform */}
+              {currentStep === stepNum(STEPS.SELECT_PLATFORM) && (
+                <div>
+                  <div className="setup-step-indicator">
+                    <div className="setup-step-line" />
+                    STEP {currentStep} OF {totalSteps}
+                  </div>
+                  {!isTestnet && (
+                    <p className="setup-note" style={{ marginTop: '0.75rem' }}>
+                      <strong>Before you start:</strong> Get funds for your node, prerequisites{' '}
+                      <a
+                        href="https://docs.nillion.com/blacklight/run-node/prerequisites"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: 'var(--nillion-primary)',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        here
+                      </a>
+                      .
+                    </p>
+                  )}
                   <label className="setup-label">Select Platform</label>
                   <div className="setup-platform-grid">
                     {(
@@ -150,7 +194,7 @@ export default function SetupPage() {
                         key={key}
                         onClick={() => {
                           setPlatform(key);
-                          setCurrentStep(STEPS.INSTALL_DOCKER);
+                          setCurrentStep(stepNum(STEPS.INSTALL_DOCKER));
                         }}
                         className={`setup-platform-button ${
                           platform === key ? 'selected' : ''
@@ -187,15 +231,25 @@ export default function SetupPage() {
                     </Link>
                     .
                   </p>
+                  {isTestnet && (
+                    <div
+                      className="setup-button-group"
+                      style={{ marginTop: '1.5rem', width: '50%', justifyContent: 'flex-start' }}
+                    >
+                      <Button variant="ghost" onClick={() => setCurrentStep(1)}>
+                        Back
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Step 2: Install Docker */}
-              {currentStep === STEPS.INSTALL_DOCKER && platform && (
+              {/* Step 3 (testnet) / Step 2 (mainnet): Install Docker */}
+              {currentStep === stepNum(STEPS.INSTALL_DOCKER) && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP {currentStep} OF {totalSteps}
                   </div>
                   <label className="setup-label">Install Docker</label>
 
@@ -297,14 +351,14 @@ export default function SetupPage() {
                   <div className="setup-button-group">
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(STEPS.SELECT_PLATFORM)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.SELECT_PLATFORM))}
                     >
                       Back
                     </Button>
                     <Button
                       variant="outline"
                       size="large"
-                      onClick={() => setCurrentStep(STEPS.SETUP_RUN_NODE)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))}
                       className="setup-button-compact"
                     >
                       I've Installed Docker
@@ -313,12 +367,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 3: Pull & Run Docker Image + Enter nodeAddress */}
-              {currentStep === STEPS.SETUP_RUN_NODE && platform && (
+              {/* Step 4 (testnet) / Step 3 (mainnet): Pull & Run Docker Image + Enter nodeAddress */}
+              {currentStep === stepNum(STEPS.SETUP_RUN_NODE) && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP {currentStep} OF {totalSteps}
                   </div>
                   <label className="setup-label">Pull Docker Image</label>
                   <div
@@ -436,7 +490,7 @@ export default function SetupPage() {
                   <div className="setup-button-group">
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(STEPS.INSTALL_DOCKER)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.INSTALL_DOCKER))}
                     >
                       Back
                     </Button>
@@ -455,7 +509,7 @@ export default function SetupPage() {
                         if (trimmedAddress !== publicKey) {
                           setPublicKey(trimmedAddress);
                         }
-                        setCurrentStep(STEPS.STAKE_TO_NODE);
+                        setCurrentStep(stepNum(STEPS.STAKE_TO_NODE));
                       }}
                       className="setup-button-compact"
                     >
@@ -465,12 +519,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 4: Stake to Node */}
-              {currentStep === STEPS.STAKE_TO_NODE && (
+              {/* Step 5 (testnet) / Step 4 (mainnet): Stake to Node */}
+              {currentStep === stepNum(STEPS.STAKE_TO_NODE) && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP {currentStep} OF {totalSteps}
                   </div>
 
                   <StakingForm
@@ -490,7 +544,7 @@ export default function SetupPage() {
                   >
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(STEPS.SETUP_RUN_NODE)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))}
                     >
                       Back
                     </Button>
@@ -498,7 +552,7 @@ export default function SetupPage() {
                       <Button
                         variant="outline"
                         size="large"
-                        onClick={() => setCurrentStep(STEPS.FUND_NODE)}
+                        onClick={() => setCurrentStep(stepNum(STEPS.FUND_NODE))}
                         className="setup-button-compact"
                       >
                         Continue
@@ -508,12 +562,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 5: Fund Node with ETH */}
-              {currentStep === STEPS.FUND_NODE && (
+              {/* Step 6 (testnet) / Step 5 (mainnet): Fund Node with ETH */}
+              {currentStep === stepNum(STEPS.FUND_NODE) && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP {currentStep} OF {totalSteps}
                   </div>
 
                   <FundNodeForm
@@ -533,7 +587,7 @@ export default function SetupPage() {
                   >
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(STEPS.STAKE_TO_NODE)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.STAKE_TO_NODE))}
                     >
                       Back
                     </Button>
@@ -541,7 +595,7 @@ export default function SetupPage() {
                       <Button
                         variant="outline"
                         size="large"
-                        onClick={() => setCurrentStep(STEPS.START_NODE)}
+                        onClick={() => setCurrentStep(stepNum(STEPS.START_NODE))}
                         className="setup-button-compact"
                       >
                         Continue
@@ -551,12 +605,12 @@ export default function SetupPage() {
                 </div>
               )}
 
-              {/* Step 6: Start Node */}
-              {currentStep === STEPS.START_NODE && platform && (
+              {/* Step 7 (testnet) / Step 6 (mainnet): Start Node */}
+              {currentStep === stepNum(STEPS.START_NODE) && platform && (
                 <div>
                   <div className="setup-step-indicator">
                     <div className="setup-step-line" />
-                    STEP {currentStep} OF {TOTAL_STEPS}
+                    STEP {currentStep} OF {totalSteps}
                   </div>
                   <label className="setup-label">Run this command</label>
                   <div
@@ -610,7 +664,7 @@ export default function SetupPage() {
                   <div className="setup-button-group">
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(STEPS.FUND_NODE)}
+                      onClick={() => setCurrentStep(stepNum(STEPS.FUND_NODE))}
                     >
                       Back
                     </Button>
