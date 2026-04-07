@@ -299,7 +299,7 @@ export const platforms = {
 
 export const helpLinks = {
   nilavHelp:
-    'https://nillion.notion.site/NilAV-Help-2c41827799b48002b185fbe16ff567d5',
+    'https://docs.nillion.com/blacklight/run-node/prerequisites',
   discord: 'https://discord.com/invite/nillionnetwork',
 } as const;
 
