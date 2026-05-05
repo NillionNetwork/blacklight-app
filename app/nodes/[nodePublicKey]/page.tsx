@@ -14,7 +14,9 @@ import {
 import {
   getOperatorRegistration,
   getOperatorDeactivation,
+  getOperatorVotes,
   formatTimeAgo,
+  normalizeConduitTimestamp,
 } from '@/lib/indexer';
 import { Card, Spinner, Button } from '@/components/ui';
 import {
@@ -93,6 +95,23 @@ export default function NodeDetailPage() {
     enabled: registrationBlockNum !== undefined,
   });
 
+  // Latest vote — used to require recent verification work for "ACTIVE" status
+  const { data: latestVoteData, isLoading: isLoadingLatestVote } = useQuery({
+    queryKey: ['operator-latest-vote', nodeAddress, registrationBlockNum],
+    queryFn: () => getOperatorVotes(nodeAddress, registrationBlockNum, 1),
+    enabled: registrationBlockNum !== undefined,
+  });
+
+  const RECENT_VERIFICATION_WINDOW_MS = 12 * 60 * 60 * 1000;
+  const latestVoteTimestamp = latestVoteData?.data?.[0]?.block_timestamp;
+  const latestVoteMs = latestVoteTimestamp
+    ? new Date(normalizeConduitTimestamp(latestVoteTimestamp)).getTime()
+    : NaN;
+  const hasRecentVerification =
+    Number.isFinite(latestVoteMs) &&
+    Date.now() - latestVoteMs < RECENT_VERIFICATION_WINDOW_MS;
+  const displayActive = isActive && hasRecentVerification;
+
   const isLoading =
     isLoadingStake ||
     isLoadingInfo ||
@@ -100,7 +119,8 @@ export default function NodeDetailPage() {
     isLoadingJailed ||
     isLoadingNodeBalance ||
     isLoadingRegistration ||
-    isLoadingDeactivation;
+    isLoadingDeactivation ||
+    isLoadingLatestVote;
 
   // Show loading while fetching or if nodeAddress is invalid
   if (isLoading || !nodeAddress) {
@@ -160,15 +180,15 @@ export default function NodeDetailPage() {
             <div className="node-overview-stat-label">Status</div>
             <div
               className={`node-status-indicator ${
-                isActive ? 'active' : 'inactive'
+                displayActive ? 'active' : 'inactive'
               }`}
             >
               <div
                 className={`node-status-dot ${
-                  isActive ? 'active' : 'inactive'
+                  displayActive ? 'active' : 'inactive'
                 }`}
               />
-              <span>{isActive ? 'ACTIVE' : 'INACTIVE'}</span>
+              <span>{displayActive ? 'ACTIVE' : 'INACTIVE'}</span>
             </div>
             {isJailed && (
               <div
