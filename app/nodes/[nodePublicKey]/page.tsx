@@ -104,13 +104,22 @@ export default function NodeDetailPage() {
 
   const RECENT_VERIFICATION_WINDOW_MS = 12 * 60 * 60 * 1000;
   const latestVoteTimestamp = latestVoteData?.data?.[0]?.block_timestamp;
+  const registrationTimestamp = registrationData?.data?.[0]?.block_timestamp;
   const latestVoteMs = latestVoteTimestamp
     ? new Date(normalizeConduitTimestamp(latestVoteTimestamp)).getTime()
+    : NaN;
+  const registrationMs = registrationTimestamp
+    ? new Date(normalizeConduitTimestamp(registrationTimestamp)).getTime()
     : NaN;
   const hasRecentVerification =
     Number.isFinite(latestVoteMs) &&
     Date.now() - latestVoteMs < RECENT_VERIFICATION_WINDOW_MS;
-  const displayActive = isActive && hasRecentVerification;
+  const hasAnyVotes = !!latestVoteData?.data?.length;
+  const isRecentlyRegistered =
+    Number.isFinite(registrationMs) &&
+    Date.now() - registrationMs < RECENT_VERIFICATION_WINDOW_MS;
+  const displayActive =
+    isActive && (hasRecentVerification || (!hasAnyVotes && isRecentlyRegistered));
 
   const isLoading =
     isLoadingStake ||
