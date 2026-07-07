@@ -1,52 +1,53 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { TriangleAlert } from 'lucide-react';
-import { useAppKitAccount } from '@reown/appkit/react';
-import { Button } from '@/components/ui';
-import { StakingForm } from '@/components/staking';
-import { FundNodeForm } from '@/components/transfer';
-import { toast } from 'sonner';
-import { platforms } from '@/config';
+import { useAppKitAccount } from "@reown/appkit/react";
+import { TriangleAlert } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { StakingForm } from "@/components/staking";
+import { FundNodeForm } from "@/components/transfer";
+import { Button } from "@/components/ui";
+import { platforms } from "@/config";
 
-type Platform = 'linux' | 'mac' | 'windows' | null;
+type Platform = "linux" | "mac" | "windows" | null;
 
 // Step configuration - add/remove/reorder steps here
 const SETUP_STEPS = [
   {
-    id: 'select-platform',
-    title: ['Select', 'Platform'],
+    id: "select-platform",
+    title: ["Select", "Platform"],
     description:
-      'Choose your operating system for platform-specific setup instructions',
+      "Choose your operating system for platform-specific setup instructions",
   },
   {
-    id: 'install-docker',
-    title: ['Install', 'Docker'],
-    description: 'Docker is required to run a Blacklight verifier node',
+    id: "install-docker",
+    title: ["Install", "Docker"],
+    description: "Docker is required to run a Blacklight verifier node",
   },
   {
-    id: 'setup-run-node',
-    title: ['Setup & Run', 'node'],
+    id: "setup-run-node",
+    title: ["Setup & Run", "node"],
     description:
       "Pull the Docker image, run it to generate your Blacklight node wallet, and enter the node's wallet address",
   },
   {
-    id: 'stake-to-node',
-    title: ['Stake to', 'your node'],
+    id: "stake-to-node",
+    title: ["Stake to", "your node"],
     description:
-      'Stake NIL tokens to your Blacklight node so it can be assigned verification work',
+      "Stake NIL tokens to your Blacklight node so it can be assigned verification work",
   },
   {
-    id: 'fund-node',
-    title: ['Fund node', 'with ETH'],
-    description: 'Fund your Blacklight node with ETH for gas transactions',
+    id: "fund-node",
+    title: ["Fund node", "with ETH"],
+    description: "Fund your Blacklight node with ETH for gas transactions",
   },
   {
-    id: 'start-node',
-    title: ['Start node'],
-    description: 'Run the Blacklight node binary to register and start your verifier node',
+    id: "start-node",
+    title: ["Start node"],
+    description:
+      "Run the Blacklight node binary to register and start your verifier node",
   },
 ] as const;
 
@@ -61,7 +62,7 @@ const STEPS = {
 } as const;
 
 const GET_FUNDS_STEP_CONFIG = {
-  title: ['Get funds', 'for your node'],
+  title: ["Get funds", "for your node"],
   description:
     "Get the required testnet NIL and ETH on Nillion's L2 to fund your node.",
 } as const;
@@ -70,13 +71,19 @@ export default function SetupPage() {
   const router = useRouter();
   const { isConnected } = useAppKitAccount();
 
-  const isTestnet = process.env.NEXT_PUBLIC_NETWORK !== 'nilavMainnet';
+  const network = process.env.NEXT_PUBLIC_NETWORK || "nilavTestnet";
+  // The "Get funds" step opens Nillion's L2 faucet - it only exists on nilavTestnet.
+  // L1 networks (sepolia/anvilL1) have no faucet step (A3): operators bring Sepolia
+  // ETH themselves and gas is a real, recurring cost for votes.
+  const hasL2Faucet = network === "nilavTestnet" || network === undefined;
+  const isL1 = network === "sepolia" || network === "anvilL1";
+  const isTestnet = hasL2Faucet;
   const totalSteps = isTestnet ? 7 : 6;
   const stepNum = (s: number) => (isTestnet ? s + 1 : s);
 
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [platform, setPlatform] = useState<Platform>(null);
-  const [publicKey, setPublicKey] = useState('');
+  const [publicKey, setPublicKey] = useState("");
   const [hasExistingStake, setHasExistingStake] = useState(false);
   const [hasExistingBalance, setHasExistingBalance] = useState(false);
 
@@ -88,12 +95,12 @@ export default function SetupPage() {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Command copied to clipboard');
+    toast.success("Command copied to clipboard");
   };
 
   const handleStakingSuccess = async (
     operatorAddress: string,
-    amount: string
+    amount: string,
   ) => {
     setCurrentStep(stepNum(STEPS.FUND_NODE));
   };
@@ -108,8 +115,8 @@ export default function SetupPage() {
       <div
         className={`setup-page-gradient ${
           currentStep <= stepNum(STEPS.SETUP_RUN_NODE)
-            ? 'setup-page-gradient-top-right'
-            : 'setup-page-gradient-bottom-left'
+            ? "setup-page-gradient-top-right"
+            : "setup-page-gradient-bottom-left"
         }`}
       />
 
@@ -137,18 +144,31 @@ export default function SetupPage() {
                     <div className="setup-step-line" />
                     STEP 1 OF {totalSteps}
                   </div>
-                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
-                    You can get the required testnet NIL and ETH on Nillion&apos;s L2 at the faucet linked below. <strong>Make sure to use the same wallet.</strong>
+                  <p className="setup-note" style={{ marginBottom: "1.5rem" }}>
+                    You can get the required testnet NIL and ETH on
+                    Nillion&apos;s L2 at the faucet linked below.{" "}
+                    <strong>Make sure to use the same wallet.</strong>
                   </p>
                   <Button
                     variant="outline"
                     size="large"
                     className="setup-button-full"
-                    onClick={() => window.open('https://faucet.testnet.nillion.network/?chain=L2', '_blank')}
+                    onClick={() =>
+                      window.open(
+                        "https://faucet.testnet.nillion.network/?chain=L2",
+                        "_blank",
+                      )
+                    }
                   >
                     Open Nillion L2 Faucet
                   </Button>
-                  <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <div
+                    style={{
+                      marginTop: "1.5rem",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
                     <Button
                       variant="outline"
                       size="large"
@@ -168,16 +188,39 @@ export default function SetupPage() {
                     <div className="setup-step-line" />
                     STEP {currentStep} OF {totalSteps}
                   </div>
+                  {isL1 && (
+                    <p className="setup-note" style={{ marginTop: "0.75rem" }}>
+                      <strong>
+                        <TriangleAlert
+                          size={16}
+                          style={{
+                            display: "inline-block",
+                            verticalAlign: "middle",
+                            marginRight: "0.35rem",
+                            color: "var(--nillion-primary)",
+                            flexShrink: 0,
+                          }}
+                          aria-hidden
+                        />
+                        Ethereum L1 network:
+                      </strong>{" "}
+                      your node pays real gas for every verification vote (~90k
+                      gas each) from its own wallet. Keep it topped up - the
+                      node warns below 0.01 ETH and shuts down when empty, which
+                      can get it jailed for missing votes.
+                    </p>
+                  )}
                   {!isTestnet && (
-                    <p className="setup-note" style={{ marginTop: '0.75rem' }}>
-                      <strong>Before you start:</strong> Get funds for your node, prerequisites{' '}
+                    <p className="setup-note" style={{ marginTop: "0.75rem" }}>
+                      <strong>Before you start:</strong> Get funds for your
+                      node, prerequisites{" "}
                       <a
                         href="https://docs.nillion.com/blacklight/run-node/prerequisites"
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
-                          color: 'var(--nillion-primary)',
-                          textDecoration: 'underline',
+                          color: "var(--nillion-primary)",
+                          textDecoration: "underline",
                         }}
                       >
                         here
@@ -197,34 +240,35 @@ export default function SetupPage() {
                           setCurrentStep(stepNum(STEPS.INSTALL_DOCKER));
                         }}
                         className={`setup-platform-button ${
-                          platform === key ? 'selected' : ''
+                          platform === key ? "selected" : ""
                         }`}
                       >
                         {platforms[key].displayName}
                       </button>
                     ))}
                   </div>
-                  <p className="setup-note" style={{ marginTop: '1.5rem' }}>
+                  <p className="setup-note" style={{ marginTop: "1.5rem" }}>
                     <strong>
                       <TriangleAlert
                         size={16}
                         style={{
-                          display: 'inline-block',
-                          verticalAlign: 'middle',
-                          marginRight: '0.35rem',
-                          color: 'var(--nillion-primary)',
+                          display: "inline-block",
+                          verticalAlign: "middle",
+                          marginRight: "0.35rem",
+                          color: "var(--nillion-primary)",
                           flexShrink: 0,
                         }}
                         aria-hidden
                       />
                       Important:
-                    </strong>{' '}
-                    Your Blacklight node must be online 24/7 to handle verification tasks. We recommend running it on a VPS.{' '}
+                    </strong>{" "}
+                    Your Blacklight node must be online 24/7 to handle
+                    verification tasks. We recommend running it on a VPS.{" "}
                     <Link
                       href="/#faq"
                       style={{
-                        color: 'var(--nillion-primary)',
-                        textDecoration: 'underline',
+                        color: "var(--nillion-primary)",
+                        textDecoration: "underline",
                       }}
                     >
                       See FAQs for suggested minimum requirements
@@ -234,7 +278,11 @@ export default function SetupPage() {
                   {isTestnet && (
                     <div
                       className="setup-button-group"
-                      style={{ marginTop: '1.5rem', width: '50%', justifyContent: 'flex-start' }}
+                      style={{
+                        marginTop: "1.5rem",
+                        width: "50%",
+                        justifyContent: "flex-start",
+                      }}
                     >
                       <Button variant="ghost" onClick={() => setCurrentStep(1)}>
                         Back
@@ -253,7 +301,7 @@ export default function SetupPage() {
                   </div>
                   <label className="setup-label">Install Docker</label>
 
-                  {platform === 'windows' ? (
+                  {platform === "windows" ? (
                     <div className="setup-download-card">
                       <div className="setup-download-info">
                         <h3 className="setup-download-filename">
@@ -271,7 +319,7 @@ export default function SetupPage() {
                         onClick={() => {
                           window.open(
                             platforms[platform].dockerInstallUrl,
-                            '_blank'
+                            "_blank",
                           );
                         }}
                       >
@@ -283,20 +331,20 @@ export default function SetupPage() {
                       <div
                         className="setup-command-row"
                         style={{
-                          marginBottom: '1rem',
+                          marginBottom: "1rem",
                         }}
                       >
                         <div
                           className="command-block"
                           style={{
-                            background: 'rgba(0, 0, 0, 0.5)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: '0.75rem',
-                            padding: '1.25rem',
-                            fontFamily: 'monospace',
-                            fontSize: '0.875rem',
-                            color: 'var(--nillion-primary-lighter)',
-                            overflowX: 'auto',
+                            background: "rgba(0, 0, 0, 0.5)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "0.75rem",
+                            padding: "1.25rem",
+                            fontFamily: "monospace",
+                            fontSize: "0.875rem",
+                            color: "var(--nillion-primary-lighter)",
+                            overflowX: "auto",
                             minWidth: 0,
                           }}
                         >
@@ -306,36 +354,36 @@ export default function SetupPage() {
                           className="setup-inline-copy-button"
                           onClick={() =>
                             handleCopy(
-                              platforms[platform].dockerInstallCommand!
+                              platforms[platform].dockerInstallCommand!,
                             )
                           }
                           style={{
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: 'none',
-                            padding: '0 1rem',
-                            borderRadius: '0.375rem',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            cursor: 'pointer',
+                            background: "rgba(255, 255, 255, 0.1)",
+                            border: "none",
+                            padding: "0 1rem",
+                            borderRadius: "0.375rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                            cursor: "pointer",
                             flexShrink: 0,
                           }}
                         >
                           Copy
                         </button>
                       </div>
-                      {platform === 'mac' && (
+                      {platform === "mac" && (
                         <p
                           className="setup-note"
-                          style={{ marginTop: '0.5rem' }}
+                          style={{ marginTop: "0.5rem" }}
                         >
-                          Alternatively, you can{' '}
+                          Alternatively, you can{" "}
                           <a
                             href={platforms[platform].dockerInstallUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ color: 'var(--nillion-primary)' }}
+                            style={{ color: "var(--nillion-primary)" }}
                           >
                             download Docker Desktop
-                          </a>{' '}
+                          </a>{" "}
                           instead.
                         </p>
                       )}
@@ -343,22 +391,26 @@ export default function SetupPage() {
                   )}
 
                   <p className="setup-note">
-                    <strong>Note:</strong> Docker is required to run a Blacklight
-                    verifier node. After installation, you may need to restart
-                    your terminal.
+                    <strong>Note:</strong> Docker is required to run a
+                    Blacklight verifier node. After installation, you may need
+                    to restart your terminal.
                   </p>
 
                   <div className="setup-button-group">
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(stepNum(STEPS.SELECT_PLATFORM))}
+                      onClick={() =>
+                        setCurrentStep(stepNum(STEPS.SELECT_PLATFORM))
+                      }
                     >
                       Back
                     </Button>
                     <Button
                       variant="outline"
                       size="large"
-                      onClick={() => setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))}
+                      onClick={() =>
+                        setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))
+                      }
                       className="setup-button-compact"
                     >
                       I've Installed Docker
@@ -378,20 +430,20 @@ export default function SetupPage() {
                   <div
                     className="setup-command-row"
                     style={{
-                      marginBottom: '1.5rem',
+                      marginBottom: "1.5rem",
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '0.75rem',
-                        padding: '1.25rem',
-                        fontFamily: 'monospace',
-                        fontSize: '0.875rem',
-                        color: 'var(--nillion-primary-lighter)',
-                        overflowX: 'auto',
+                        background: "rgba(0, 0, 0, 0.5)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "0.75rem",
+                        padding: "1.25rem",
+                        fontFamily: "monospace",
+                        fontSize: "0.875rem",
+                        color: "var(--nillion-primary-lighter)",
+                        overflowX: "auto",
                         minWidth: 0,
                       }}
                     >
@@ -403,12 +455,12 @@ export default function SetupPage() {
                         handleCopy(platforms[platform].dockerPullCommand)
                       }
                       style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: 'none',
-                        padding: '0 1rem',
-                        borderRadius: '0.375rem',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        cursor: 'pointer',
+                        background: "rgba(255, 255, 255, 0.1)",
+                        border: "none",
+                        padding: "0 1rem",
+                        borderRadius: "0.375rem",
+                        color: "rgba(255, 255, 255, 0.6)",
+                        cursor: "pointer",
                         flexShrink: 0,
                       }}
                     >
@@ -416,24 +468,26 @@ export default function SetupPage() {
                     </button>
                   </div>
 
-                  <label className="setup-label">Run Blacklight Node Setup</label>
+                  <label className="setup-label">
+                    Run Blacklight Node Setup
+                  </label>
                   <div
                     className="setup-command-row"
                     style={{
-                      marginBottom: '1rem',
+                      marginBottom: "1rem",
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '0.75rem',
-                        padding: '1.25rem',
-                        fontFamily: 'monospace',
-                        fontSize: '0.875rem',
-                        color: 'var(--nillion-primary-lighter)',
-                        overflowX: 'auto',
+                        background: "rgba(0, 0, 0, 0.5)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "0.75rem",
+                        padding: "1.25rem",
+                        fontFamily: "monospace",
+                        fontSize: "0.875rem",
+                        color: "var(--nillion-primary-lighter)",
+                        overflowX: "auto",
                         minWidth: 0,
                       }}
                     >
@@ -445,12 +499,12 @@ export default function SetupPage() {
                         handleCopy(platforms[platform].dockerRunCommand)
                       }
                       style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: 'none',
-                        padding: '0 1rem',
-                        borderRadius: '0.375rem',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        cursor: 'pointer',
+                        background: "rgba(255, 255, 255, 0.1)",
+                        border: "none",
+                        padding: "0 1rem",
+                        borderRadius: "0.375rem",
+                        color: "rgba(255, 255, 255, 0.6)",
+                        cursor: "pointer",
                         flexShrink: 0,
                       }}
                     >
@@ -458,17 +512,21 @@ export default function SetupPage() {
                     </button>
                   </div>
 
-                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
-                    <strong>Note:</strong> Your node will generate
-                    a new wallet and save the keys to{' '}
-                    <code>./blacklight-node/blacklight_node.env</code>. Ensure you keep a copy, it contains the keys for your Blacklight node.
-
+                  <p className="setup-note" style={{ marginBottom: "1.5rem" }}>
+                    <strong>Note:</strong> Your node will generate a new wallet
+                    and save the keys to{" "}
+                    <code>./blacklight-node/blacklight_node.env</code>. Ensure
+                    you keep a copy, it contains the keys for your Blacklight
+                    node.
                   </p>
-                  <p className="setup-note" style={{ marginBottom: '1.5rem' }}>
-                  Your Blacklight node public key (address) will be displayed in your terminal - paste it below.
+                  <p className="setup-note" style={{ marginBottom: "1.5rem" }}>
+                    Your Blacklight node public key (address) will be displayed
+                    in your terminal - paste it below.
                   </p>
 
-                  <label className="setup-label">Enter Blacklight Node Public Key</label>
+                  <label className="setup-label">
+                    Enter Blacklight Node Public Key
+                  </label>
                   <input
                     type="text"
                     value={publicKey}
@@ -490,7 +548,9 @@ export default function SetupPage() {
                   <div className="setup-button-group">
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(stepNum(STEPS.INSTALL_DOCKER))}
+                      onClick={() =>
+                        setCurrentStep(stepNum(STEPS.INSTALL_DOCKER))
+                      }
                     >
                       Back
                     </Button>
@@ -501,8 +561,11 @@ export default function SetupPage() {
                       onClick={() => {
                         // Validate address format on Continue
                         const trimmedAddress = publicKey.trim();
-                        if (!trimmedAddress.startsWith('0x') || trimmedAddress.length !== 42) {
-                          toast.error('Invalid node address format');
+                        if (
+                          !trimmedAddress.startsWith("0x") ||
+                          trimmedAddress.length !== 42
+                        ) {
+                          toast.error("Invalid node address format");
                           return;
                         }
                         // Update state with trimmed address if needed
@@ -531,7 +594,7 @@ export default function SetupPage() {
                     nodeAddress={publicKey}
                     onSuccess={handleStakingSuccess}
                     onError={(error) => {
-                      console.error('Staking failed:', error);
+                      console.error("Staking failed:", error);
                     }}
                     onStakeDataChange={(data) => {
                       setHasExistingStake(data.currentStake > 0);
@@ -540,11 +603,13 @@ export default function SetupPage() {
 
                   <div
                     className="setup-button-group"
-                    style={{ marginTop: '1.5rem' }}
+                    style={{ marginTop: "1.5rem" }}
                   >
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))}
+                      onClick={() =>
+                        setCurrentStep(stepNum(STEPS.SETUP_RUN_NODE))
+                      }
                     >
                       Back
                     </Button>
@@ -574,7 +639,7 @@ export default function SetupPage() {
                     nodeAddress={publicKey}
                     onSuccess={handleFundingSuccess}
                     onError={(error) => {
-                      console.error('Funding failed:', error);
+                      console.error("Funding failed:", error);
                     }}
                     onBalanceDataChange={(data) => {
                       setHasExistingBalance(data.nodeBalance > 0);
@@ -583,11 +648,13 @@ export default function SetupPage() {
 
                   <div
                     className="setup-button-group"
-                    style={{ marginTop: '1.5rem' }}
+                    style={{ marginTop: "1.5rem" }}
                   >
                     <Button
                       variant="ghost"
-                      onClick={() => setCurrentStep(stepNum(STEPS.STAKE_TO_NODE))}
+                      onClick={() =>
+                        setCurrentStep(stepNum(STEPS.STAKE_TO_NODE))
+                      }
                     >
                       Back
                     </Button>
@@ -595,7 +662,9 @@ export default function SetupPage() {
                       <Button
                         variant="outline"
                         size="large"
-                        onClick={() => setCurrentStep(stepNum(STEPS.START_NODE))}
+                        onClick={() =>
+                          setCurrentStep(stepNum(STEPS.START_NODE))
+                        }
                         className="setup-button-compact"
                       >
                         Continue
@@ -616,20 +685,20 @@ export default function SetupPage() {
                   <div
                     className="setup-command-row"
                     style={{
-                      marginBottom: '1rem',
+                      marginBottom: "1rem",
                     }}
                   >
                     <div
                       className="command-block"
                       style={{
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '0.75rem',
-                        padding: '1.25rem',
-                        fontFamily: 'monospace',
-                        fontSize: '0.875rem',
-                        color: 'var(--nillion-primary-lighter)',
-                        overflowX: 'auto',
+                        background: "rgba(0, 0, 0, 0.5)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "0.75rem",
+                        padding: "1.25rem",
+                        fontFamily: "monospace",
+                        fontSize: "0.875rem",
+                        color: "var(--nillion-primary-lighter)",
+                        overflowX: "auto",
                         minWidth: 0,
                       }}
                     >
@@ -641,12 +710,12 @@ export default function SetupPage() {
                         handleCopy(platforms[platform].dockerRunCommand);
                       }}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: 'none',
-                        padding: '0 1rem',
-                        borderRadius: '0.375rem',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        cursor: 'pointer',
+                        background: "rgba(255, 255, 255, 0.1)",
+                        border: "none",
+                        padding: "0 1rem",
+                        borderRadius: "0.375rem",
+                        color: "rgba(255, 255, 255, 0.6)",
+                        cursor: "pointer",
                         flexShrink: 0,
                       }}
                     >
@@ -655,10 +724,10 @@ export default function SetupPage() {
                   </div>
 
                   <p className="setup-note">
-                    After running this command, you should see "✅ Ready to operate"
-                    followed by "Node registered
-                    successfully" in your terminal. This means your Blacklight node is
-                    successfully running correctly.
+                    After running this command, you should see "✅ Ready to
+                    operate" followed by "Node registered successfully" in your
+                    terminal. This means your Blacklight node is successfully
+                    running correctly.
                   </p>
 
                   <div className="setup-button-group">
@@ -672,7 +741,7 @@ export default function SetupPage() {
                       variant="ghost"
                       size="large"
                       onClick={() => {
-                        window.open('https://discord.gg/nillion', '_blank');
+                        window.open("https://discord.gg/nillion", "_blank");
                       }}
                       className="setup-button-compact"
                     >
@@ -684,7 +753,7 @@ export default function SetupPage() {
                       onClick={() => {
                         // Show success message
                         toast.success(
-                          `Node setup complete! Your node is now running.`
+                          `Node setup complete! Your node is now running.`,
                         );
 
                         // Redirect to node detail page
