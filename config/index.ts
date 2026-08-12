@@ -37,8 +37,8 @@ const nilTokenDecimals = 6;
 const dockerImageBase =
   'ghcr.io/nillionnetwork/blacklight-node/blacklight_node';
 const dockerImageVersions = {
-  nilavTestnet: '0.10.0',
-  nilavMainnet: '0.10.0',
+  nilavTestnet: '0.10.7',
+  nilavMainnet: '0.10.7',
 } as const satisfies Record<NetworkKey, string>;
 const dockerDataDir = './blacklight_node';
 const dockerCacheDir = './blacklight_node';
