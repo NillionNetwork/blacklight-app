@@ -16,6 +16,8 @@
 :root {
   /* Lock to dark color scheme */
   color-scheme: dark;
+  /* Height of the Blacklight L1 banner; the sticky navbar sits just below it */
+  --l1-banner-height: 2.25rem;
 }
 
 /* Override and enforce dark mode colors */
@@ -628,7 +630,7 @@ select {
 
 .navbar {
   position: sticky;
-  top: 0;
+  top: var(--l1-banner-height);
   z-index: 100;
   width: 100%;
   background: rgba(0, 0, 34, 0.80);
@@ -2098,4 +2100,162 @@ button.nillion-button-outline.setup-button-compact {
 .button-destructive:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ============================================
+   BLACKLIGHT L1 MIGRATION
+   ============================================ */
+
+.l1-banner {
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  height: var(--l1-banner-height);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(to right, #4159f6, #0000ff);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.l1-banner-track {
+  display: flex;
+  width: max-content;
+  animation: l1-banner-scroll 60s linear infinite;
+}
+
+/* Pause on hover, so the link can be clicked */
+.l1-banner:hover .l1-banner-track {
+  animation-play-state: paused;
+}
+
+.l1-banner-item {
+  padding-right: 6rem;
+}
+
+.l1-banner a {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Beat the global a:hover in public/nillion.css, whose load order relative to this file varies */
+.l1-banner a:hover {
+  color: #ffffff;
+  opacity: 0.85;
+}
+
+@keyframes l1-banner-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* No motion: show the message once, wrapped and centred */
+@media (prefers-reduced-motion: reduce) {
+  .l1-banner {
+    height: auto;
+    min-height: var(--l1-banner-height);
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .l1-banner-track {
+    animation: none;
+    width: auto;
+  }
+
+  .l1-banner-item {
+    padding-right: 0;
+  }
+
+  .l1-banner-item[aria-hidden='true'] {
+    display: none;
+  }
+}
+
+.l1-notice {
+  max-width: 44rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(242, 242, 255, 0.2);
+  background: rgba(0, 0, 34, 0.75);
+  backdrop-filter: blur(8px);
+  color: #f2f2ff;
+  pointer-events: auto;
+  user-select: text;
+}
+
+.l1-notice-label {
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.l1-notice p {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.l1-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.l1-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  pointer-events: auto;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.l1-button-primary {
+  background: linear-gradient(to right, #4159f6, #0000ff);
+}
+
+.l1-button-primary:hover {
+  color: #ffffff;
+  background: linear-gradient(to right, #0000ff, #4159f6);
+}
+
+.l1-button-secondary {
+  border: 2px solid rgba(242, 242, 255, 0.2);
+  background: rgba(242, 242, 255, 0.05);
+}
+
+.l1-button-secondary:hover {
+  color: #ffffff;
+  border-color: rgba(242, 242, 255, 0.3);
+  background: rgba(242, 242, 255, 0.1);
+}
+
+.l1-page {
+  max-width: 1200px;
+  min-height: calc(100vh - 5rem - var(--l1-banner-height));
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
 }
