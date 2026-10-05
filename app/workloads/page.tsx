@@ -1,21 +1,15 @@
 "use client";
 
 import { useAppKitAccount } from "@reown/appkit/react";
-import { useState } from "react";
-import { toast } from "sonner";
 import { ConnectWallet } from "@/components/auth";
-import { Button } from "@/components/ui/Button";
+import { L1Notice } from "@/components/l1";
 import { Spinner } from "@/components/ui/Spinner";
-import { Modal } from "@/components/ui/Modal";
 import { WorkloadList } from "@/components/workload/WorkloadList";
-import { WorkloadForm } from "@/components/workload/WorkloadForm";
 import { useWorkloads } from "@/lib/hooks/useWorkloads";
 
 export default function WorkloadsPage() {
   const { address, isConnected } = useAppKitAccount();
   const { workloads, loading, refresh } = useWorkloads();
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
 
   // Show connect wallet if not connected
   if (!isConnected || !address) {
@@ -49,33 +43,6 @@ export default function WorkloadsPage() {
       </div>
     );
   }
-
-  const handleCreate = async (data: any) => {
-    setIsCreating(true);
-    try {
-      const response = await fetch("/api/workloads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-user-id": address,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create workload");
-      }
-
-      toast.success("Workload created successfully!");
-      setShowAddModal(false);
-      refresh();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create workload");
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -114,26 +81,9 @@ export default function WorkloadsPage() {
           No Workloads Yet
         </h1>
         <p style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "1rem" }}>
-          You haven't registered any TEE workloads yet.
+          You haven't registered any TEE workloads.
         </p>
-        <Button variant="primary" onClick={() => setShowAddModal(true)}>
-          Add Your First Workload
-        </Button>
-
-        {/* Add Workload Modal */}
-        {showAddModal && (
-          <Modal
-            isOpen={showAddModal}
-            onClose={() => !isCreating && setShowAddModal(false)}
-            title="Add New Workload"
-          >
-            <WorkloadForm
-              onSubmit={handleCreate}
-              onCancel={() => setShowAddModal(false)}
-              isSubmitting={isCreating}
-            />
-          </Modal>
-        )}
+        <L1Notice backToHome />
       </div>
     );
   }
@@ -147,27 +97,14 @@ export default function WorkloadsPage() {
             {workloads.length} {workloads.length === 1 ? "workload" : "workloads"}
           </p>
         </div>
-        <Button variant="primary" onClick={() => setShowAddModal(true)}>
-          + Add Workload
-        </Button>
+      </div>
+
+      <div style={{ marginBottom: "2rem" }}>
+        <L1Notice />
       </div>
 
       <WorkloadList workloads={workloads} onRefresh={refresh} />
 
-      {/* Add Workload Modal */}
-      {showAddModal && (
-        <Modal
-          isOpen={showAddModal}
-          onClose={() => !isCreating && setShowAddModal(false)}
-          title="Add New Workload"
-        >
-          <WorkloadForm
-            onSubmit={handleCreate}
-            onCancel={() => setShowAddModal(false)}
-            isSubmitting={isCreating}
-          />
-        </Modal>
-      )}
     </div>
   );
 }

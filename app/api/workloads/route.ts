@@ -3,6 +3,10 @@ import { db } from "@/lib/db";
 import { extractPhalaHtx } from "@/lib/phala";
 import type { WorkloadProvider, PhalaWorkloadConfig } from "@/types/workload";
 
+// Blacklight is moving to Blacklight L1, so new workload registrations on the L2 are closed.
+// Existing workloads can still be listed, edited, paused and deleted. Set to true to reopen.
+const WORKLOAD_REGISTRATION_OPEN = false;
+
 export async function GET(request: NextRequest) {
   const userId = request.headers.get("x-user-id");
   if (!userId) {
@@ -17,6 +21,16 @@ export async function POST(request: NextRequest) {
   const userId = request.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!WORKLOAD_REGISTRATION_OPEN) {
+    return NextResponse.json(
+      {
+        error:
+          "New workload registrations on the Blacklight L2 are closed, as Blacklight moves to Blacklight L1",
+      },
+      { status: 410 }
+    );
   }
 
   try {

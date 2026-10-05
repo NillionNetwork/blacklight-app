@@ -304,6 +304,23 @@ export const helpLinks = {
 } as const;
 
 // ==============================================
+// BLACKLIGHT L1 MIGRATION
+// ==============================================
+
+// Blacklight is moving to Blacklight L1, so new node and workload registrations on the L2 are
+// closed; existing L2 nodes are still managed from /nodes. The L1 node app is live on testnet
+// only, so mainnet has no app link until it launches.
+const l1AppUrls = {
+  nilavTestnet: 'https://blacklight-l1.testnet.nillion.com',
+  nilavMainnet: null,
+} as const satisfies Record<NetworkKey, string | null>;
+
+export const l1Migration = {
+  appUrl: l1AppUrls[NETWORK_KEY],
+  docsUrl: 'https://docs.nillion.com/blacklight/l1/overview',
+} as const;
+
+// ==============================================
 // UTILITIES
 // ==============================================
 

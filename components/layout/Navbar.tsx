@@ -46,16 +46,6 @@ export function Navbar() {
               Dashboard
             </Link>
           )}
-          <Link
-            href="/setup"
-            style={{
-              color: 'inherit',
-              textDecoration: 'none',
-              fontWeight: 500,
-            }}
-          >
-            Set Up Node
-          </Link>
           <div className="navbar-wallet">
             {isConnected ? (
               <AccountButton size="small" variant="outline" />

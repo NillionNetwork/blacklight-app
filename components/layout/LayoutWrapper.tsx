@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
+import { L1Banner } from '@/components/l1'
 import { ReactNode } from 'react'
 
 interface LayoutWrapperProps {
@@ -15,6 +16,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <L1Banner />
       {showNavbar && <Navbar />}
       <main style={{ flex: 1 }}>
         {children}

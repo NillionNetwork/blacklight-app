@@ -1,21 +1,19 @@
 'use client';
 
 import {
-  ArrowRight,
-  Shield,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
 } from 'lucide-react';
 import { useState, useEffect, useRef, ReactNode } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { NetworkGlobe, networkExampleData } from '../globe/globe.js';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { AccountButton, ConnectWallet } from '@/components/auth';
+import { L1Notice, L1PrimaryAction } from '@/components/l1';
+import { l1Migration } from '@/config';
 
 export function BlacklightLanding() {
-  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeStep, setActiveStep] = useState(1);
   const [mounted, setMounted] = useState(false);
@@ -183,8 +181,29 @@ export function BlacklightLanding() {
     },
     {
       question: 'How do I run a verifier node?',
-      answer:
-        'To run a Blacklight node, click the “Set up node” button on this page to get started. At a high level, you launch the node using the provided Docker image, which generates a public key for your node. You must then stake at least 70,000 NIL to this public key for your node to be assigned verification work and be able to participate in Nillion Blacklight.',
+      answer: l1Migration.appUrl ? (
+        <>
+          New node registrations on the Blacklight L2 are closed, as Blacklight
+          moves to Blacklight L1. You can run a Blacklight L1 node on testnet
+          today from the{' '}
+          <a
+            href={l1Migration.appUrl}
+            style={{
+              color: 'var(--nillion-primary)',
+              fontStyle: 'italic',
+              textDecoration: 'underline',
+            }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Blacklight L1 node app
+          </a>
+          . If you already run an L2 node, you can keep managing it from the
+          dashboard.
+        </>
+      ) : (
+        'New node registrations on the Blacklight L2 are closed, as Blacklight moves to Blacklight L1. The Blacklight L1 node app is coming soon. If you already run an L2 node, you can keep managing it from the dashboard.'
+      ),
     },
     {
       question: 'What do Nillion Blacklight nodes check?',
@@ -452,80 +471,8 @@ export function BlacklightLanding() {
                   multiple operators.
                 </p>
 
-                {/* CTAs - Functional navigation */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4 pointer-events-none select-none">
-                  <button
-                    onClick={() => router.push('/setup')}
-                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0 w-full sm:w-auto select-none"
-                    style={{
-                      background: 'linear-gradient(to right, #4159F6, #0000FF)',
-                      color: '#FFFFFF',
-                      boxShadow: '0 25px 50px -12px rgba(65, 89, 246, 0.3)',
-                      cursor: 'pointer',
-                    }}
-                    ref={(el) => {
-                      if (el) {
-                        el.style.setProperty(
-                          'pointer-events',
-                          'auto',
-                          'important'
-                        );
-                      }
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #0000FF, #4159F6)';
-                      e.currentTarget.style.boxShadow =
-                        '0 25px 50px -12px rgba(65, 89, 246, 0.5)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #4159F6, #0000FF)';
-                      e.currentTarget.style.boxShadow =
-                        '0 25px 50px -12px rgba(65, 89, 246, 0.3)';
-                    }}
-                  >
-                    <span className="whitespace-normal sm:whitespace-nowrap">
-                      Set up node and earn rewards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1 flex-shrink-0 inline-block" />
-                  </button>
-
-                  <button
-                    onClick={() => router.push('/workloads')}
-                    className="group px-6 py-5 sm:px-8 sm:py-6 text-base sm:text-lg font-semibold rounded-none backdrop-blur-sm transition-all hover:scale-105 w-full sm:w-auto select-none"
-                    style={{
-                      border: '2px solid rgba(242, 242, 255, 0.2)',
-                      backgroundColor: 'rgba(242, 242, 255, 0.05)',
-                      color: '#FFFFFF',
-                      cursor: 'pointer',
-                    }}
-                    ref={(el) => {
-                      if (el) {
-                        el.style.setProperty(
-                          'pointer-events',
-                          'auto',
-                          'important'
-                        );
-                      }
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        'rgba(242, 242, 255, 0.1)';
-                      e.currentTarget.style.borderColor =
-                        'rgba(242, 242, 255, 0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        'rgba(242, 242, 255, 0.05)';
-                      e.currentTarget.style.borderColor =
-                        'rgba(242, 242, 255, 0.2)';
-                    }}
-                  >
-                    <Shield className="mr-2 h-4 w-4 sm:h-5 sm:w-5 inline-block" />
-                    Verify your apps
-                  </button>
-                </div>
+                {/* L2 registrations are closed: point at Blacklight L1 */}
+                <L1Notice />
               </div>
             </div>
           </div>
@@ -748,7 +695,9 @@ export function BlacklightLanding() {
                   className="text-lg md:text-xl leading-relaxed mb-6 lg:mb-8"
                   style={{ color: '#F2F2FF' }}
                 >
-                  Set up your node in 5 minutes and begin earning rewards.
+                  New node registrations on the Blacklight L2 are closed, as
+                  Blacklight moves to Blacklight L1. If you already run an L2
+                  node, this is how it works.
                 </p>
 
                 {/* Stage Indicator and Title Group */}
@@ -814,35 +763,8 @@ export function BlacklightLanding() {
                   </button>
                 </div>
 
-                {/* CTA Button - Functional navigation */}
                 <div className="pt-6">
-                  <button
-                    onClick={() => router.push('/setup')}
-                    className="group px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0 w-full"
-                    style={{
-                      background: 'linear-gradient(to right, #4159F6, #0000FF)',
-                      color: '#FFFFFF',
-                      boxShadow: '0 25px 50px -12px rgba(65, 89, 246, 0.3)',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #0000FF, #4159F6)';
-                      e.currentTarget.style.boxShadow =
-                        '0 25px 50px -12px rgba(65, 89, 246, 0.5)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #4159F6, #0000FF)';
-                      e.currentTarget.style.boxShadow =
-                        '0 25px 50px -12px rgba(65, 89, 246, 0.3)';
-                    }}
-                  >
-                    <span className="whitespace-normal sm:whitespace-nowrap">
-                      Set up node and earn rewards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1 flex-shrink-0 inline-block" />
-                  </button>
+                  <L1PrimaryAction />
                 </div>
               </div>
 
@@ -976,33 +898,6 @@ export function BlacklightLanding() {
               >
                 The Universal Verification Layer
               </h2>
-              <div className="flex justify-start lg:justify-end">
-                <button
-                  onClick={() => router.push('/workloads')}
-                  className="group px-8 py-6 text-lg font-semibold rounded-none shadow-2xl transition-all hover:scale-105 border-0"
-                  style={{
-                    background: 'linear-gradient(to right, #4159F6, #0000FF)',
-                    color: '#FFFFFF',
-                    boxShadow: '0 25px 50px -12px rgba(65, 89, 246, 0.3)',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      'linear-gradient(to right, #0000FF, #4159F6)';
-                    e.currentTarget.style.boxShadow =
-                      '0 25px 50px -12px rgba(65, 89, 246, 0.5)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      'linear-gradient(to right, #4159F6, #0000FF)';
-                    e.currentTarget.style.boxShadow =
-                      '0 25px 50px -12px rgba(65, 89, 246, 0.3)';
-                  }}
-                >
-                  Verify your app
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1 inline-block" />
-                </button>
-              </div>
             </div>
 
             {/* Three Card Layout - Context → Layer → Action */}
@@ -1073,36 +968,10 @@ export function BlacklightLanding() {
                   className="text-base md:text-lg leading-relaxed mb-6"
                   style={{ color: '#F2F2FF' }}
                 >
-                  Verify your apps and workloads that rely on multiple TEE
-                  providers by submitting them to the Blacklight Network.
+                  New app registrations on the Blacklight L2 are closed, as
+                  Blacklight moves to Blacklight L1. Apps already registered
+                  can still be managed.
                 </p>
-                <div className="pt-2">
-                  <button
-                    onClick={() => router.push('/workloads')}
-                    className="group px-6 py-3 text-base font-semibold rounded-none shadow-xl transition-all hover:scale-105 border-0"
-                    style={{
-                      background: 'linear-gradient(to right, #4159F6, #0000FF)',
-                      color: '#FFFFFF',
-                      boxShadow: '0 15px 35px -10px rgba(65, 89, 246, 0.3)',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #0000FF, #4159F6)';
-                      e.currentTarget.style.boxShadow =
-                        '0 15px 35px -10px rgba(65, 89, 246, 0.5)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        'linear-gradient(to right, #4159F6, #0000FF)';
-                      e.currentTarget.style.boxShadow =
-                        '0 15px 35px -10px rgba(65, 89, 246, 0.3)';
-                    }}
-                  >
-                    Verify your app
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 inline-block" />
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -1214,9 +1083,11 @@ export function BlacklightLanding() {
                 </p>
               </Link>
 
-              {/* Card 2: Set up Node */}
-              <Link
-                href="/setup"
+              {/* Card 2: Blacklight L1 */}
+              <a
+                href={l1Migration.appUrl ?? l1Migration.docsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="blacklight-nav-card"
                 ref={(el) => {
                   if (el) {
@@ -1224,36 +1095,13 @@ export function BlacklightLanding() {
                   }
                 }}
               >
-                <div className="blacklight-nav-card-title">Set Up Blacklight Node</div>
+                <div className="blacklight-nav-card-title">Blacklight L1</div>
                 <p className="blacklight-nav-card-description">
-                  Configure a new Blacklight node and start earning rewards.
+                  {l1Migration.appUrl
+                    ? 'New registrations have moved to Blacklight L1. Run a node on testnet.'
+                    : 'New registrations have moved to Blacklight L1. Its node app is coming soon.'}
                 </p>
-              </Link>
-
-              {/* Card 3: Developers */}
-              <Link
-                href="/workloads"
-                className="blacklight-nav-card blacklight-nav-card-full"
-                ref={(el) => {
-                  if (el) {
-                    el.style.setProperty('pointer-events', 'auto', 'important');
-                  }
-                }}
-              >
-                <div className="blacklight-nav-card-header">
-                  <div className="blacklight-nav-card-badge">NEW</div>
-                  <div
-                    className="blacklight-nav-card-title"
-                    style={{ marginBottom: 0 }}
-                  >
-                    Submit TEE Workload
-                  </div>
-                </div>
-                <p className="blacklight-nav-card-description">
-                  For developers: Verify your apps and workloads running on TEE
-                  providers.
-                </p>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
