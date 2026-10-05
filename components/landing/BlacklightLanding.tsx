@@ -184,8 +184,8 @@ export function BlacklightLanding() {
       answer: l1Migration.appUrl ? (
         <>
           New node registrations on the Blacklight L2 are closed, as Blacklight
-          moves to Blacklight L1. You can run a Blacklight L1 node on testnet
-          today from the{' '}
+          moves to Blacklight L1. You can run a Blacklight L1 node on{' '}
+          {l1Migration.networkLabel} today from the{' '}
           <a
             href={l1Migration.appUrl}
             style={{
@@ -1098,7 +1098,7 @@ export function BlacklightLanding() {
                 <div className="blacklight-nav-card-title">Blacklight L1</div>
                 <p className="blacklight-nav-card-description">
                   {l1Migration.appUrl
-                    ? 'New registrations have moved to Blacklight L1. Run a node on testnet.'
+                    ? `New registrations have moved to Blacklight L1. Run a node on ${l1Migration.networkLabel}.`
                     : 'New registrations have moved to Blacklight L1. Its node app is coming soon.'}
                 </p>
               </a>

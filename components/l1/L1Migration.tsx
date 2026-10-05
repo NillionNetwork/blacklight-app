@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { l1Migration } from "@/config";
 
-/** The one thing to do next: the L1 node app on testnet, or the L1 docs until mainnet's is live. */
+/** The one thing to do next: the L1 node app for this network, or the L1 docs if it has none. */
 export function L1PrimaryAction() {
   const href = l1Migration.appUrl ?? l1Migration.docsUrl;
   return (
@@ -15,7 +15,7 @@ export function L1PrimaryAction() {
       className="l1-button l1-button-primary"
     >
       {l1Migration.appUrl
-        ? "Try Blacklight L1 on testnet"
+        ? `Try Blacklight L1 on ${l1Migration.networkLabel}`
         : "Learn about Blacklight L1"}
       <ArrowRight size={18} />
     </a>
@@ -36,7 +36,7 @@ export function L1Notice({ backToHome = false }: L1NoticeProps) {
         New node and app registrations on the Blacklight L2 are closed, as
         Blacklight moves to <b>Blacklight L1</b> on Ethereum.{" "}
         {l1Migration.appUrl
-          ? "You can already run a Blacklight L1 node on testnet."
+          ? `You can already run a Blacklight L1 node on ${l1Migration.networkLabel}.`
           : "The Blacklight L1 node app is coming soon."}
       </p>
       <p>
@@ -67,7 +67,7 @@ export function L1Banner() {
       be managed from the dashboard.{" "}
       {l1Migration.appUrl ? (
         <a href={l1Migration.appUrl} target="_blank" rel="noopener noreferrer">
-          Try Blacklight L1 on testnet →
+          Try Blacklight L1 on {l1Migration.networkLabel} →
         </a>
       ) : (
         "The Blacklight L1 node app is coming soon."
