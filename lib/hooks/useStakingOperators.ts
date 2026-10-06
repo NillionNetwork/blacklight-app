@@ -416,7 +416,7 @@ export function useIsActiveOperator(operatorAddress?: `0x${string}`) {
  * @param operatorAddress - Address of the operator
  */
 export function useStakeOf(operatorAddress?: `0x${string}`) {
-  const { data: stake, isLoading } = useReadContract({
+  const { data: stake, isLoading, refetch } = useReadContract({
     address: activeContracts.stakingOperators as `0x${string}`,
     abi: stakingOperatorsABI,
     functionName: 'stakeOf',
@@ -427,6 +427,7 @@ export function useStakeOf(operatorAddress?: `0x${string}`) {
   return {
     stake: stake as bigint | undefined,
     isLoading,
+    refetch,
   };
 }
 
