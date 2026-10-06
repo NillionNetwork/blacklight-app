@@ -38,7 +38,7 @@ export function UnstakingForm({
   const { switchChain } = useSwitchChain();
   const queryClient = useQueryClient();
   const { requestUnstake } = useStakingOperators();
-  const { stake, isLoading: isLoadingStake } = useStakeOf(operatorAddress);
+  const { stake, isLoading: isLoadingStake, refetch: refetchStake } = useStakeOf(operatorAddress);
   const { delay: unstakeDelay, isLoading: isLoadingDelay } = useUnstakeDelay();
   const { data: unstakingHistory, isLoading: isLoadingUnstakingHistory, error: unstakingHistoryError } = useQuery({
     queryKey: ['unstaking-history', operatorAddress],
@@ -46,7 +46,6 @@ export function UnstakingForm({
     enabled: !!operatorAddress,
   });
 
-  const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showTxModal, setShowTxModal] = useState(false);
@@ -82,11 +81,6 @@ export function UnstakingForm({
     return `${days.toFixed(1)} days`;
   };
 
-  const handleMaxClick = () => {
-    setAmount(stakedAmount);
-    setError(null);
-  };
-
   const handleRequestUnstake = async () => {
     if (!isConnected || !address) {
       setError('Please connect your wallet');
@@ -94,15 +88,9 @@ export function UnstakingForm({
       return;
     }
 
-    if (!amount || parseFloat(amount) <= 0) {
-      setError('Please enter a valid amount');
-      onError?.('Please enter a valid amount');
-      return;
-    }
-
-    if (parseFloat(amount) > parseFloat(stakedAmount)) {
-      setError(`Amount exceeds staked balance (${stakedAmount} ${tokenSymbol})`);
-      onError?.(`Amount exceeds staked balance`);
+    if (!hasStake) {
+      setError('No tokens staked to this operator');
+      onError?.('No tokens staked to this operator');
       return;
     }
 
@@ -121,7 +109,15 @@ export function UnstakingForm({
         }
       }
 
-      await requestUnstake(operatorAddress, amount, (step, data) => {
+      // Re-read the stake right before sending, so a stake that changed since the page
+      // loaded (rewards, say) is still unstaked in full rather than leaving a remainder.
+      const { data: latestStake } = await refetchStake();
+      const fullAmount = formatUnits(
+        (latestStake as bigint | undefined) ?? stake ?? 0n,
+        activeContracts.nilTokenDecimals
+      );
+
+      await requestUnstake(operatorAddress, fullAmount, (step, data) => {
         if (step === 'requesting') {
           setTxStatus({ step: 'requesting' });
         } else if (step === 'confirming' && data?.requestHash) {
@@ -130,9 +126,8 @@ export function UnstakingForm({
       });
 
       setTxStatus({ step: 'complete' });
-      setAmount('');
       queryClient.invalidateQueries({ queryKey: ['unstaking-history', operatorAddress] });
-      onUnstakeSuccess?.(operatorAddress, amount);
+      onUnstakeSuccess?.(operatorAddress, fullAmount);
     } catch (err: any) {
       // Keep the transaction hash if we have it
       setTxStatus(prev => ({ ...prev, step: 'error', hash: prev?.hash }));
@@ -304,36 +299,27 @@ export function UnstakingForm({
         {hasStake && (
           <>
             <label htmlFor="unstake-amount" className="setup-label staking-label">
-              Amount to Unstake
+              Amount to Unstake (full stake)
             </label>
             <div className="unstaking-input-container">
               <Input
                 id="unstake-amount"
-                type="number"
-                placeholder={`0.00 ${tokenSymbol}`}
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setError(null);
-                }}
-                disabled={isProcessing || !isConnected}
-                style={{ paddingRight: '5rem' }}
+                type="text"
+                value={`${stakedAmount} ${tokenSymbol}`}
+                readOnly
+                disabled
               />
-              <button
-                onClick={handleMaxClick}
-                disabled={isProcessing || !isConnected}
-                className="unstaking-max-button"
-              >
-                MAX
-              </button>
             </div>
 
             <div className="unstaking-info-box">
               <div className="unstaking-info-line">
-                ℹ️ Unstaking initiates a {formatUnstakeDelay()} unbonding period.
+                ℹ️ Blacklight is moving to Blacklight L1, so the L2 only supports unstaking your
+                full stake. Partial unstakes are turned off: one that left less than the
+                minimum stake behind would fail on-chain.
               </div>
               <div className="unstaking-info-line">
-                You can withdraw tokens after the period ends.
+                Unstaking starts a {formatUnstakeDelay()} unbonding period. You can withdraw your
+                tokens after it ends.
               </div>
             </div>
 
@@ -341,10 +327,10 @@ export function UnstakingForm({
               variant="primary"
               size="medium"
               onClick={handleRequestUnstake}
-              disabled={!isConnected || isProcessing || !amount || parseFloat(amount) <= 0}
+              disabled={!isConnected || isProcessing || !hasStake}
               style={{ width: '100%' }}
             >
-              {isProcessing ? 'Processing...' : 'Request Unstake'}
+              {isProcessing ? 'Processing...' : 'Unstake Everything'}
             </Button>
           </>
         )}
